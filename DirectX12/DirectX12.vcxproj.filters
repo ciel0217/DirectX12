@@ -28,6 +28,9 @@
       <Filter>Framework\LowLevel</Filter>
     </ClInclude>
     <ClInclude Include="Framework\LowLevel\MainApplication.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\LowLevel\Dx12GraphicsDevice.h">
       <Filter>Framework\LowLevel</Filter>
     </ClInclude>
   </ItemGroup>

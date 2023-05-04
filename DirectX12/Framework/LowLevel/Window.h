@@ -3,6 +3,9 @@
 #define WINDOW_NAME		"‚ ‚ ‚ "
 #define CLASS_NAME		"App"
 
+#define SCREEN_WIDTH	(1280)
+#define SCREEN_HEIGHT	(720)
+
 class Window {
 private:
 	HWND m_hWnd;

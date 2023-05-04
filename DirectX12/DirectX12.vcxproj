@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Framework\LowLevel\DirectX12.h" />
+    <ClInclude Include="Framework\LowLevel\Dx12GraphicsDevice.h" />
     <ClInclude Include="Framework\LowLevel\MainApplication.h" />
     <ClInclude Include="Framework\LowLevel\Window.h" />
   </ItemGroup>

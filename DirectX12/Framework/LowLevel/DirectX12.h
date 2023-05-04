@@ -16,7 +16,7 @@
 #define DIRECTINPUT_VERSION 0x0800		// åxçêëŒèà
 #include "dinput.h"
 #include "mmsystem.h"
-
+#include <dxgi1_6.h>
 #pragma warning(pop)
 
 
@@ -29,7 +29,7 @@
 //#pragma comment (lib, "dxerr.lib")
 #pragma comment (lib, "dxguid.lib")
 #pragma comment (lib, "dinput8.lib")
-
+#pragma comment (lib, "dxgi.lib")
 //
 //#if _DEBUG
 //#pragma comment (lib, "DirectXTex/Header/x86/Debug/DirectXTex.lib")
@@ -38,5 +38,4 @@
 //#endif
 //
 
-#define SCREEN_WIDTH	(960)
-#define SCREEN_HEIGHT	(540)	
+	
