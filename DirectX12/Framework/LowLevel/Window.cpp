@@ -18,8 +18,9 @@ HRESULT Window::RegisterWindowClass(WNDCLASSEX * wnd)
 		CLASS_NAME,
 		NULL
 	};
-	HRESULT hr;
-	hr = RegisterClassEx(&m_wndClass);
+	HRESULT hr = S_OK;
+	if (!RegisterClassEx(&m_wndClass))
+		hr = FALSE;
 	*wnd = m_wndClass;
 
 	return hr;
