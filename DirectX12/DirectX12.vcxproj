@@ -138,8 +138,10 @@
     <ClInclude Include="Framework\LowLevel\Dx12GraphicsDevice.h" />
     <ClInclude Include="Framework\LowLevel\MainApplication.h" />
     <ClInclude Include="Framework\LowLevel\Window.h" />
+    <ClInclude Include="Framework\Utility\Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Framework\LowLevel\Dx12GraphicsDevice.cpp" />
     <ClCompile Include="Framework\LowLevel\MainApplication.cpp" />
     <ClCompile Include="Framework\LowLevel\Window.cpp" />
   </ItemGroup>

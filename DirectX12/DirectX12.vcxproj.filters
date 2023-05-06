@@ -19,6 +19,9 @@
     <Filter Include="Framework\LowLevel">
       <UniqueIdentifier>{ff02495f-6236-46cf-83c4-7943b1061faf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Utility">
+      <UniqueIdentifier>{828bb14a-bcb7-4db8-adc9-4716bcb591ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\LowLevel\DirectX12.h">
@@ -33,12 +36,18 @@
     <ClInclude Include="Framework\LowLevel\Dx12GraphicsDevice.h">
       <Filter>Framework\LowLevel</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Utility\Utility.h">
+      <Filter>Framework\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
       <Filter>Framework\LowLevel</Filter>
     </ClCompile>
     <ClCompile Include="Framework\LowLevel\MainApplication.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\LowLevel\Dx12GraphicsDevice.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

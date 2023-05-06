@@ -11,8 +11,6 @@
 #include <d3d12.h>
 #include <DirectXTex/d3dx12.h>
 #include <d3dcompiler.h>
-//#include <d3dx9.h>
-#include <wrl/client.h>
 #define DIRECTINPUT_VERSION 0x0800		// Œx‘Îˆ
 #include "dinput.h"
 #include "mmsystem.h"
