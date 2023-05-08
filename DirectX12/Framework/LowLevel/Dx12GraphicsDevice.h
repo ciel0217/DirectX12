@@ -10,6 +10,7 @@ private:
 	static Dx12GraphicsDevice* m_Instance;
 
 	ComPtr<ID3D12Device> m_Device;
+	ComPtr<IDXGISwapChain3> m_SwapChain;
 
 public:
 	Dx12GraphicsDevice() { if (!m_Instance)m_Instance = this; }
