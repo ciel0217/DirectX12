@@ -39,6 +39,15 @@
     <ClInclude Include="Framework\Utility\Utility.h">
       <Filter>Framework\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\LowLevel\DirectX12Helper.h">
+      <Filter>Framework\LowLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\LowLevel\DescriptorHeap.h">
+      <Filter>Framework\LowLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\LowLevel\CommandContext.h">
+      <Filter>Framework\LowLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
