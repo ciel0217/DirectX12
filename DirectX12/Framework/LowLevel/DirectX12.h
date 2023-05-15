@@ -17,6 +17,9 @@
 #include <dxgi1_6.h>
 #pragma warning(pop)
 
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 //*****************************************************************************
 // ƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒŠƒ“ƒN

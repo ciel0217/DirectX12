@@ -1,8 +1,6 @@
 #pragma once
 #include "DirectX12.h"
-#include <wrl/client.h>
 
-using Microsoft::WRL::ComPtr;
 
 class Dx12GraphicsDevice
 {
