@@ -45,11 +45,21 @@ struct Block {
 };
 
 
+
 class TLSFAllocator
 {
 public:
 	TLSFAllocator(unsigned int data_size) : BLOCK_DATA_SIZE(data_size) {};
+	~TLSFAllocator() { ShutDown(); }
 
 private:
+	void ShutDown();
+
+	void* DivideMemory(unsigned int block_num);
+	void ReleaseMemory(void* ptr);
+	void RegistFreeList(Block* block);
+	void RemoveFreeList(Block* block);
+
 	const unsigned int BLOCK_DATA_SIZE;
+	std::vector<Block*> m_FreeList;
 };
