@@ -48,6 +48,9 @@
     <ClInclude Include="Framework\LowLevel\CommandContext.h">
       <Filter>Framework\LowLevel</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\LowLevel\TLSFAllocator.h">
+      <Filter>Framework\LowLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
