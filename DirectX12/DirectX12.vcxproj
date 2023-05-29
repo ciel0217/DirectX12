@@ -140,14 +140,15 @@
     <ClInclude Include="Framework\LowLevel\DirectX12Helper.h" />
     <ClInclude Include="Framework\LowLevel\Dx12GraphicsDevice.h" />
     <ClInclude Include="Framework\LowLevel\MainApplication.h" />
-    <ClInclude Include="Framework\LowLevel\TLSFAllocator.h" />
     <ClInclude Include="Framework\LowLevel\Window.h" />
+    <ClInclude Include="Framework\MemoryAllocator\TLSFAllocator.h" />
     <ClInclude Include="Framework\Utility\Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Dx12GraphicsDevice.cpp" />
     <ClCompile Include="Framework\LowLevel\MainApplication.cpp" />
     <ClCompile Include="Framework\LowLevel\Window.cpp" />
+    <ClCompile Include="Framework\MemoryAllocator\TLSFAllocator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

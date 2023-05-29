@@ -22,6 +22,9 @@
     <Filter Include="Framework\Utility">
       <UniqueIdentifier>{828bb14a-bcb7-4db8-adc9-4716bcb591ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\MemoryAllocator">
+      <UniqueIdentifier>{7fdd5df7-d213-4c5e-888b-4216e040fa52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\LowLevel\DirectX12.h">
@@ -48,8 +51,8 @@
     <ClInclude Include="Framework\LowLevel\CommandContext.h">
       <Filter>Framework\LowLevel</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\LowLevel\TLSFAllocator.h">
-      <Filter>Framework\LowLevel</Filter>
+    <ClInclude Include="Framework\MemoryAllocator\TLSFAllocator.h">
+      <Filter>Framework\MemoryAllocator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +64,9 @@
     </ClCompile>
     <ClCompile Include="Framework\LowLevel\Dx12GraphicsDevice.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\MemoryAllocator\TLSFAllocator.cpp">
+      <Filter>Framework\MemoryAllocator</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
