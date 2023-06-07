@@ -11,7 +11,7 @@ void * TLSFAllocator::DivideMemory(unsigned int block_size)
 
 	unsigned int mask = (1 << divide_bit) - 1;
 
-	const unsigned int rs = mask - 5;
+	const unsigned int rs = divide_bit - 5;
 
 	unsigned int index = (divide_bit & mask) >> rs;
 
