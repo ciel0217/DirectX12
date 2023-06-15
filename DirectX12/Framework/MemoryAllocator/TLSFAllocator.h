@@ -109,7 +109,13 @@ private:
 	void RegistFreeList(Block* block);
 	void RemoveFreeList(Block* block);
 
+	
+	const unsigned int FREE_LIST_DIVISIONS = 32;
+	const unsigned int POWER_OF_TWO_FREE_LIST_DIVISIONS = FastLog2(FREE_LIST_DIVISIONS);
+	
 	const unsigned int BLOCK_DATA_SIZE;
+
+
 	std::vector<Block*> m_FreeList;
 	unsigned int m_FreeFlags;
 };

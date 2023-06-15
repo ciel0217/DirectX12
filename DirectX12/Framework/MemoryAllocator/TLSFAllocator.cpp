@@ -6,23 +6,17 @@ void TLSFAllocator::ShutDown()
 
 void * TLSFAllocator::DivideMemory(unsigned int block_size)
 {
-	//block_num‚ÌÅãˆÊ1Bit‚ğæ“¾
-	unsigned int divide_bit = HigherBit(block_size);
+	//block_size‚ÌÅãˆÊ1Bit‚ğæ“¾
+	unsigned int fli = HigherBit(block_size);
 
-	unsigned int mask = (1 << divide_bit) - 1;
+	unsigned int mask = (1 << fli) - 1;
 
-	const unsigned int rs = divide_bit - 5;
+	const unsigned int rs = fli - POWER_OF_TWO_FREE_LIST_DIVISIONS;
 
-	unsigned int index = (divide_bit & mask) >> rs;
-
-	if (m_FreeList[divide_bit * 32 + index]->m_Size == block_size)
-	{
-
-	}
-	
+	unsigned int index = (fli & mask) >> rs;
 
 	//ÅãˆÊ1Bit‚©‚ç¶‘¤‚ğ1‚Å–„‚ß‚é
-	unsigned int my_bit = ~(FillRightBit(divide_bit) >> 1);
+	unsigned int my_bit = ~(FillRightBit(fli) >> 1);
 	//FreeFlags‚Æmask‚ÅA‹ó‚¢‚Ä‚¢‚é—Ìˆæ‚ğæ“¾
 	unsigned int free_bit = (m_FreeFlags & my_bit);
 
