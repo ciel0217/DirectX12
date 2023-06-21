@@ -20,7 +20,8 @@ struct Block {
 		m_ListNext = block;
 	}
 
-	void remove() {
+	void remove()
+	{
 		if (m_ListNext != nullptr) 
 			m_ListNext->m_ListPrev = m_ListPrev;
 		
@@ -31,7 +32,8 @@ struct Block {
 	}
 
 	//このブロックと終端タグにサイズ数を書き込み
-	void SetSize(unsigned int size) {
+	void SetSize(unsigned int size) 
+	{
 		this->m_Size = size;
 		unsigned int* endHeaderPtr = (unsigned int*)((unsigned char*)this + (sizeof(Block) + sizeof(unsigned char)) * size);
 		endHeaderPtr -= 1;
@@ -94,6 +96,7 @@ inline constexpr unsigned int Fassss(unsigned int value) {
 	}
 }
 
+constexpr unsigned char BLOCK_AND_HEADER_SIZE = sizeof(Block) + sizeof(unsigned char);
 
 class TLSFAllocator
 {
@@ -101,7 +104,6 @@ public:
 	TLSFAllocator(unsigned int data_size) : BLOCK_DATA_SIZE(data_size) {};
 	~TLSFAllocator() { ShutDown(); }
 
-private:
 	void ShutDown();
 
 	void* DivideMemory(unsigned int block_num);
@@ -109,13 +111,47 @@ private:
 	void RegistFreeList(Block* block);
 	void RemoveFreeList(Block* block);
 
-	
-	const unsigned int FREE_LIST_DIVISIONS = 32;
+	//データポインタからブロックヘッダーを取得する
+	inline Block* GetBlockFromDataPtr(void* dataPtr) 
+	{
+		return (Block*)(m_BlockPtr + dataLocalIndex(dataPtr) * BLOCK_AND_HEADER_SIZE);
+	}
+
+	//basePtrを開始としたデータ本体のローカルポインタを返す
+	inline unsigned int dataLocalIndex(void* blockPtr) 
+	{
+		unsigned int local_ptr = reinterpret_cast<unsigned int>(blockPtr) - reinterpret_cast<unsigned int>(m_DataPtr);
+		return local_ptr / BLOCK_DATA_SIZE;
+	}
+
+	//basePtrを開始としたブロックのローカルポインタを返す
+	inline unsigned int blockLocalIndex(void* blockPtr) 
+	{
+		unsigned int local_ptr = reinterpret_cast<unsigned int>(blockPtr) - reinterpret_cast<unsigned int>(this->m_BlockPtr);
+		return local_ptr / BLOCK_AND_HEADER_SIZE;
+	}
+
+	//ブロックローカルインデックスからアロケーターのデータポインタを求める
+	void* getDataPtrFromBlockLocation(unsigned int blockLocation)
+	{
+		unsigned int local_ptr = blockLocation * BLOCK_DATA_SIZE;
+		return m_DataPtr + local_ptr;
+	}
+
+private:
+	unsigned int GetFLI(unsigned int num);
+	unsigned int GetSLI(unsigned int fli, unsigned int size);
+
+	const unsigned int FREE_LIST_DIVISIONS = 16;
 	const unsigned int POWER_OF_TWO_FREE_LIST_DIVISIONS = FastLog2(FREE_LIST_DIVISIONS);
 	
 	const unsigned int BLOCK_DATA_SIZE;
 
+	unsigned char* m_DataPtr;
+	unsigned char* m_BlockPtr;
+	unsigned int m_AllocateBlockSize;
+	unsigned int m_AllocateDataSize;
 
 	std::vector<Block*> m_FreeList;
-	unsigned int m_FreeFlags;
+	std::vector<unsigned int> m_FreeFlags;
 };
