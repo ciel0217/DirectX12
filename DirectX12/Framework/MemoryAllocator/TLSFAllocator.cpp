@@ -39,9 +39,9 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 		_BitScanForward(&index, enable_bit);
 
 		block = m_FreeList[fli * FREE_LIST_DIVISIONS + sli];
-		
+
 	}
-	
+
 	RemoveFreeList(block);
 
 	if (block->m_Size == block_num)
@@ -72,6 +72,7 @@ void TLSFAllocator::RegistFreeList(Block * block)
 
 void TLSFAllocator::RemoveFreeList(Block * block)
 {
+
 }
 
 unsigned int TLSFAllocator::GetFLI(unsigned int num)
@@ -80,7 +81,7 @@ unsigned int TLSFAllocator::GetFLI(unsigned int num)
 		return -1;
 
 	unsigned long index = 0;
-	
+
 	_BitScanReverse(&index, num);
 	return index;
 }
