@@ -16,19 +16,39 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 
 	if (!block)
 	{
+		unsigned int fli_bit =  fli;
+		unsigned int sli_bit = sli;
+		unsigned long index = fli;
+		/*unsigned int fli_enable_bit = m_FLIFreeFlags & fli_bit;
+		
+		_BitScanForward(&index, fli_enable_bit);*/
+
+		//最大31回
+		while (fli_bit != 0)
+		{
+			unsigned int sli_mask_bit = 0xffffffff << sli_bit;
+			unsigned int sli_enable_bit = m_SLIFreeFlags[index] & sli_mask_bit;
+
+			//フリーリストあり
+			if (sli_enable_bit != 0)
+				break;
+
+			//フリーリストがない場合は次のfliに更新
+			sli_bit = 0;
+
+			unsigned int fli_mask_bit = 0xffffffff << fli_bit;
+			unsigned int fli_enable_bit = m_FLIFreeFlags & fli_mask_bit;
+			_BitScanForward(&index, fli_enable_bit);
+			fli_bit = index;
+		}
+
+
 		unsigned int my_bit = 0xffffffff << sli;
 		unsigned int enable_bit = m_FreeFlags[fli] & my_bit;
 
 		if (enable_bit == 0)
 		{
-			for (fli; fli < m_FreeFlags.size(); fli++)
-			{
-				my_bit = 0xffffffff << fli;
-				enable_bit = m_FreeFlags[fli] & my_bit;
-
-				if (enable_bit != 0)
-					break;
-			}
+			
 
 			//フリーリスト見つからない
 			if (enable_bit == 0)

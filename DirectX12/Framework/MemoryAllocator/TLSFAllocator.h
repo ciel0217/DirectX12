@@ -153,5 +153,6 @@ private:
 	unsigned int m_AllocateDataSize;
 
 	std::vector<Block*> m_FreeList;
-	std::vector<unsigned int> m_FreeFlags;
+	std::vector<unsigned int> m_SLIFreeFlags;
+	unsigned int m_FLIFreeFlags
 };
