@@ -154,5 +154,5 @@ private:
 
 	std::vector<Block*> m_FreeList;
 	std::vector<unsigned int> m_SLIFreeFlags;
-	unsigned int m_FLIFreeFlags
+	unsigned int m_FLIFreeFlags;
 };

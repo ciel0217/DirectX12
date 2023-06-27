@@ -10,6 +10,11 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 {
 	//block_numの最上位1BitのIndexを取得
 	unsigned int fli = GetFLI(block_num);
+
+	//block_numがおかしいからnullptr
+	if (fli == -1)
+		return nullptr;
+
 	unsigned int sli = GetSLI(fli, block_num);
 
 	Block* block = m_FreeList[fli * FREE_LIST_DIVISIONS + sli];
@@ -24,7 +29,7 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 		_BitScanForward(&index, fli_enable_bit);*/
 
 		//最大31回
-		while (fli_bit != 0)
+		do 
 		{
 			unsigned int sli_mask_bit = 0xffffffff << sli_bit;
 			unsigned int sli_enable_bit = m_SLIFreeFlags[index] & sli_mask_bit;
@@ -38,28 +43,16 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 
 			unsigned int fli_mask_bit = 0xffffffff << fli_bit;
 			unsigned int fli_enable_bit = m_FLIFreeFlags & fli_mask_bit;
+
+			//空いている領域が完全に0だったら終わり
+			if (fli_enable_bit == 0)
+				return nullptr;
+			
 			_BitScanForward(&index, fli_enable_bit);
 			fli_bit = index;
-		}
-
-
-		unsigned int my_bit = 0xffffffff << sli;
-		unsigned int enable_bit = m_FreeFlags[fli] & my_bit;
-
-		if (enable_bit == 0)
-		{
-			
-
-			//フリーリスト見つからない
-			if (enable_bit == 0)
-				return nullptr;
-		}
-
-		unsigned long index;
-		_BitScanForward(&index, enable_bit);
-
-		block = m_FreeList[fli * FREE_LIST_DIVISIONS + sli];
-
+		} while (fli_bit != 0);
+		
+		block = m_FreeList[fli_bit * FREE_LIST_DIVISIONS + sli_bit];
 	}
 
 	RemoveFreeList(block);
