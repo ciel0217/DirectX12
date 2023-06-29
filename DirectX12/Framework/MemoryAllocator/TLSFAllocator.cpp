@@ -17,7 +17,9 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 
 	unsigned int sli = GetSLI(fli, block_num);
 
-	Block* block = m_FreeList[fli * FREE_LIST_DIVISIONS + sli];
+	unsigned int regist_index = fli * FREE_LIST_DIVISIONS + sli;
+
+	Block* block = m_FreeList[regist_index];
 
 	if (!block)
 	{
@@ -52,7 +54,8 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 			fli_bit = index;
 		} while (fli_bit != 0);
 		
-		block = m_FreeList[fli_bit * FREE_LIST_DIVISIONS + sli_bit];
+		regist_index = fli_bit * FREE_LIST_DIVISIONS + sli_bit;
+		block = m_FreeList[regist_index];
 	}
 
 	RemoveFreeList(block);
