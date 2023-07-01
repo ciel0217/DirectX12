@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\LowLevel\BufferView.h" />
     <ClInclude Include="Framework\LowLevel\CommandContext.h" />
     <ClInclude Include="Framework\LowLevel\DescriptorHeap.h" />
     <ClInclude Include="Framework\LowLevel\DirectX12.h" />

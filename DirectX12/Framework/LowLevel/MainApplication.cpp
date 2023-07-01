@@ -1,5 +1,7 @@
 #include "MainApplication.h"
 #include <time.h>
+#include "DirectX12/Framework/MemoryAllocator/TLSFAllocator.h"
+#include "BufferView.h"
 
 MainApplication *pApp = nullptr;
 
@@ -63,6 +65,9 @@ HRESULT MainApplication::Initialize()
 {
 	//‰Šú‰»ˆ—‚·‚é‚â‚Â
 	//render‚Æ‚©
+	TLSFAllocator * t = new TLSFAllocator(sizeof(BufferView));
+	t->Init(1000);
+	t->DivideMemory(100);
 
 	return S_OK;
 }

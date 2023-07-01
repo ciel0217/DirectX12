@@ -4,6 +4,38 @@ void TLSFAllocator::ShutDown()
 {
 }
 
+void TLSFAllocator::Init(unsigned int allocate_block_num)
+{
+	//引数の値を一番近い二の累乗に計算
+	allocate_block_num--;
+	unsigned int log2 = FastLog2(allocate_block_num);
+	allocate_block_num = 1U << log2 + 1;
+
+	m_AllocateBlockSize = allocate_block_num * (unsigned int)BLOCK_AND_HEADER_SIZE;
+	m_AllocateDataSize = allocate_block_num * (unsigned int)BLOCK_DATA_SIZE;
+
+	m_DataPtr = new unsigned char[m_AllocateDataSize];
+	m_BlockPtr = new unsigned char[m_AllocateBlockSize];
+
+	memset(m_DataPtr, 0, m_AllocateDataSize);
+	memset(m_BlockPtr, 0, m_AllocateBlockSize);
+
+	m_FreeList.resize(FREE_LIST_DIVISIONS * FREE_LIST_DIVISIONS);
+
+	Block* block = new(m_BlockPtr)Block();
+	block->m_Size = allocate_block_num;
+
+	m_SLIFreeFlags.resize(FREE_LIST_DIVISIONS);
+
+	unsigned int fli = GetFLI(block->m_Size);
+
+	unsigned int sli = GetSLI(fli, block->m_Size);
+
+	unsigned int regist_index = fli * FREE_LIST_DIVISIONS + sli;
+
+	RegistFreeList(block, regist_index);
+}
+
 //引数
 //欲しいメモリブロック数(メモリ数じゃないよ！)
 void * TLSFAllocator::DivideMemory(unsigned int block_num)
@@ -52,13 +84,13 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 			
 			_BitScanForward(&index, fli_enable_bit);
 			fli_bit = index;
-		} while (fli_bit != 0);
+		} while (fli_bit == 0);
 		
 		regist_index = fli_bit * FREE_LIST_DIVISIONS + sli_bit;
 		block = m_FreeList[regist_index];
 	}
 
-	RemoveFreeList(block);
+	RemoveFreeList(block, regist_index);
 
 	if (block->m_Size == block_num)
 	{
@@ -72,7 +104,12 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 	new_block->SetSize(block_num);
 	new_block->m_Enable = true;
 
-	RegistFreeList(block);
+	//登録Indexを再計算
+	fli = GetFLI(block->m_Size);
+	sli = GetSLI(fli, block->m_Size);
+	regist_index = fli * FREE_LIST_DIVISIONS + sli;
+
+	RegistFreeList(block, regist_index);
 
 	return m_DataPtr + blockLocalIndex(new_block) * BLOCK_DATA_SIZE;
 
@@ -80,15 +117,87 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 
 void TLSFAllocator::ReleaseMemory(void * ptr)
 {
+	unsigned int index = dataLocalIndex(ptr);
+	Block* block = (Block*)(m_BlockPtr + index * BLOCK_AND_HEADER_SIZE);
+
+	//前後左右のブロックポインタ
+	unsigned int* prev_block_size = (unsigned int*)((unsigned char*)block - sizeof(unsigned int));
+	Block* prev_block = (Block*)((unsigned char*)block - *prev_block_size * BLOCK_AND_HEADER_SIZE);
+	Block* nextBlock = (Block*)((unsigned char*)block + block->m_Size * BLOCK_AND_HEADER_SIZE);
+
+	//配列の０番目なら前のブロックは存在しない
+	if (index == 0) {
+		prev_block = nullptr;
+	}
+
+	//配列の最後なら次のブロックは存在しない
+	if (index == (m_AllocateBlockSize / BLOCK_AND_HEADER_SIZE - block->m_Size)) {
+		nextBlock = nullptr;
+	}
+
+	//debugRemoveActiveList(block);
+
+	//前マージ
+	if (prev_block != nullptr) {
+		if (!prev_block->m_Enable) {
+			RemoveFreeList(prev_block, index);
+			prev_block->SetSize(prev_block->m_Size + block->m_Size);
+
+			block = prev_block;
+			//DEBUG_PRINT("Prev Merge");
+		}
+	}
+
+	//後マージ
+	if (nextBlock != nullptr) {
+		if (!nextBlock->m_Enable) {
+			RemoveFreeList(nextBlock, index);
+			block->SetSize(block->m_Size + nextBlock->m_Size);
+			//DEBUG_PRINT("Next Merge");
+		}
+	}
+
+	//フリーリストに登録
+	block->m_Enable = false;
+	RegistFreeList(block, index);
 }
 
-void TLSFAllocator::RegistFreeList(Block * block)
+void TLSFAllocator::RegistFreeList(Block * block, unsigned int index)
 {
+	unsigned int fli_index = GetFLI(block->m_Size);
+	unsigned int sli_index = GetSLI(fli_index, block->m_Size);
+
+	if (m_FreeList[index] == nullptr)
+	{
+		m_FreeList[index] = block;
+
+		m_FLIFreeFlags |= 1U << fli_index;
+		m_SLIFreeFlags[fli_index] |= 1U << sli_index;
+	}
+	else 
+	{
+		m_FreeList[index]->Regist(block);
+	}
 }
 
-void TLSFAllocator::RemoveFreeList(Block * block)
+void TLSFAllocator::RemoveFreeList(Block * block, unsigned int index)
 {
+	unsigned int fli_index = GetFLI(block->m_Size);
+	unsigned int sli_index = GetSLI(fli_index, block->m_Size);
 
+	block->remove();
+	if (m_FreeList[index] == block)
+	{
+		m_FreeList[index] = block->m_ListNext;
+	}
+
+	if (m_FreeList[index] == nullptr)
+	{
+		
+		m_SLIFreeFlags[fli_index] &= ~(1U << sli_index);
+		if (m_SLIFreeFlags[fli_index] == 0)
+			m_FLIFreeFlags &= ~(1U << fli_index);
+	}
 }
 
 unsigned int TLSFAllocator::GetFLI(unsigned int num)
