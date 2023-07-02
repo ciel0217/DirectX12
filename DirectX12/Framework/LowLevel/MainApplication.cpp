@@ -67,7 +67,8 @@ HRESULT MainApplication::Initialize()
 	//render‚Æ‚©
 	TLSFAllocator * t = new TLSFAllocator(sizeof(BufferView));
 	t->Init(1000);
-	t->DivideMemory(100);
+	BufferView * a = (BufferView*)t->DivideMemory(100);
+	t->ReleaseMemory(a);
 
 	return S_OK;
 }

@@ -27,13 +27,7 @@ void TLSFAllocator::Init(unsigned int allocate_block_num)
 
 	m_SLIFreeFlags.resize(FREE_LIST_DIVISIONS);
 
-	unsigned int fli = GetFLI(block->m_Size);
-
-	unsigned int sli = GetSLI(fli, block->m_Size);
-
-	unsigned int regist_index = fli * FREE_LIST_DIVISIONS + sli;
-
-	RegistFreeList(block, regist_index);
+	RegistFreeList(block);
 }
 
 //引数
@@ -90,7 +84,7 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 		block = m_FreeList[regist_index];
 	}
 
-	RemoveFreeList(block, regist_index);
+	RemoveFreeList(block);
 
 	if (block->m_Size == block_num)
 	{
@@ -104,12 +98,8 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 	new_block->SetSize(block_num);
 	new_block->m_Enable = true;
 
-	//登録Indexを再計算
-	fli = GetFLI(block->m_Size);
-	sli = GetSLI(fli, block->m_Size);
-	regist_index = fli * FREE_LIST_DIVISIONS + sli;
 
-	RegistFreeList(block, regist_index);
+	RegistFreeList(block);
 
 	return m_DataPtr + blockLocalIndex(new_block) * BLOCK_DATA_SIZE;
 
@@ -126,21 +116,23 @@ void TLSFAllocator::ReleaseMemory(void * ptr)
 	Block* nextBlock = (Block*)((unsigned char*)block + block->m_Size * BLOCK_AND_HEADER_SIZE);
 
 	//配列の０番目なら前のブロックは存在しない
-	if (index == 0) {
+	if (index == 0) 
 		prev_block = nullptr;
-	}
+	
 
 	//配列の最後なら次のブロックは存在しない
-	if (index == (m_AllocateBlockSize / BLOCK_AND_HEADER_SIZE - block->m_Size)) {
+	if (index == (m_AllocateBlockSize / BLOCK_AND_HEADER_SIZE - block->m_Size))
 		nextBlock = nullptr;
-	}
+	
 
 	//debugRemoveActiveList(block);
 
 	//前マージ
-	if (prev_block != nullptr) {
-		if (!prev_block->m_Enable) {
-			RemoveFreeList(prev_block, index);
+	if (prev_block != nullptr) 
+	{
+		if (!prev_block->m_Enable) 
+		{
+			RemoveFreeList(prev_block);
 			prev_block->SetSize(prev_block->m_Size + block->m_Size);
 
 			block = prev_block;
@@ -149,9 +141,11 @@ void TLSFAllocator::ReleaseMemory(void * ptr)
 	}
 
 	//後マージ
-	if (nextBlock != nullptr) {
-		if (!nextBlock->m_Enable) {
-			RemoveFreeList(nextBlock, index);
+	if (nextBlock != nullptr) 
+	{
+		if (!nextBlock->m_Enable) 
+		{
+			RemoveFreeList(nextBlock);
 			block->SetSize(block->m_Size + nextBlock->m_Size);
 			//DEBUG_PRINT("Next Merge");
 		}
@@ -159,39 +153,42 @@ void TLSFAllocator::ReleaseMemory(void * ptr)
 
 	//フリーリストに登録
 	block->m_Enable = false;
-	RegistFreeList(block, index);
+	RegistFreeList(block);
 }
 
-void TLSFAllocator::RegistFreeList(Block * block, unsigned int index)
+void TLSFAllocator::RegistFreeList(Block * block)
 {
 	unsigned int fli_index = GetFLI(block->m_Size);
 	unsigned int sli_index = GetSLI(fli_index, block->m_Size);
+	unsigned int regist_index = fli_index * FREE_LIST_DIVISIONS + sli_index;
 
-	if (m_FreeList[index] == nullptr)
+	if (m_FreeList[regist_index] == nullptr)
 	{
-		m_FreeList[index] = block;
+		m_FreeList[regist_index] = block;
 
 		m_FLIFreeFlags |= 1U << fli_index;
 		m_SLIFreeFlags[fli_index] |= 1U << sli_index;
 	}
 	else 
 	{
-		m_FreeList[index]->Regist(block);
+		m_FreeList[regist_index]->Regist(block);
 	}
 }
 
-void TLSFAllocator::RemoveFreeList(Block * block, unsigned int index)
+void TLSFAllocator::RemoveFreeList(Block * block)
 {
 	unsigned int fli_index = GetFLI(block->m_Size);
 	unsigned int sli_index = GetSLI(fli_index, block->m_Size);
 
+	unsigned int remove_index = fli_index * FREE_LIST_DIVISIONS + sli_index;
+
 	block->remove();
-	if (m_FreeList[index] == block)
+	if (m_FreeList[remove_index] == block)
 	{
-		m_FreeList[index] = block->m_ListNext;
+		m_FreeList[remove_index] = block->m_ListNext;
 	}
 
-	if (m_FreeList[index] == nullptr)
+	if (m_FreeList[remove_index] == nullptr)
 	{
 		
 		m_SLIFreeFlags[fli_index] &= ~(1U << sli_index);

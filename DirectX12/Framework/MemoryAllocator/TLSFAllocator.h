@@ -109,8 +109,8 @@ public:
 	void Init(unsigned int allocate_block_num);
 	void* DivideMemory(unsigned int block_num);
 	void ReleaseMemory(void* ptr);
-	void RegistFreeList(Block* block, unsigned int index);
-	void RemoveFreeList(Block* block, unsigned int index);
+	void RegistFreeList(Block* block);
+	void RemoveFreeList(Block* block);
 
 	//データポインタからブロックヘッダーを取得する
 	inline Block* GetBlockFromDataPtr(void* dataPtr) 
