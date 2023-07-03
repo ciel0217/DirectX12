@@ -49,38 +49,41 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 
 	if (!block)
 	{
-		unsigned int fli_bit =  fli;
-		unsigned int sli_bit = sli;
-		unsigned long index = fli;
-		/*unsigned int fli_enable_bit = m_FLIFreeFlags & fli_bit;
-		
-		_BitScanForward(&index, fli_enable_bit);*/
 
-		//最大31回
-		do 
+		unsigned int sli_bit = CalcEnableSLIBit(fli, sli);
+		unsigned int fli_bit = fli;
+
+		if (sli_bit == 0)
 		{
-			unsigned int sli_mask_bit = 0xffffffff << sli_bit;
-			unsigned int sli_enable_bit = m_SLIFreeFlags[index] & sli_mask_bit;
+			//最大31回
+			do
+			{
+				unsigned int fli_mask_bit = 0xffffffff << fli_bit;
+				unsigned int fli_enable_bit = m_FLIFreeFlags & fli_mask_bit;
 
-			//フリーリストあり
-			if (sli_enable_bit != 0)
-				break;
+				//空いている領域が完全に0だったら終わり
+				if (fli_enable_bit == 0)
+					return nullptr;
 
-			//フリーリストがない場合は次のfliに更新
-			sli_bit = 0;
+				unsigned long index = 0;
+				_BitScanForward(&index, fli_enable_bit);
+				fli_bit = index;
 
-			unsigned int fli_mask_bit = 0xffffffff << fli_bit;
-			unsigned int fli_enable_bit = m_FLIFreeFlags & fli_mask_bit;
+				unsigned int sli_enable_bit = CalcEnableSLIBit(fli_bit, 0);
 
-			//空いている領域が完全に0だったら終わり
-			if (fli_enable_bit == 0)
-				return nullptr;
-			
-			_BitScanForward(&index, fli_enable_bit);
-			fli_bit = index;
-		} while (fli_bit == 0);
-		
-		regist_index = fli_bit * FREE_LIST_DIVISIONS + sli_bit;
+				//フリーリストあり
+				if (sli_enable_bit != 0)
+				{
+					sli_bit = sli_enable_bit;
+					break;
+				}
+
+				//フリーリストがない場合は次のfliに更新
+			} while (1);
+		}
+		unsigned int sli_index = FastLog2(sli_bit);
+
+		regist_index = fli_bit * FREE_LIST_DIVISIONS + sli_index;
 		block = m_FreeList[regist_index];
 	}
 
@@ -215,4 +218,12 @@ unsigned int TLSFAllocator::GetSLI(unsigned int fli, unsigned int size)
 	const unsigned int rs = fli - POWER_OF_TWO_FREE_LIST_DIVISIONS;
 
 	return (size & mask) >> rs;
+}
+
+unsigned int TLSFAllocator::CalcEnableSLIBit(unsigned int index, unsigned int sli_bit)
+{
+	unsigned int sli_mask_bit = 0xffffffff << sli_bit;
+	unsigned int sli_enable_bit = m_SLIFreeFlags[index] & sli_mask_bit;
+
+	return sli_enable_bit;
 }

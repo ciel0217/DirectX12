@@ -142,6 +142,7 @@ public:
 private:
 	unsigned int GetFLI(unsigned int num);
 	unsigned int GetSLI(unsigned int fli, unsigned int size);
+	unsigned int CalcEnableSLIBit(unsigned int index, unsigned int sli_bit);
 
 	const unsigned int FREE_LIST_DIVISIONS = 16;
 	const unsigned int POWER_OF_TWO_FREE_LIST_DIVISIONS = FastLog2(FREE_LIST_DIVISIONS);
