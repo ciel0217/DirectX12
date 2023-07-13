@@ -57,6 +57,15 @@
     <ClInclude Include="Framework\LowLevel\BufferView.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\LowLevel\CommandList.h">
+      <Filter>Framework\LowLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\LowLevel\CommandAllocator.h">
+      <Filter>Framework\LowLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\LowLevel\CommandQueue.h">
+      <Filter>Framework\LowLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
