@@ -144,15 +144,26 @@
     <ClInclude Include="Framework\LowLevel\DirectX12Helper.h" />
     <ClInclude Include="Framework\LowLevel\Dx12GraphicsDevice.h" />
     <ClInclude Include="Framework\LowLevel\MainApplication.h" />
+    <ClInclude Include="Framework\LowLevel\PipelineStateObject.h" />
+    <ClInclude Include="Framework\LowLevel\RootSignature.h" />
     <ClInclude Include="Framework\LowLevel\Window.h" />
     <ClInclude Include="Framework\MemoryAllocator\TLSFAllocator.h" />
+    <ClInclude Include="Framework\Resources\Shader.h" />
     <ClInclude Include="Framework\Utility\Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Framework\LowLevel\CommandAllocator.cpp" />
+    <ClCompile Include="Framework\LowLevel\CommandContext.cpp" />
+    <ClCompile Include="Framework\LowLevel\CommandList.cpp" />
+    <ClCompile Include="Framework\LowLevel\CommandQueue.cpp" />
+    <ClCompile Include="Framework\LowLevel\DescriptorHeap.cpp" />
     <ClCompile Include="Framework\LowLevel\Dx12GraphicsDevice.cpp" />
     <ClCompile Include="Framework\LowLevel\MainApplication.cpp" />
+    <ClCompile Include="Framework\LowLevel\PipelineStateObject.cpp" />
+    <ClCompile Include="Framework\LowLevel\RootSignature.cpp" />
     <ClCompile Include="Framework\LowLevel\Window.cpp" />
     <ClCompile Include="Framework\MemoryAllocator\TLSFAllocator.cpp" />
+    <ClCompile Include="Framework\Resources\Shader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

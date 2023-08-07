@@ -115,25 +115,25 @@ public:
 	//データポインタからブロックヘッダーを取得する
 	inline Block* GetBlockFromDataPtr(void* dataPtr) 
 	{
-		return (Block*)(m_BlockPtr + dataLocalIndex(dataPtr) * BLOCK_AND_HEADER_SIZE);
+		return (Block*)(m_BlockPtr + DataLocalIndex(dataPtr) * BLOCK_AND_HEADER_SIZE);
 	}
 
 	//basePtrを開始としたデータ本体のローカルポインタを返す
-	inline unsigned int dataLocalIndex(void* blockPtr) 
+	inline unsigned int DataLocalIndex(void* blockPtr) 
 	{
 		unsigned int local_ptr = reinterpret_cast<unsigned int>(blockPtr) - reinterpret_cast<unsigned int>(m_DataPtr);
 		return local_ptr / BLOCK_DATA_SIZE;
 	}
 
 	//basePtrを開始としたブロックのローカルポインタを返す
-	inline unsigned int blockLocalIndex(void* blockPtr) 
+	inline unsigned int BlockLocalIndex(void* blockPtr) 
 	{
 		unsigned int local_ptr = reinterpret_cast<unsigned int>(blockPtr) - reinterpret_cast<unsigned int>(this->m_BlockPtr);
 		return local_ptr / BLOCK_AND_HEADER_SIZE;
 	}
 
 	//ブロックローカルインデックスからアロケーターのデータポインタを求める
-	void* getDataPtrFromBlockLocation(unsigned int blockLocation)
+	void* GetDataPtrFromBlockLocation(unsigned int blockLocation)
 	{
 		unsigned int local_ptr = blockLocation * BLOCK_DATA_SIZE;
 		return m_DataPtr + local_ptr;

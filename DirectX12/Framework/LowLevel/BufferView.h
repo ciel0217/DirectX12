@@ -1,17 +1,17 @@
 #include "DirectX12.h"
 
 struct BufferView {
-	BufferView() :cpuHandle(), gpuHandle(), location(0), size(0) {}
+	BufferView() :m_CpuHandle(), m_GpuHandle(), m_Location(0), m_Size(0) {}
 	virtual ~BufferView() {}
 
-	inline bool isEnable() const { return cpuHandle.ptr != 0 && gpuHandle.ptr != 0 && location != 0 && size != 0; }
+	inline bool isEnable() const { return m_CpuHandle.ptr != 0 && m_GpuHandle.ptr != 0 && m_Location != 0 && m_Size != 0; }
 
 	/*RefBufferView getRefBufferView() const {
-		return RefBufferView(gpuHandle);
+		return RefBufferView(m_GpuHandle);
 	}*/
 
-	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle;
-	unsigned int location;
-	unsigned int size;
+	D3D12_CPU_DESCRIPTOR_HANDLE m_CpuHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE m_GpuHandle;
+	unsigned int m_Location;
+	unsigned int m_Size;
 };

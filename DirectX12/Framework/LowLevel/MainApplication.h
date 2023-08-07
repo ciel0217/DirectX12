@@ -2,13 +2,14 @@
 #pragma once
 #include "Window.h"
 #include <memory>
+#include "Dx12GraphicsDevice.h"
 
 class MainApplication {
 private:
 	HINSTANCE m_hInstance;
 	WNDCLASSEX m_WndClassWx;
 	std::unique_ptr<Window> m_DxWindow;
-
+	Dx12GraphicsDevice* d;
 	//デバッグ用
 	int m_CountFPS;
 	char m_DebugStr[2048] = "aaaa";

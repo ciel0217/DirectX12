@@ -2,6 +2,7 @@
 #include <time.h>
 #include "DirectX12/Framework/MemoryAllocator/TLSFAllocator.h"
 #include "BufferView.h"
+#include "CommandContext.h"
 
 MainApplication *pApp = nullptr;
 
@@ -64,19 +65,10 @@ HRESULT MainApplication::CreateMainWnd()
 HRESULT MainApplication::Initialize()
 {
 	//‰Šú‰»ˆ—‚·‚é‚â‚Â
-	//render‚Æ‚©
-	TLSFAllocator * t = new TLSFAllocator(sizeof(BufferView));
-	t->Init(1000);
-	void* a[3];
-	for (int i = 0; i < 3; i++)
-	{
-		a[i] = t->DivideMemory(10);
-
-	}
 	
-	t->ReleaseMemory(a[1]);
-	t->ReleaseMemory(a[0]);
-	//t->ReleaseMemory(a[2]);
+
+	d = new Dx12GraphicsDevice();
+	d->Init();
 
 	return S_OK;
 }

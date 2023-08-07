@@ -1,5 +1,8 @@
 #include "Dx12GraphicsDevice.h"
 #include "DirectX12Helper.h"
+#include "CommandContext.h"
+
+Dx12GraphicsDevice* Dx12GraphicsDevice::m_Instance;
 
 BOOL Dx12GraphicsDevice::Init()
 {
@@ -38,7 +41,8 @@ BOOL Dx12GraphicsDevice::Init()
 	ThrowIfFailed(D3D12CreateDevice(_adapter1.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_Device)));
 
 
-
+	CommandContext x;
+	x.Create(m_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 	return 0;
 }
