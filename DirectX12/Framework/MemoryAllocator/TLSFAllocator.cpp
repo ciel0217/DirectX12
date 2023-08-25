@@ -92,7 +92,7 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 	if (block->m_Size == block_num)
 	{
 		block->m_Enable = true;
-		return m_DataPtr + blockLocalIndex(block) * BLOCK_DATA_SIZE;
+		return m_DataPtr + BlockLocalIndex(block) * BLOCK_DATA_SIZE;
 	}
 
 	block->SetSize(block->m_Size - block_num);
@@ -104,13 +104,13 @@ void * TLSFAllocator::DivideMemory(unsigned int block_num)
 
 	RegistFreeList(block);
 
-	return m_DataPtr + blockLocalIndex(new_block) * BLOCK_DATA_SIZE;
+	return m_DataPtr + BlockLocalIndex(new_block) * BLOCK_DATA_SIZE;
 
 }
 
 void TLSFAllocator::ReleaseMemory(void * ptr)
 {
-	unsigned int index = dataLocalIndex(ptr);
+	unsigned int index = DataLocalIndex(ptr);
 	Block* block = (Block*)(m_BlockPtr + index * BLOCK_AND_HEADER_SIZE);
 
 	//前後左右のブロックポインタ

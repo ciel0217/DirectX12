@@ -1,8 +1,8 @@
 #include "MainApplication.h"
 #include <time.h>
-#include "DirectX12/Framework/MemoryAllocator/TLSFAllocator.h"
-#include "BufferView.h"
-#include "CommandContext.h"
+#include "Framework/MemoryAllocator/TLSFAllocator.h"
+#include "Framework/LowLevel/BufferView.h"
+#include "Framework/LowLevel/CommandContext.h"
 
 MainApplication *pApp = nullptr;
 
@@ -68,7 +68,7 @@ HRESULT MainApplication::Initialize()
 	
 
 	d = new Dx12GraphicsDevice();
-	d->Init();
+	d->Init(m_DxWindow->GetHWND());
 
 	return S_OK;
 }
@@ -157,5 +157,5 @@ void MainApplication::Update()
 
 void MainApplication::Draw()
 {
-
+	d->Render();
 }

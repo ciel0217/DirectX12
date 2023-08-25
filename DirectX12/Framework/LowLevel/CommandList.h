@@ -18,7 +18,7 @@ public:
 	void DiscardCommandList(UINT64 fenceValue, const ComPtr<ID3D12GraphicsCommandList>& list);
 
 	//アロケータープールの要素数
-	inline size_t GetSize() const { return m_CommandListPool.size(); }
+	inline const size_t GetSize() { return m_CommandListPool.size(); }
 
 private:
 	D3D12_COMMAND_LIST_TYPE m_CommandListType;

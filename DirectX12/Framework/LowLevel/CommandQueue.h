@@ -20,7 +20,7 @@ public:
 	UINT64 ExecuteCommandList(ComPtr<ID3D12CommandList> commandList);
 
 	bool IsFenceCompleted(UINT64 fenceValue);
-	UINT64 FenceValue() const { return m_Fence->GetCompletedValue(); }
+	const UINT64 FenceValue() { return m_Fence->GetCompletedValue(); }
 	void Shutdown();
 
 private:

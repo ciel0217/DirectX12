@@ -134,7 +134,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Framework\LowLevel\BufferView.h" />
     <ClInclude Include="Framework\LowLevel\CommandAllocator.h" />
     <ClInclude Include="Framework\LowLevel\CommandContext.h" />
     <ClInclude Include="Framework\LowLevel\CommandList.h" />
@@ -143,13 +142,16 @@
     <ClInclude Include="Framework\LowLevel\DirectX12.h" />
     <ClInclude Include="Framework\LowLevel\DirectX12Helper.h" />
     <ClInclude Include="Framework\LowLevel\Dx12GraphicsDevice.h" />
-    <ClInclude Include="Framework\LowLevel\MainApplication.h" />
     <ClInclude Include="Framework\LowLevel\PipelineStateObject.h" />
     <ClInclude Include="Framework\LowLevel\RootSignature.h" />
     <ClInclude Include="Framework\LowLevel\Window.h" />
     <ClInclude Include="Framework\MemoryAllocator\TLSFAllocator.h" />
+    <ClInclude Include="Framework\Resources\FrameResources.h" />
+    <ClInclude Include="Framework\Resources\GpuBuffer.h" />
     <ClInclude Include="Framework\Resources\Shader.h" />
+    <ClInclude Include="Framework\Resources\Texture2D.h" />
     <ClInclude Include="Framework\Utility\Utility.h" />
+    <ClInclude Include="MainApplication.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\CommandAllocator.cpp" />
@@ -158,12 +160,39 @@
     <ClCompile Include="Framework\LowLevel\CommandQueue.cpp" />
     <ClCompile Include="Framework\LowLevel\DescriptorHeap.cpp" />
     <ClCompile Include="Framework\LowLevel\Dx12GraphicsDevice.cpp" />
-    <ClCompile Include="Framework\LowLevel\MainApplication.cpp" />
     <ClCompile Include="Framework\LowLevel\PipelineStateObject.cpp" />
     <ClCompile Include="Framework\LowLevel\RootSignature.cpp" />
     <ClCompile Include="Framework\LowLevel\Window.cpp" />
     <ClCompile Include="Framework\MemoryAllocator\TLSFAllocator.cpp" />
+    <ClCompile Include="Framework\Resources\FrameResources.cpp" />
+    <ClCompile Include="Framework\Resources\GpuBuffer.cpp" />
     <ClCompile Include="Framework\Resources\Shader.cpp" />
+    <ClCompile Include="Framework\Resources\Texture2D.cpp" />
+    <ClCompile Include="MainApplication.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Framework\Shader\TestPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Framework\Shader\TestVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

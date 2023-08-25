@@ -1,16 +1,17 @@
 #include "DescriptorHeap.h"
 #include "DirectX12Helper.h"
 #include "../MemoryAllocator/TLSFAllocator.h"
+#include "BufferView.h"
 
-bool DescriptorHeap::Create(ComPtr<ID3D12Device> &device, UINT numDescriptors)
+bool DescriptorHeap::Create(const ComPtr<ID3D12Device> &device, UINT numDescriptors)
 {
 	D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	if (m_DescriptorHeapType == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
 		flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
 	D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-	//heapDesc.NumDescriptors = MAX_NUM_HEAP;//numDescriptorsでもいいんだけど、MAX_NUM_HEAPを超える数値を入力されたくない
-	heapDesc.NumDescriptors = numDescriptors;//一応こっちにしとく
+	heapDesc.NumDescriptors = MAX_NUM_HEAP;//numDescriptorsでもいいんだけど、MAX_NUM_HEAPを超える数値を入力されたくない
+	//heapDesc.NumDescriptors = numDescriptors;
 	heapDesc.Type = m_DescriptorHeapType;
 	heapDesc.Flags = flags;
 	ThrowIfFailed(device.Get()->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(m_DescriptorHeap.ReleaseAndGetAddressOf())));
@@ -48,14 +49,14 @@ void DescriptorHeap::DiscardBufferView(const BufferView & bufferView)
 	m_Allocator->ReleaseMemory(bufferViewPtr);
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetGpuHandle(unsigned int location) const
+const D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetGpuHandle(unsigned int location)
 {
 	D3D12_GPU_DESCRIPTOR_HANDLE rtvHandle = m_GpuHandleStart;
 	rtvHandle.ptr += m_IncrimentSize * static_cast<SIZE_T>(location);
 	return rtvHandle;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCpuHandle(unsigned int location) const
+const D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCpuHandle(unsigned int location)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_CpuHandleStart;
 	rtvHandle.ptr += m_IncrimentSize * static_cast<SIZE_T>(location);
@@ -66,18 +67,27 @@ D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCpuHandle(unsigned int location) 
 //マネージャークラス
 //////////////////////////////////////////////////////
 
+DescriptorHeapManager* DescriptorHeapManager::m_Singleton;
+
 DescriptorHeapManager::DescriptorHeapManager():
 	m_RtvHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV),
 	m_DsvHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV),
 	m_CbvSrvHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
-{}
+{
+}
+
+DescriptorHeapManager & DescriptorHeapManager::CreateInstance()
+{
+	if (!m_Singleton)m_Singleton = new DescriptorHeapManager();
+	return *m_Singleton;
+}
 
 DescriptorHeapManager::~DescriptorHeapManager()
 {
 	Shutdown();
 }
 
-void DescriptorHeapManager::Create(ComPtr<ID3D12Device>& device)
+void DescriptorHeapManager::Create(const ComPtr<ID3D12Device>& device)
 {
 	m_RtvHeap.Create(device);
 	m_DsvHeap.Create(device);
@@ -88,7 +98,7 @@ void DescriptorHeapManager::Shutdown()
 {
 }
 
-void DescriptorHeapManager::CreateRenderTargetView(ID3D12Resource ** textureBuffers, BufferView * dstView, unsigned int viewCount)
+void DescriptorHeapManager::CreateRenderTargetView(ID3D12Resource *const* textureBuffers, BufferView * dstView, unsigned int viewCount)
 {
 	m_RtvHeap.AllocateBufferView(dstView, viewCount);
 
@@ -188,7 +198,7 @@ void DescriptorHeapManager::CreateTextureShaderResourceView(ID3D12Resource ** te
 	device->Release();
 }
 
-void DescriptorHeapManager::CreateDepthStencilView(ID3D12Resource ** depthStencils, BufferView * dstView, unsigned int viewCount)
+void DescriptorHeapManager::CreateDepthStencilView(ID3D12Resource *const* depthStencils, BufferView * dstView, unsigned int viewCount)
 {
 	m_DsvHeap.AllocateBufferView(dstView, viewCount);
 
@@ -254,7 +264,7 @@ void DescriptorHeapManager::DiscardDepthStencilView(const BufferView & bufferVie
 	m_DsvHeap.DiscardBufferView(bufferView);
 }
 
-ComPtr<ID3D12DescriptorHeap> DescriptorHeapManager::GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type)
+const ComPtr<ID3D12DescriptorHeap>& DescriptorHeapManager::GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type)
 {
 	
 	switch (type)

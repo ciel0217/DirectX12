@@ -1,3 +1,4 @@
+#pragma once
 #include "DirectX12.h"
 
 struct BufferView {
@@ -5,10 +6,6 @@ struct BufferView {
 	virtual ~BufferView() {}
 
 	inline bool isEnable() const { return m_CpuHandle.ptr != 0 && m_GpuHandle.ptr != 0 && m_Location != 0 && m_Size != 0; }
-
-	/*RefBufferView getRefBufferView() const {
-		return RefBufferView(m_GpuHandle);
-	}*/
 
 	D3D12_CPU_DESCRIPTOR_HANDLE m_CpuHandle;
 	D3D12_GPU_DESCRIPTOR_HANDLE m_GpuHandle;

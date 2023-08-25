@@ -1,41 +1,35 @@
-#pragma once
 
 #pragma once
-#include "Window.h"
+#include "Framework/LowLevel/Window.h"
 #include <memory>
+#include "Framework/LowLevel/Dx12GraphicsDevice.h"
 
-
-class CDxMainApplication {
+class MainApplication {
 private:
 	HINSTANCE m_hInstance;
 	WNDCLASSEX m_WndClassWx;
-	std::unique_ptr<CDxWindow> m_DxWindow;
-	CDxRenderer *m_Renderer;
-	ManagerTexture *m_ManagerTexture;
-
-
-
+	std::unique_ptr<Window> m_DxWindow;
+	Dx12GraphicsDevice* d;
 	//デバッグ用
 	int m_CountFPS;
 	char m_DebugStr[2048] = "aaaa";
 
 public:
-	CDxMainApplication();
-	~CDxMainApplication() {};
+	MainApplication();
+	~MainApplication() {};
 	int Run(HINSTANCE hInstance);
-	static LRESULT CALLBACK GrobalWndProc(HWND, UINT, WPARAM, LPARAM);
-
+	
 	HINSTANCE GetHInstance() { return m_hInstance; }
 	void GetWndClass(WNDCLASSEX *wc) {
 		*wc = m_WndClassWx;
 	}
 
-	CDxWindow* GetDxWindow() { return m_DxWindow.get(); }
+	Window* GetDxWindow() { return m_DxWindow.get(); }
 
 private:
-	BOOL RegistWndClass();
-	BOOL CreateMainWnd();
-	BOOL Initialize();
+	HRESULT RegistWndClass();
+	HRESULT CreateMainWnd();
+	HRESULT Initialize();
 	void Loop();
 	void ReleaseApp();
 	void Update();

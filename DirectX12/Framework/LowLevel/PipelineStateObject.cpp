@@ -2,12 +2,13 @@
 #include "../Resources/Shader.h"
 #include "RootSignature.h"
 
-void PipelineStateObject::CreateGraphicPipeline(ComPtr<ID3D12Device>& device, RootSignature * rootSignature, const VertexShader * vertexShader, const PixelShader * pixelShader, const GeometryShader * geometryShader, const PipelineStateDesc & psoDesc)
+void PipelineStateObject::CreateGraphicPipeline(ComPtr<ID3D12Device>& device, RootSignature * rootSignature, const VertexShader * vertexShader, const PixelShader * pixelShader, const GeometryShader * geometryShader , const PipelineStateDesc & psoDesc)
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {};
 	desc.InputLayout = { vertexShader->GetInputLayouts().data(), static_cast<UINT>(vertexShader->GetInputLayouts().size()) };
 	desc.pRootSignature = rootSignature->GetRootSignature().Get();
 
+	
 	desc.VS = vertexShader->GetByteCode();
 	desc.PS = pixelShader->GetByteCode();
 
@@ -26,6 +27,7 @@ void PipelineStateObject::CreateGraphicPipeline(ComPtr<ID3D12Device>& device, Ro
 
 	desc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	desc.SampleDesc.Count = 1;
+	IID_PPV_ARGS(m_PipelineState.ReleaseAndGetAddressOf());
 	//
 	ThrowIfFailed(device.Get()->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(m_PipelineState.ReleaseAndGetAddressOf())));
 }

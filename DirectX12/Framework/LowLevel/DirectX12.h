@@ -11,6 +11,7 @@
 #include <d3d12.h>
 #include <DirectXTex/d3dx12.h>
 #include <d3dcompiler.h>
+#include <DirectXMath.h>
 #define DIRECTINPUT_VERSION 0x0800		// Œx‘Îˆ
 #include "dinput.h"
 #include "mmsystem.h"
@@ -20,6 +21,7 @@
 #include <wrl/client.h>
 
 using Microsoft::WRL::ComPtr;
+using namespace DirectX;
 
 //*****************************************************************************
 // ƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒŠƒ“ƒN
@@ -31,6 +33,7 @@ using Microsoft::WRL::ComPtr;
 #pragma comment (lib, "dxguid.lib")
 #pragma comment (lib, "dinput8.lib")
 #pragma comment (lib, "dxgi.lib")
+
 //
 //#if _DEBUG
 //#pragma comment (lib, "DirectXTex/Header/x86/Debug/DirectXTex.lib")

@@ -44,7 +44,7 @@ public:
 	void WaitForIdle();
 
 	CommandQueue* GetCommandQueue() { return &m_CommandQueue; };
-	ID3D12CommandQueue* GetDirectQueue() const { return m_CommandQueue.Getm_CommandQueue().Get(); }
+	ID3D12CommandQueue* const GetDirectQueue() const{ return m_CommandQueue.Getm_CommandQueue().Get(); }
 
 protected:
 	D3D12_COMMAND_LIST_TYPE m_CommandListType;
