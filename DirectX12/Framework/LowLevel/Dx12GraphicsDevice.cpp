@@ -95,6 +95,7 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	m_VShader.Create("Framework/Shader/TestVertex.cso");
 	m_PShader.Create("Framework/Shader/TestPixel.cso");
 
+	
 
 	m_RootSignature.Create(m_Device, m_VShader, m_PShader);
 	m_PSO.CreateGraphicPipeline(m_Device, &m_RootSignature, &m_VShader, &m_PShader);

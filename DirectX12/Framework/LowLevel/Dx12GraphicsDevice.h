@@ -8,6 +8,7 @@
 #include "../Resources/Shader.h"
 #include "PipelineStateObject.h"
 #include "RootSignature.h"
+#include "../Resources/GpuBuffer.h"
 
 //ダブルバッファリング
 constexpr UINT FRAME_COUNT = 2;
@@ -35,6 +36,9 @@ private:
 	PixelShader m_PShader;
 	PipelineStateObject m_PSO;
 	RootSignature m_RootSignature;
+	VertexBuffer m_VBuffer;
+	
+
 
 	void MoveToNextFrame();
 
