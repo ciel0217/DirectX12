@@ -24,6 +24,7 @@ public:
 
 	void CreateFromBackBuffer(const ComPtr<IDXGISwapChain3> &swapChain, UINT index);
 	void CreateDepth(const ComPtr<ID3D12Device> &device, const DepthInfo info);
+	void CreateTexture(const ComPtr<ID3D12Device> &device, const ComPtr<ID3D12GraphicsCommandList> &commandList, ComPtr<ID3D12Resource> &uploadHeap, const std::string &name);
 	void ShutDown();
 
 	const ComPtr<ID3D12Resource>& GetResource()const{ return m_TextureResource; }

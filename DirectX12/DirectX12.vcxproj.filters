@@ -31,6 +31,9 @@
     <Filter Include="Framework\Shader">
       <UniqueIdentifier>{266f7ece-9df5-4373-9110-458b47d0ab51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\ThirdParty">
+      <UniqueIdentifier>{cf7696fd-d52a-4791-b800-8064a2a61681}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\LowLevel\DirectX12.h">
@@ -87,6 +90,9 @@
     <ClInclude Include="MainApplication.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="..\DirectXTex\WICTextureLoader12.h">
+      <Filter>Framework\ThirdParty</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
@@ -133,6 +139,9 @@
     </ClCompile>
     <ClCompile Include="MainApplication.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DirectXTex\WICTextureLoader12.cpp">
+      <Filter>Framework\ThirdParty</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

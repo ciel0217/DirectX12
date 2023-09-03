@@ -34,12 +34,12 @@ using namespace DirectX;
 #pragma comment (lib, "dinput8.lib")
 #pragma comment (lib, "dxgi.lib")
 
-//
-//#if _DEBUG
-//#pragma comment (lib, "DirectXTex/Header/x86/Debug/DirectXTex.lib")
-//#else
-//#pragma comment (lib, "DirectXTex/Header/x86/Release/DirectXTex.lib")
-//#endif
-//
+
+#if _DEBUG
+#pragma comment (lib, "DirectXTex/x64/Debug/DirectXTex.lib")
+#else
+#pragma comment (lib, "DirectXTex/x64/Release/DirectXTex.lib")
+#endif
+
 
 	

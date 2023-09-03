@@ -1,4 +1,8 @@
 #include "Texture2D.h"
+#include <sstream>
+#include <istream>
+#include "DirectXTex/WICTextureLoader12.h"
+#include <codecvt>
 
 void Texture2D::CreateFromBackBuffer(const ComPtr<IDXGISwapChain3>& swapChain, UINT index)
 {
@@ -39,6 +43,37 @@ void Texture2D::CreateDepth(const ComPtr<ID3D12Device>& device, const DepthInfo 
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
 		&depthOptimizedClearValue,
 		IID_PPV_ARGS(m_TextureResource.ReleaseAndGetAddressOf()));
+}
+
+//コマンドを発行してるだけ
+void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, const ComPtr<ID3D12GraphicsCommandList>& commandList, ComPtr<ID3D12Resource>& uploadHeap, const std::string & name)
+{
+	std::unique_ptr<uint8_t[]> decodedData;
+	D3D12_SUBRESOURCE_DATA subresource;
+	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cv;
+
+	ThrowIfFailed(
+		DirectX::LoadWICTextureFromFile(device.Get(), cv.from_bytes(name.c_str()).c_str(), m_TextureResource.ReleaseAndGetAddressOf(),
+			decodedData, subresource)
+	);
+
+	D3D12_RESOURCE_DESC textureDesc = m_TextureResource->GetDesc();
+
+	const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_TextureResource.Get(), 0, 1);
+
+	CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
+
+	auto desc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
+
+	// Create the GPU upload buffer.
+	ThrowIfFailed(
+		device.Get()->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(uploadHeap.ReleaseAndGetAddressOf())));
+
+	UpdateSubresources(commandList.Get(), m_TextureResource.Get(), uploadHeap.Get(), 0, 0, 1, &subresource);
+
+	auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_TextureResource.Get(),
+		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+	commandList->ResourceBarrier(1, &barrier);
 }
 
 void Texture2D::ShutDown()

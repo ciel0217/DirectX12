@@ -2,7 +2,7 @@
 #include "../LowLevel/CommandContext.h"
 
 template<typename T>
-void GpuReadOnlyBuffer::CreateWithData(const ComPtr<ID3D12Device>& device, const ComPtr<ID3D12GraphicsCommandList>& commandList, const std::vector<T>& data)
+void GpuReadOnlyBuffer::CreateWithData(const ComPtr<ID3D12Device>& device, const ComPtr<ID3D12GraphicsCommandList>& commandList, ComPtr<ID3D12Resource> &uploadHeap, const std::vector<T>& data)
 {
 	D3D12_HEAP_PROPERTIES defaultHeapProp = { D3D12_HEAP_TYPE_DEFAULT };
 	D3D12_HEAP_PROPERTIES uploadHeapProp = { D3D12_HEAP_TYPE_UPLOAD };
@@ -16,7 +16,6 @@ void GpuReadOnlyBuffer::CreateWithData(const ComPtr<ID3D12Device>& device, const
 	bufferDesc.SampleDesc.Count = 1;
 	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	ComPtr<ID3D12Resource> uploadHeap;
 
 	//コピーに使う一時的なCPU用のResource作成
 	ThrowIfFailed(device.Get()->CreateCommittedResource
@@ -39,13 +38,14 @@ void GpuReadOnlyBuffer::CreateWithData(const ComPtr<ID3D12Device>& device, const
 		nullptr,
 		IID_PPV_ARGS(m_Resource.ReleaseAndGetAddressOf())
 	));
+	m_Resource.Get()->SetName(L"s");
 
 	//VRAMを直接Mapは出来ないから、一旦Map可能なbufferに書き込んで、コピーを行う
 	T* mapPtr = nullptr;
-	ThrowIfFailed(uploadHeap.Get()->Map(0, nullptr, reinterpret_cast<void**>(mapPtr)));//CPU からリードバック データを認識できるようにする。今回はnullptrのため認識できなくしてる(GPUReadOnly)
+	ThrowIfFailed((*(uploadHeap.GetAddressOf()))->Map(0, nullptr, reinterpret_cast<void**>(&mapPtr)));//CPU からリードバック データを認識できるようにする。今回はnullptrのため認識できなくしてる(GPUReadOnly)
 	memcpy(mapPtr, data.data(), bufferDesc.Width);
 
-	commandList.Get()->CopyBufferRegion(m_Resource.Get(), 0, uploadHeap.Get(), 0, bufferDesc.Width);
+	commandList.Get()->CopyBufferRegion(m_Resource.Get(), 0, (*(uploadHeap.GetAddressOf())), 0, bufferDesc.Width);
 }
 
 void GpuReadOnlyBuffer::CreateNonData(const ComPtr<ID3D12Device>& device, const UINT size, const D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
@@ -107,7 +107,8 @@ void GpuAndCpuBuffer::WriteData(const void * data, const UINT size, const UINT s
 void VertexBuffer::CreateVertexBuffer(const ComPtr<ID3D12Device>& device, CommandContext* const context, const std::vector<VERTEX_3D>& data)
 {
 	auto commandListSet = context->RequestCommandListSet();
-	CreateWithData<VERTEX_3D>(device, commandListSet.m_CommandList, data);
+	ComPtr<ID3D12Resource> uploadHeap;
+	CreateWithData<VERTEX_3D>(device, commandListSet.m_CommandList, uploadHeap, data);
 
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -122,12 +123,17 @@ void VertexBuffer::CreateVertexBuffer(const ComPtr<ID3D12Device>& device, Comman
 	m_VertexBufferView.BufferLocation = GetGpuVirtualAddress();
 	m_VertexBufferView.StrideInBytes = sizeof(VERTEX_3D);
 	m_VertexBufferView.SizeInBytes = static_cast<UINT>(sizeof(VERTEX_3D) * data.size());
+
+	context->ExecuteCommandList(commandListSet.m_CommandList);
+	context->DiscardCommandListSet(commandListSet);
+	context->WaitForIdle();
 }
 
 void IndexBuffer::CreateIndexBuffer(const ComPtr<ID3D12Device>& device, CommandContext* const context, const std::vector<UINT>& data)
 {
 	auto commandListSet = context->RequestCommandListSet();
-	CreateWithData<UINT>(device, commandListSet.m_CommandList, data);
+	ComPtr<ID3D12Resource> uploadHeap;
+	CreateWithData<UINT>(device, commandListSet.m_CommandList, uploadHeap, data);
 
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;

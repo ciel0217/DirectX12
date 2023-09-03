@@ -7,7 +7,16 @@ struct VERTEX_3D
 	float4 Diffuse : COLOR;//í∏ì_ÉJÉâÅ[
 };
 
-float4 main(VERTEX_3D parameter) : SV_POSITION
+struct Output
 {
-	return float4(parameter.Position, 0.0);
+	float4 Position : SV_POSITION;
+	float2 TexCoord : TEXCOORD;
+};
+
+Output main(VERTEX_3D parameter)
+{
+	Output o;
+	o.Position = float4(parameter.Position, 1.0);
+	o.TexCoord = parameter.TexCoord;
+	return o;
 }

@@ -6,6 +6,7 @@
 
 struct PipelineStateDesc
 {
+	PipelineStateDesc() {};
 	PipelineStateDesc(UINT RenderTargetNum) :
 		m_RasterizerDesc({}),
 		m_BlendDesc({}),
@@ -46,7 +47,7 @@ struct PipelineStateDesc
 			m_RTVFormat[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		}
 
-		m_DepthStencilDesc.DepthEnable = TRUE;
+		m_DepthStencilDesc.DepthEnable = FALSE;
 		m_DepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 		m_DepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 		m_DepthStencilDesc.StencilEnable = FALSE;
@@ -96,4 +97,6 @@ public:
 	void CreateComputePipeline();
 
 	void ShutDown();
+
+	const ComPtr<ID3D12PipelineState>& GetPipelineState() const{ return m_PipelineState; }
 };

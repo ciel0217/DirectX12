@@ -28,7 +28,7 @@ public:
 	virtual ~GpuReadOnlyBuffer() { ShutDown(); }
 
 	template<typename T>
-	void CreateWithData(const ComPtr<ID3D12Device> &device, const ComPtr<ID3D12GraphicsCommandList> &commandList, const std::vector<T>& data);
+	void CreateWithData(const ComPtr<ID3D12Device> &device, const ComPtr<ID3D12GraphicsCommandList> &commandList, ComPtr<ID3D12Resource> &uploadHeap, const std::vector<T>& data);
 
 	void CreateNonData(const ComPtr<ID3D12Device> &device, const UINT size, const D3D12_RESOURCE_FLAGS flags);
 
@@ -68,6 +68,7 @@ private:
 
 public:
 	void CreateVertexBuffer(const ComPtr<ID3D12Device> &device, CommandContext* const context, const std::vector<VERTEX_3D>& data);
+	const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const{ return m_VertexBufferView; }
 };
 
 class IndexBuffer : public GpuReadOnlyBuffer
@@ -78,6 +79,7 @@ private:
 
 public:
 	void CreateIndexBuffer(const ComPtr<ID3D12Device> &device, CommandContext* const context, const std::vector<UINT>& data);
+	const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return m_IndexBufferView; }
 };
 
 class ConstantBuffer : public GpuAndCpuBuffer

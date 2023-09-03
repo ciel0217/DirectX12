@@ -30,15 +30,17 @@ private:
 	FrameResources m_FrameResource[FRAME_COUNT];
 	Texture2D m_DepthStencil;
 	BufferView m_DSV;
-
+	
 	//Test—p
 	VertexShader m_VShader;
 	PixelShader m_PShader;
 	PipelineStateObject m_PSO;
 	RootSignature m_RootSignature;
 	VertexBuffer m_VBuffer;
-	
-
+	IndexBuffer m_IndexBuffer;
+	BufferView m_TexV;
+	Texture2D m_Texture;
+	ConstantBuffer m_Constant;
 
 	void MoveToNextFrame();
 

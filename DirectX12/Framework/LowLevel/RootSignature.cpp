@@ -9,6 +9,7 @@ void RootSignature::Create(const ComPtr<ID3D12Device> &device, const std::vector
 	rootSignatureDesc.Desc_1_1.NumStaticSamplers = 0;
 	rootSignatureDesc.Desc_1_1.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	//static sampler
 	if (sampler != nullptr) 
 	{
 		rootSignatureDesc.Desc_1_1.NumStaticSamplers = 1;

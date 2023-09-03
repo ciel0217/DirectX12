@@ -17,5 +17,5 @@ public:
 	void Create(const ComPtr<ID3D12Device> &device, const VertexShader &vShader, const PixelShader &pShader);
 	void ShutDown();
 
-	ComPtr<ID3D12RootSignature> GetRootSignature()const { return m_RootSignature; }
+	const ComPtr<ID3D12RootSignature>& GetRootSignature()const { return m_RootSignature; }
 };

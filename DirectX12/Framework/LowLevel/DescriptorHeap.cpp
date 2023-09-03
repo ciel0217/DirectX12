@@ -167,7 +167,7 @@ void DescriptorHeapManager::CreateShaderResourceView(ID3D12Resource ** shaderRes
 	device->Release();
 }
 
-void DescriptorHeapManager::CreateTextureShaderResourceView(ID3D12Resource ** textureResources, BufferView * dstView, unsigned int viewCount)
+void DescriptorHeapManager::CreateTextureShaderResourceView(ID3D12Resource *const* textureResources, BufferView * dstView, unsigned int viewCount)
 {
 	m_CbvSrvHeap.AllocateBufferView(dstView, viewCount);
 
@@ -285,6 +285,7 @@ const ComPtr<ID3D12DescriptorHeap>& DescriptorHeapManager::GetD3dDescriptorHeap(
 	default:
 		break;
 	}
+
 	return nullptr;
 }
 
