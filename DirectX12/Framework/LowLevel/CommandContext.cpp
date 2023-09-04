@@ -23,14 +23,14 @@ void CommandContext::Shutdown()
 {
 }
 
-const CommandListSet CommandContext::RequestCommandListSet(ID3D12PipelineState * state)
+CommandListSet CommandContext::RequestCommandListSet(ID3D12PipelineState * state)
 {
 
 	UINT64 fenceValue = m_CommandQueue.FenceValue();
 	//すでに使用済みのアロケータ、リストを再利用
 	auto allocator = m_CommandAllocator.RequestAllocator(fenceValue);
 	auto list = m_CommandList.RequestCommandList(fenceValue, allocator);
-
+	
 	ThrowIfFailed(allocator.Get()->Reset());
 	ThrowIfFailed(list->Reset(allocator.Get(), state));
 

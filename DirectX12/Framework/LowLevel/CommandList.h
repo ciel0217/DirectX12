@@ -12,7 +12,7 @@ public:
 	void Shutdown();
 
 	//既に実行完了しているコマンドリストを要求
-	ComPtr<ID3D12GraphicsCommandList> RequestCommandList(UINT64 completedFenceValue, const ComPtr<ID3D12CommandAllocator> &allocator);
+	const ComPtr<ID3D12GraphicsCommandList>& RequestCommandList(UINT64 completedFenceValue, const ComPtr<ID3D12CommandAllocator> &allocator);
 
 	//実行完了したコマンドリストを返却
 	void DiscardCommandList(UINT64 fenceValue, const ComPtr<ID3D12GraphicsCommandList>& list);

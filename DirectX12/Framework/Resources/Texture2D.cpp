@@ -50,6 +50,7 @@ void Texture2D::CreateDepth(const ComPtr<ID3D12Device>& device, const DepthInfo 
 void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, CommandContext* const context, ComPtr<ID3D12Resource>& uploadHeap, const std::string & name)
 {
 	auto commandListSet = context->RequestCommandListSet();
+	
 	std::unique_ptr<uint8_t[]> decodedData;
 	D3D12_SUBRESOURCE_DATA subresource;
 	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cv;
