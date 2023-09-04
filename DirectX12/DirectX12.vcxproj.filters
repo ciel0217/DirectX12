@@ -93,6 +93,9 @@
     <ClInclude Include="..\DirectXTex\WICTextureLoader12.h">
       <Filter>Framework\ThirdParty</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Resources\Model.h">
+      <Filter>Framework\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
@@ -151,5 +154,8 @@
     <FxCompile Include="Framework\Shader\TestPixel.hlsl">
       <Filter>Framework\Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

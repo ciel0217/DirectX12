@@ -45,9 +45,10 @@ void Texture2D::CreateDepth(const ComPtr<ID3D12Device>& device, const DepthInfo 
 		IID_PPV_ARGS(m_TextureResource.ReleaseAndGetAddressOf()));
 }
 
-//コマンドを発行してるだけ
-void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, const ComPtr<ID3D12GraphicsCommandList>& commandList, ComPtr<ID3D12Resource>& uploadHeap, const std::string & name)
+//コマンド実行まで行ってる
+void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device,  CommandContext &context, ComPtr<ID3D12Resource>& uploadHeap, const std::string & name)
 {
+	auto commandListSet = context.RequestCommandListSet();
 	std::unique_ptr<uint8_t[]> decodedData;
 	D3D12_SUBRESOURCE_DATA subresource;
 	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cv;
@@ -69,11 +70,16 @@ void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, const ComPtr<I
 	ThrowIfFailed(
 		device.Get()->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(uploadHeap.ReleaseAndGetAddressOf())));
 
-	UpdateSubresources(commandList.Get(), m_TextureResource.Get(), uploadHeap.Get(), 0, 0, 1, &subresource);
+	UpdateSubresources(commandListSet.m_CommandList.Get(), m_TextureResource.Get(), uploadHeap.Get(), 0, 0, 1, &subresource);
 
 	auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_TextureResource.Get(),
 		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	commandList->ResourceBarrier(1, &barrier);
+	commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
+
+	context->ExecuteCommandList(commandListSet.m_CommandList);
+	context->DiscardCommandListSet(commandListSet);
+
+	context->WaitForIdle();
 }
 
 void Texture2D::ShutDown()

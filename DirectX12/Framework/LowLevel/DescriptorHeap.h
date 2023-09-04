@@ -59,7 +59,7 @@ public:
 	void Shutdown();
 
 	void CreateRenderTargetView(ID3D12Resource*const* textureBuffers, BufferView* dstView, unsigned int viewCount);
-	void CreateConstantBufferView(ID3D12Resource** constantBuffers, BufferView* dstView, unsigned int viewCount);
+	void CreateConstantBufferView(ID3D12Resource*const* constantBuffers, BufferView* dstView, unsigned int viewCount);
 	void CreateShaderResourceView(ID3D12Resource** shaderResources, BufferView* dstView, unsigned int viewCount, const std::vector<D3D12_BUFFER_SRV>& buffers);
 	void CreateTextureShaderResourceView(ID3D12Resource*const* textureResources, BufferView* dstView, unsigned int viewCount);
 	void CreateDepthStencilView(ID3D12Resource*const* depthStencils, BufferView* dstView, unsigned int viewCount);

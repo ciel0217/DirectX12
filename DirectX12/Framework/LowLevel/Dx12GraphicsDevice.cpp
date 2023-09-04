@@ -93,12 +93,9 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	
 	auto set = m_GraphicsCommandContext.RequestCommandListSet();
 	ComPtr<ID3D12Resource> re;
-	m_Texture.CreateTexture(m_Device, set.m_CommandList, re, "Asset/Texture/test.png");
+	m_Texture.CreateTexture(m_Device, &m_GraphicsCommandContext, re, "Asset/Texture/test.png");
 
-	m_GraphicsCommandContext.ExecuteCommandList(set.m_CommandList);
-	m_GraphicsCommandContext.DiscardCommandListSet(set);
-
-	m_GraphicsCommandContext.WaitForIdle();
+	
 
 	DescriptorHeapManager::Intance().CreateTextureShaderResourceView(m_Texture.GetResource().GetAddressOf(), &m_TexV, 1);
 
@@ -127,6 +124,10 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	
 
 	m_Constant.CreateConstantBuffer(m_Device, sizeof(float));
+	float da = 0.2f;
+	m_Constant.WriteData(&da, sizeof(float));
+	DescriptorHeapManager::Intance().CreateConstantBufferView(m_Constant.GetResource().GetAddressOf(), &m_ConstantB, 1);
+
 
 	return 0;
 }
@@ -176,7 +177,9 @@ void Dx12GraphicsDevice::Render()
 		commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(m_RootSignature.GetRootSignature().Get());
 		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		commandListSet.m_CommandList.Get()->IASetVertexBuffers(0, 1, &m_VBuffer.GetVertexBufferView());
-		commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(0, m_TexV.m_GpuHandle);
+		commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(1, m_TexV.m_GpuHandle);
+		commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(0, m_ConstantB.m_GpuHandle);
+
 		commandListSet.m_CommandList.Get()->IASetIndexBuffer(&m_IndexBuffer.GetIndexBufferView());
 		commandListSet.m_CommandList.Get()->DrawInstanced(4,1,0,0);
 

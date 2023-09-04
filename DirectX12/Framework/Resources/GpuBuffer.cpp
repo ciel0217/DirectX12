@@ -158,5 +158,5 @@ void ConstantBuffer::CreateConstantBuffer(const ComPtr<ID3D12Device>& device, co
 
 	//256バイトにアラインメント
 	const UINT constantBufferSize = (size + (D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT - 1)) & ~(D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT - 1);
-	CreateNonData(device, size);
+	CreateNonData(device, constantBufferSize);
 }

@@ -123,7 +123,7 @@ void DescriptorHeapManager::CreateRenderTargetView(ID3D12Resource *const* textur
 	device->Release();
 }
 
-void DescriptorHeapManager::CreateConstantBufferView(ID3D12Resource ** constantBuffers, BufferView * dstView, unsigned int viewCount)
+void DescriptorHeapManager::CreateConstantBufferView(ID3D12Resource *const* constantBuffers, BufferView * dstView, unsigned int viewCount)
 {
 	m_CbvSrvHeap.AllocateBufferView(dstView, viewCount);
 

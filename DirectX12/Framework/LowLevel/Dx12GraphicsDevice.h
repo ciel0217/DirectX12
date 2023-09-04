@@ -41,6 +41,7 @@ private:
 	BufferView m_TexV;
 	Texture2D m_Texture;
 	ConstantBuffer m_Constant;
+	BufferView m_ConstantB;
 
 	void MoveToNextFrame();
 
