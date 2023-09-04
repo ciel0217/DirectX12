@@ -29,7 +29,7 @@ public:
 	//コマンド発効に必要なコマンドリスト、アロケーター等のデータを取得
 	//引数のパイプラインステートは、要求コマンドリストが引数のパイプラインステートのみしか使用しないなどドライバが最適化できる場合に指定する。
 	//例えばBundleのみの描画を行う時。(https://docs.microsoft.com/en-us/windows/desktop/api/d3d12/nf-d3d12-id3d12graphicscommandlist-reset)
-	CommandListSet RequestCommandListSet(ID3D12PipelineState* state = nullptr);
+	const CommandListSet RequestCommandListSet(ID3D12PipelineState* state = nullptr);
 
 	//コマンドリストセットのコマンドリストとコマンドアロケーターを返却する
 	void DiscardCommandListSet(const CommandListSet& set);

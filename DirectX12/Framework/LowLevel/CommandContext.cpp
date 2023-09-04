@@ -23,7 +23,7 @@ void CommandContext::Shutdown()
 {
 }
 
-CommandListSet CommandContext::RequestCommandListSet(ID3D12PipelineState * state)
+const CommandListSet CommandContext::RequestCommandListSet(ID3D12PipelineState * state)
 {
 
 	UINT64 fenceValue = m_CommandQueue.FenceValue();

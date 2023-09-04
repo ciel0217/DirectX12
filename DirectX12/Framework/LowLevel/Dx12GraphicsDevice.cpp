@@ -95,8 +95,6 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	ComPtr<ID3D12Resource> re;
 	m_Texture.CreateTexture(m_Device, &m_GraphicsCommandContext, re, "Asset/Texture/test.png");
 
-	
-
 	DescriptorHeapManager::Intance().CreateTextureShaderResourceView(m_Texture.GetResource().GetAddressOf(), &m_TexV, 1);
 
 	//Test—p
@@ -124,7 +122,7 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	
 
 	m_Constant.CreateConstantBuffer(m_Device, sizeof(float));
-	float da = 0.2f;
+	float da = 0.5f;
 	m_Constant.WriteData(&da, sizeof(float));
 	DescriptorHeapManager::Intance().CreateConstantBufferView(m_Constant.GetResource().GetAddressOf(), &m_ConstantB, 1);
 

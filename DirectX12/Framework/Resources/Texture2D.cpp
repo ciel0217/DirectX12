@@ -4,6 +4,7 @@
 #include "DirectXTex/WICTextureLoader12.h"
 #include <codecvt>
 
+
 void Texture2D::CreateFromBackBuffer(const ComPtr<IDXGISwapChain3>& swapChain, UINT index)
 {
 	ThrowIfFailed(swapChain.Get()->GetBuffer(index, IID_PPV_ARGS(m_TextureResource.ReleaseAndGetAddressOf())));
@@ -46,9 +47,9 @@ void Texture2D::CreateDepth(const ComPtr<ID3D12Device>& device, const DepthInfo 
 }
 
 //コマンド実行まで行ってる
-void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device,  CommandContext &context, ComPtr<ID3D12Resource>& uploadHeap, const std::string & name)
+void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, CommandContext* const context, ComPtr<ID3D12Resource>& uploadHeap, const std::string & name)
 {
-	auto commandListSet = context.RequestCommandListSet();
+	auto commandListSet = context->RequestCommandListSet();
 	std::unique_ptr<uint8_t[]> decodedData;
 	D3D12_SUBRESOURCE_DATA subresource;
 	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cv;
