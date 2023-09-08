@@ -21,7 +21,7 @@ void CommandAllocator::Shutdown()
 	m_CommandAllocatorPool.clear();
 }
 
-const ComPtr<ID3D12CommandAllocator> CommandAllocator::RequestAllocator(UINT64 completedFenceValue)
+ComPtr<ID3D12CommandAllocator> CommandAllocator::RequestAllocator(UINT64 completedFenceValue)
 {
 	ComPtr<ID3D12CommandAllocator> allocator = nullptr;
 

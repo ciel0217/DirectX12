@@ -1,6 +1,11 @@
 #pragma once
 #include "GpuBuffer.h"
 
+struct Mesh
+{
+	std::vector<VERTEX_3D> m_Vertices;
+	std::vector<UINT> m_Indices;
+};
 
 class Model
 {

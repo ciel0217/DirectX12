@@ -26,7 +26,7 @@ void CommandList::Shutdown()
 	m_CommandListPool.clear();
 }
 
-const ComPtr<ID3D12GraphicsCommandList>& CommandList::RequestCommandList(UINT64 completedFenceValue, const ComPtr<ID3D12CommandAllocator> &allocator)
+ComPtr<ID3D12GraphicsCommandList> CommandList::RequestCommandList(UINT64 completedFenceValue, const ComPtr<ID3D12CommandAllocator> &allocator)
 {
 	ComPtr<ID3D12GraphicsCommandList> list = nullptr;
 

@@ -146,6 +146,9 @@
     <ClCompile Include="..\DirectXTex\WICTextureLoader12.cpp">
       <Filter>Framework\ThirdParty</Filter>
     </ClCompile>
+    <ClCompile Include="Framework\Resources\Model.cpp">
+      <Filter>Framework\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Framework\Shader\TestVertex.hlsl">

@@ -11,7 +11,7 @@ public:
 	void Shutdown();
 
 	//既に実行完了しているアロケーターを要求
-	const ComPtr<ID3D12CommandAllocator> RequestAllocator(UINT64 completedFenceValue);
+	ComPtr<ID3D12CommandAllocator> RequestAllocator(UINT64 completedFenceValue);
 
 	//実行完了したアロケータを返却
 	void DiscardAllocator(UINT64 fenceValue, const ComPtr<ID3D12CommandAllocator> &allocator);
