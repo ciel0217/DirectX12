@@ -11,9 +11,14 @@ class Model
 {
 private:
 	const std::string m_Name;
-	VertexBuffer m_VertexBuffer;
-	IndexBuffer m_IndexBuffer;
+	std::vector<VertexBuffer> m_VertexBuffer;
+	std::vector<IndexBuffer> m_IndexBuffer;
 	//TODO:::ƒ}ƒeƒŠƒAƒ‹‚È‚Ç’Ç‰Á
+
+
+
+	void CreateVertexBuffer(const std::vector<Mesh> &mesh);
+	void CreateIndexBuffer(const std::vector<Mesh> &mesh);
 
 public:
 	Model() = delete;
@@ -21,7 +26,8 @@ public:
 	virtual ~Model(){}
 
 	void LoadModel();
+	
 
-	const VertexBuffer &GetVertexBuffer() const{ return m_VertexBuffer; }
-	const IndexBuffer &GetIndexBuffer() const{ return m_IndexBuffer; }
+	const std::vector<VertexBuffer> &GetVertexBuffer() const{ return m_VertexBuffer; }
+	const std::vector<IndexBuffer> &GetIndexBuffer() const{ return m_IndexBuffer; }
 };

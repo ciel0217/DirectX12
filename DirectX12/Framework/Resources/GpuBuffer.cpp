@@ -150,6 +150,10 @@ void IndexBuffer::CreateIndexBuffer(const ComPtr<ID3D12Device>& device, CommandC
 	m_IndexBufferView.SizeInBytes = static_cast<UINT>(sizeof(UINT) * data.size());
 
 	m_IndexCount = static_cast<UINT>(data.size());
+
+	context->ExecuteCommandList(commandListSet.m_CommandList);
+	context->DiscardCommandListSet(commandListSet);
+	context->WaitForIdle();
 }
 
 void ConstantBuffer::CreateConstantBuffer(const ComPtr<ID3D12Device>& device, const UINT size)

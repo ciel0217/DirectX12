@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "../LowLevel/Dx12GraphicsDevice.h"
 #include <Assimp/Importer.hpp>
 #include <Assimp/scene.h>
 #include <Assimp/postprocess.h>
@@ -31,7 +32,7 @@ void Model::LoadModel()
 		const auto  mesh = scene->mMeshes[i];
 		
 		meshes[i].m_Vertices.resize(mesh->mNumVertices);
-		meshes[i].m_Vertices.resize(mesh->mNumFaces * 3);//1Face‚ÍŽOŠpŒ`‚¾‚©‚ç
+		meshes[i].m_Indices.resize(mesh->mNumFaces * 3);//1Face‚ÍŽOŠpŒ`‚¾‚©‚ç
 
 		for (int j = 0; j < mesh->mNumVertices; j++)
 		{
@@ -56,4 +57,30 @@ void Model::LoadModel()
 		}
 	}
 	
+	CreateVertexBuffer(meshes);
+	CreateIndexBuffer(meshes);
+}
+
+void Model::CreateVertexBuffer(const std::vector<Mesh> &meshes)
+{
+	m_VertexBuffer.resize(meshes.size());
+
+	const ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
+	CommandContext context = Dx12GraphicsDevice::GetInstance()->GetGraphicContext();
+	for (UINT i = 0; i < meshes.size(); i++)
+	{
+		m_VertexBuffer[i].CreateVertexBuffer(device, &context, meshes[i].m_Vertices);
+	}
+}
+
+void Model::CreateIndexBuffer(const std::vector<Mesh> &meshes)
+{
+	m_IndexBuffer.resize(meshes.size());
+
+	const ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
+	CommandContext context = Dx12GraphicsDevice::GetInstance()->GetGraphicContext();
+	for (UINT i = 0; i < meshes.size(); i++)
+	{
+		m_IndexBuffer[i].CreateIndexBuffer(device, &context, meshes[i].m_Indices);
+	}
 }

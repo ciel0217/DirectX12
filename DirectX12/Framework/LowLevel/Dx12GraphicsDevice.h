@@ -53,4 +53,7 @@ public:
 	void Update();
 	void Render();
 	BOOL Release();
+
+	const ComPtr<ID3D12Device> &GetDevice()const { return m_Device; }
+	const CommandContext &GetGraphicContext()const { return m_GraphicsCommandContext; }
 };
