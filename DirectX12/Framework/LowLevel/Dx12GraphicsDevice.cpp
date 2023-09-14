@@ -10,6 +10,9 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 
 	UINT dxgiFactoryFlags = 0;
 #ifdef _DEBUG
+
+	SetDllDirectoryA("Assimp/lib/x64-Debug");
+	LoadLibraryExA("assimp-vc142-mtd.dll", NULL, NULL);
 	ComPtr<ID3D12Debug> debugController;
 	
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) 
@@ -17,6 +20,9 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 		debugController->EnableDebugLayer();
 		dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 	}
+#else
+	SetDllDirectoryA("Assimp/lib/x64-Release");
+	LoadLibraryExA("assimp-vc142-mt.dll", NULL, NULL);
 #endif
 
 	ComPtr<IDXGIFactory4> factory4;
@@ -136,6 +142,7 @@ void Dx12GraphicsDevice::Update()
 
 void Dx12GraphicsDevice::Render()
 {
+
 	{
 		auto commandListSet = m_GraphicsCommandContext.RequestCommandListSet();
 		

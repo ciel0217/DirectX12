@@ -101,7 +101,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir);$(SolutionDir)\packages\Assimp\lib\x64-Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir);$(SolutionDir)Assimp\lib\x64-Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>assimp-vc142-mtd.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
@@ -134,7 +134,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir);$(SolutionDir)\packages\Assimp\lib\x64-Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir);$(SolutionDir)Assimp\lib\x64-Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>assimp-vc142-mt.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
