@@ -66,10 +66,10 @@ void Model::CreateVertexBuffer(const std::vector<Mesh> &meshes)
 	m_VertexBuffer.resize(meshes.size());
 
 	const ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
-	CommandContext context = Dx12GraphicsDevice::GetInstance()->GetGraphicContext();
+	CommandContext* context = Dx12GraphicsDevice::GetInstance()->GetGraphicContext();
 	for (UINT i = 0; i < meshes.size(); i++)
 	{
-		m_VertexBuffer[i].CreateVertexBuffer(device, &context, meshes[i].m_Vertices);
+		m_VertexBuffer[i].CreateVertexBuffer(device, context, meshes[i].m_Vertices);
 	}
 }
 
@@ -78,9 +78,17 @@ void Model::CreateIndexBuffer(const std::vector<Mesh> &meshes)
 	m_IndexBuffer.resize(meshes.size());
 
 	const ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
-	CommandContext context = Dx12GraphicsDevice::GetInstance()->GetGraphicContext();
+	CommandContext* context = Dx12GraphicsDevice::GetInstance()->GetGraphicContext();
+	ComPtr<ID3D12Resource> uploadHeap;
+	auto set = context->RequestCommandListSet();
+	ComPtr<ID3D12GraphicsCommandList> commandList = set.m_CommandList;
+
 	for (UINT i = 0; i < meshes.size(); i++)
 	{
-		m_IndexBuffer[i].CreateIndexBuffer(device, &context, meshes[i].m_Indices);
+		m_IndexBuffer[i].CreateIndexBuffer(device, commandList, uploadHeap, meshes[i].m_Indices);
 	}
+
+	context->ExecuteCommandList(commandList);
+	context->DiscardCommandListSet(set);
+	context->WaitForIdle();
 }

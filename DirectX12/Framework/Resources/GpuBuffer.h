@@ -68,6 +68,7 @@ private:
 
 public:
 	void CreateVertexBuffer(const ComPtr<ID3D12Device> &device, CommandContext* const context, const std::vector<VERTEX_3D>& data);
+	void CreateVertexBuffer(const ComPtr<ID3D12Device> &device, const ComPtr<ID3D12GraphicsCommandList>& commandList, ComPtr<ID3D12Resource>& uploadHeap, const std::vector<VERTEX_3D>& data);
 	const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const{ return m_VertexBufferView; }
 };
 
@@ -79,6 +80,7 @@ private:
 
 public:
 	void CreateIndexBuffer(const ComPtr<ID3D12Device> &device, CommandContext* const context, const std::vector<UINT>& data);
+	void CreateIndexBuffer(const ComPtr<ID3D12Device> &device, const ComPtr<ID3D12GraphicsCommandList>& commandList, ComPtr<ID3D12Resource>& uploadHeap, const std::vector<UINT>& data);
 	const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return m_IndexBufferView; }
 };
 

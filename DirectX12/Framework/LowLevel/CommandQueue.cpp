@@ -69,7 +69,7 @@ UINT64 CommandQueue::ExecuteCommandList(ComPtr<ID3D12CommandList> commandList)
 bool CommandQueue::IsFenceCompleted(UINT64 fenceValue)
 {
 	if (fenceValue > m_LastFenceValue)
-		m_LastFenceValue = std::max(m_LastFenceValue, m_Fence->GetCompletedValue());
+		m_LastFenceValue = max(m_LastFenceValue, m_Fence->GetCompletedValue());
 
 	return fenceValue <= m_LastFenceValue;
 }

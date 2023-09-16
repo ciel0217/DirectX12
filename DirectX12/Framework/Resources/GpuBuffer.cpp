@@ -108,32 +108,17 @@ void VertexBuffer::CreateVertexBuffer(const ComPtr<ID3D12Device>& device, Comman
 {
 	auto commandListSet = context->RequestCommandListSet();
 	ComPtr<ID3D12Resource> uploadHeap;
-	CreateWithData<VERTEX_3D>(device, commandListSet.m_CommandList, uploadHeap, data);
-
-	D3D12_RESOURCE_BARRIER barrier = {};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = m_Resource.Get();
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-	commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
-
-	m_VertexBufferView.BufferLocation = GetGpuVirtualAddress();
-	m_VertexBufferView.StrideInBytes = sizeof(VERTEX_3D);
-	m_VertexBufferView.SizeInBytes = static_cast<UINT>(sizeof(VERTEX_3D) * data.size());
+	CreateVertexBuffer(device, commandListSet.m_CommandList, uploadHeap, data);
 
 	context->ExecuteCommandList(commandListSet.m_CommandList);
 	context->DiscardCommandListSet(commandListSet);
 	context->WaitForIdle();
 }
 
-void IndexBuffer::CreateIndexBuffer(const ComPtr<ID3D12Device>& device, CommandContext* const context, const std::vector<UINT>& data)
+//commandî≠çsÇÃÇ›
+void VertexBuffer::CreateVertexBuffer(const ComPtr<ID3D12Device>& device, const ComPtr<ID3D12GraphicsCommandList>& commandList, ComPtr<ID3D12Resource>& uploadHeap, const std::vector<VERTEX_3D>& data)
 {
-	auto commandListSet = context->RequestCommandListSet();
-	ComPtr<ID3D12Resource> uploadHeap;
-	CreateWithData<UINT>(device, commandListSet.m_CommandList, uploadHeap, data);
+	CreateWithData<VERTEX_3D>(device, commandList, uploadHeap, data);
 
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -143,17 +128,45 @@ void IndexBuffer::CreateIndexBuffer(const ComPtr<ID3D12Device>& device, CommandC
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
-	commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
+	commandList->ResourceBarrier(1, &barrier);
 
-	m_IndexBufferView.BufferLocation = GetGpuVirtualAddress();
-	m_IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
-	m_IndexBufferView.SizeInBytes = static_cast<UINT>(sizeof(UINT) * data.size());
+	m_VertexBufferView.BufferLocation = GetGpuVirtualAddress();
+	m_VertexBufferView.StrideInBytes = sizeof(VERTEX_3D);
+	m_VertexBufferView.SizeInBytes = static_cast<UINT>(sizeof(VERTEX_3D) * data.size());
+}
 
-	m_IndexCount = static_cast<UINT>(data.size());
+void IndexBuffer::CreateIndexBuffer(const ComPtr<ID3D12Device>& device, CommandContext* const context, const std::vector<UINT>& data)
+{
+	auto commandListSet = context->RequestCommandListSet();
+	ComPtr<ID3D12Resource> uploadHeap;
+	CreateIndexBuffer(device, commandListSet.m_CommandList, uploadHeap, data);
 
 	context->ExecuteCommandList(commandListSet.m_CommandList);
 	context->DiscardCommandListSet(commandListSet);
 	context->WaitForIdle();
+	
+}
+
+//commandî≠çsÇÃÇ›
+void IndexBuffer::CreateIndexBuffer(const ComPtr<ID3D12Device>& device, const ComPtr<ID3D12GraphicsCommandList>& commandList, ComPtr<ID3D12Resource>& uploadHeap, const std::vector<UINT>& data)
+{
+	CreateWithData<UINT>(device, commandList, uploadHeap, data);
+
+	D3D12_RESOURCE_BARRIER barrier = {};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = m_Resource.Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+	commandList.Get()->ResourceBarrier(1, &barrier);
+
+	m_IndexBufferView.BufferLocation = m_Resource->GetGPUVirtualAddress();
+	m_IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+	m_IndexBufferView.SizeInBytes = static_cast<UINT>(sizeof(UINT) * data.size());
+
+	m_IndexCount = static_cast<UINT>(data.size());
 }
 
 void ConstantBuffer::CreateConstantBuffer(const ComPtr<ID3D12Device>& device, const UINT size)

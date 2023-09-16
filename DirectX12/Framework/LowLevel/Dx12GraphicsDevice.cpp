@@ -11,7 +11,7 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	UINT dxgiFactoryFlags = 0;
 #ifdef _DEBUG
 
-	SetDllDirectoryA("Assimp/lib/x64-Debug");
+	SetDllDirectoryA("../Assimp/lib/x64-Debug");
 	LoadLibraryExA("assimp-vc142-mtd.dll", NULL, NULL);
 	ComPtr<ID3D12Debug> debugController;
 	
@@ -103,7 +103,7 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 
 	DescriptorHeapManager::Intance().CreateTextureShaderResourceView(m_Texture.GetResource().GetAddressOf(), &m_TexV, 1);
 
-	//Test—p
+	//ˆÈ‰ºTest—p
 	m_VShader.Create("Framework/Shader/TestVertex.cso");
 	m_PShader.Create("Framework/Shader/TestPixel.cso");
 
@@ -131,7 +131,8 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	float da = 0.5f;
 	m_Constant.WriteData(&da, sizeof(float));
 	DescriptorHeapManager::Intance().CreateConstantBufferView(m_Constant.GetResource().GetAddressOf(), &m_ConstantB, 1);
-
+	m_Model = new Model("Asset/Model/Sphere.obj");
+	m_Model->LoadModel();
 
 	return 0;
 }

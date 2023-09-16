@@ -9,6 +9,7 @@
 #include "PipelineStateObject.h"
 #include "RootSignature.h"
 #include "../Resources/GpuBuffer.h"
+#include "../Resources/Model.h"
 
 //ダブルバッファリング
 constexpr UINT FRAME_COUNT = 2;
@@ -42,18 +43,19 @@ private:
 	Texture2D m_Texture;
 	ConstantBuffer m_Constant;
 	BufferView m_ConstantB;
+	Model* m_Model;
 
 	void MoveToNextFrame();
 
 public:
 	Dx12GraphicsDevice() { if (!m_Instance)m_Instance = this; }
 
-	static const Dx12GraphicsDevice* GetInstance() { return m_Instance; }
+	static Dx12GraphicsDevice* const GetInstance() { return m_Instance; }
 	BOOL Init(HWND hWND);
 	void Update();
 	void Render();
 	BOOL Release();
 
 	const ComPtr<ID3D12Device> &GetDevice()const { return m_Device; }
-	const CommandContext &GetGraphicContext()const { return m_GraphicsCommandContext; }
+	CommandContext* const GetGraphicContext(){ return &m_GraphicsCommandContext; }
 };

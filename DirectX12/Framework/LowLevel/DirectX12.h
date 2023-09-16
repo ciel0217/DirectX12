@@ -4,7 +4,6 @@
 
 #define _CRT_SECURE_NO_WARNINGS			// scanf ÇÃwarningñhé~
 #define no_init_all deprecated
-#define NOMINMAX
 
 #include <stdio.h>
 
