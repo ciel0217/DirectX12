@@ -13,10 +13,24 @@ struct Output
 	float2 TexCoord : TEXCOORD;
 };
 
+cbuffer wv : register(b0)
+{
+	matrix w;
+	matrix v;
+	matrix p;
+};
+
 Output main(VERTEX_3D parameter)
 {
 	Output o;
-	o.Position = float4(parameter.Position, 1.0);
+	float4 position = float4(parameter.Position, 1.0);
+
+	matrix a = mul(w, v);
+	a = mul(a, p);
+
+	o.Position = mul(position, a);
+
+
 	o.TexCoord = parameter.TexCoord;
 	return o;
 }

@@ -26,6 +26,7 @@ void Model::LoadModel()
 	std::vector<Mesh> meshes;
 	meshes.clear();
 	meshes.resize(scene->mNumMeshes);
+	m_IndexNum.resize(scene->mNumMeshes);
 
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
@@ -33,6 +34,7 @@ void Model::LoadModel()
 		
 		meshes[i].m_Vertices.resize(mesh->mNumVertices);
 		meshes[i].m_Indices.resize(mesh->mNumFaces * 3);//1Face‚ÍŽOŠpŒ`‚¾‚©‚ç
+		m_IndexNum[i] = mesh->mNumFaces * 3;
 
 		for (int j = 0; j < mesh->mNumVertices; j++)
 		{

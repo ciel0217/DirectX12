@@ -17,7 +17,7 @@ struct PipelineStateDesc
 		m_RenderTargetsNum(RenderTargetNum)
 	{
 		m_RasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-		m_RasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+		m_RasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 		m_RasterizerDesc.FrontCounterClockwise = FALSE;
 		m_RasterizerDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
 		m_RasterizerDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
@@ -47,7 +47,7 @@ struct PipelineStateDesc
 			m_RTVFormat[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		}
 
-		m_DepthStencilDesc.DepthEnable = FALSE;
+		m_DepthStencilDesc.DepthEnable = TRUE;
 		m_DepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 		m_DepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 		m_DepthStencilDesc.StencilEnable = FALSE;

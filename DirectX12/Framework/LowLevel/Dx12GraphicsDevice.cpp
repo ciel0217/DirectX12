@@ -3,7 +3,12 @@
 
 Dx12GraphicsDevice* Dx12GraphicsDevice::m_Instance;
 
-
+struct wvp
+{
+	XMMATRIX w;
+	XMMATRIX v;
+	XMMATRIX p;
+};
 
 BOOL Dx12GraphicsDevice::Init(HWND hWND)
 {
@@ -127,9 +132,16 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	m_PSO.CreateGraphicPipeline(m_Device, &m_RootSignature, &m_VShader, &m_PShader);
 	
 
-	m_Constant.CreateConstantBuffer(m_Device, sizeof(float));
-	float da = 0.5f;
-	m_Constant.WriteData(&da, sizeof(float));
+	m_Constant.CreateConstantBuffer(m_Device, sizeof(wvp));
+
+	wvp da;
+	da.w = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+	da.w = XMMatrixTranspose(da.w);
+	da.v = XMMatrixLookAtLH(XMVectorSet(0,0,-5, 0), XMVectorSet(0, 0, 0, 0), XMVectorSet(0, 1, 0, 0));
+	da.v = XMMatrixTranspose(da.v);
+	da.p = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.1, 10000);
+	da.p = XMMatrixTranspose(da.p);
+	m_Constant.WriteData(&da, sizeof(wvp));
 	DescriptorHeapManager::Intance().CreateConstantBufferView(m_Constant.GetResource().GetAddressOf(), &m_ConstantB, 1);
 	m_Model = new Model("Asset/Model/Sphere.obj");
 	m_Model->LoadModel();
@@ -176,18 +188,24 @@ void Dx12GraphicsDevice::Render()
 		//レンダーターゲットクリア
 		const float clearColor[] = { 0.0f, 1.0f, 0.4f, 1.0f };
 		commandListSet.m_CommandList.Get()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-
+		commandListSet.m_CommandList.Get()->ClearDepthStencilView(m_DSV.m_CpuHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 		//各オブジェクト描画
 		
 		commandListSet.m_CommandList.Get()->SetPipelineState(m_PSO.GetPipelineState().Get());
 		commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(m_RootSignature.GetRootSignature().Get());
-		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		commandListSet.m_CommandList.Get()->IASetVertexBuffers(0, 1, &m_VBuffer.GetVertexBufferView());
+		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		
 		commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(1, m_TexV.m_GpuHandle);
 		commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(0, m_ConstantB.m_GpuHandle);
 
-		commandListSet.m_CommandList.Get()->IASetIndexBuffer(&m_IndexBuffer.GetIndexBufferView());
-		commandListSet.m_CommandList.Get()->DrawInstanced(4,1,0,0);
+		VertexBuffer vb = m_Model->GetVertexBuffer()[0];
+		IndexBuffer ib = m_Model->GetIndexBuffer()[0];
+		UINT in = m_Model->GetIndexNum()[0];
+
+		commandListSet.m_CommandList.Get()->IASetVertexBuffers(0, 1, &vb.GetVertexBufferView());
+		commandListSet.m_CommandList.Get()->IASetIndexBuffer(&ib.GetIndexBufferView());
+
+		commandListSet.m_CommandList.Get()->DrawIndexedInstanced(in, 1, 0, 0, 0);
 
 		//ResourceBarrierの設定(描画後)
 		
