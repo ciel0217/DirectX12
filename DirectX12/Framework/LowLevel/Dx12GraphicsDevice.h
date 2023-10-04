@@ -43,6 +43,8 @@ private:
 	Texture2D m_Texture;
 	ConstantBuffer m_Constant;
 	BufferView m_ConstantB;
+	ConstantBuffer m_Constantt;
+	BufferView m_Constantbf;
 	Model* m_Model;
 
 	void MoveToNextFrame();

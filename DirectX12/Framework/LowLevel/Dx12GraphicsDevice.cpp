@@ -143,6 +143,12 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	da.p = XMMatrixTranspose(da.p);
 	m_Constant.WriteData(&da, sizeof(wvp));
 	DescriptorHeapManager::Intance().CreateConstantBufferView(m_Constant.GetResource().GetAddressOf(), &m_ConstantB, 1);
+
+	m_Constantt.CreateConstantBuffer(m_Device, sizeof(float));
+
+	float t = 0.3;
+	m_Constantt.WriteData(&t, sizeof(float));
+	DescriptorHeapManager::Intance().CreateConstantBufferView(m_Constantt.GetResource().GetAddressOf(), &m_Constantbf, 1);
 	m_Model = new Model("Asset/Model/Sphere.obj");
 	m_Model->LoadModel();
 
@@ -195,8 +201,10 @@ void Dx12GraphicsDevice::Render()
 		commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(m_RootSignature.GetRootSignature().Get());
 		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		
-		commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(1, m_TexV.m_GpuHandle);
+		commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(2, m_TexV.m_GpuHandle);
+		commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(1, m_Constantbf.m_GpuHandle);
 		commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(0, m_ConstantB.m_GpuHandle);
+		
 
 		VertexBuffer vb = m_Model->GetVertexBuffer()[0];
 		IndexBuffer ib = m_Model->GetIndexBuffer()[0];

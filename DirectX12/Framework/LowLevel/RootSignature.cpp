@@ -1,5 +1,6 @@
 #include "RootSignature.h"
 
+
 void RootSignature::Create(const ComPtr<ID3D12Device> &device, const std::vector<D3D12_ROOT_PARAMETER1>& parameters, D3D12_STATIC_SAMPLER_DESC * sampler)
 {
 	D3D12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
@@ -23,19 +24,38 @@ void RootSignature::Create(const ComPtr<ID3D12Device> &device, const std::vector
 
 }
 
-void RootSignature::Create(const ComPtr<ID3D12Device>& device, const VertexShader & vShader, const PixelShader & pShader)
+void RootSignature::Create(const ComPtr<ID3D12Device>& device, const VertexShader* const vShader, const PixelShader* const pShader)
 {
 	std::vector<D3D12_ROOT_PARAMETER1> rootParameter;
+	rootParameter.clear();
 
-	if (!vShader.GetShaderReflectResult().m_CBVRangeDescs.empty())
-		rootParameter.push_back(vShader.GetCbvRootParameter());//DescriptorTable 1
-	if (!vShader.GetShaderReflectResult().m_SRVRangeDescs.empty())
-		rootParameter.push_back(vShader.GetSrvRootParameter());//DescriptorTable 2
+	if (!vShader->GetShaderReflectResult().m_CBVRangeDescs.empty())
+		for (const auto& desc : vShader->GetShaderReflectResult().m_CBVRangeDescs)
+		{
+			m_DescriptorTableIndex[desc.first] = rootParameter.size();
+			rootParameter.push_back(vShader->GetCbvRootParameter(desc.first));
+		}
 
-	if (!pShader.GetShaderReflectResult().m_CBVRangeDescs.empty())
-		rootParameter.push_back(pShader.GetCbvRootParameter());//DescriptorTable 3
-	if (!pShader.GetShaderReflectResult().m_SRVRangeDescs.empty())
-		rootParameter.push_back(pShader.GetSrvRootParameter());//DescriptorTable 4
+	if (!vShader->GetShaderReflectResult().m_SRVRangeDescs.empty())
+		for (const auto& desc : vShader->GetShaderReflectResult().m_SRVRangeDescs)
+		{
+			m_DescriptorTableIndex[desc.first] = rootParameter.size();
+			rootParameter.push_back(vShader->GetSrvRootParameter(desc.first));
+		}
+
+	if (!pShader->GetShaderReflectResult().m_CBVRangeDescs.empty())
+		for (const auto& desc : pShader->GetShaderReflectResult().m_CBVRangeDescs)
+		{
+			m_DescriptorTableIndex[desc.first] = rootParameter.size();
+			rootParameter.push_back(pShader->GetCbvRootParameter(desc.first));
+		}
+
+	if (!pShader->GetShaderReflectResult().m_SRVRangeDescs.empty())
+		for (const auto& desc : pShader->GetShaderReflectResult().m_SRVRangeDescs)
+		{
+			m_DescriptorTableIndex[desc.first] = rootParameter.size();
+			rootParameter.push_back(pShader->GetSrvRootParameter(desc.first));
+		}
 
 	//‚Æ‚è‚ ‚¦‚¸ŒÅ’è
 	D3D12_STATIC_SAMPLER_DESC samplerDesc = {};

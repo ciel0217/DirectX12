@@ -34,6 +34,9 @@
     <Filter Include="Framework\ThirdParty">
       <UniqueIdentifier>{cf7696fd-d52a-4791-b800-8064a2a61681}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Render">
+      <UniqueIdentifier>{48b56d77-c02a-4516-b108-b097d659ed08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\LowLevel\DirectX12.h">
@@ -96,6 +99,15 @@
     <ClInclude Include="Framework\Resources\Model.h">
       <Filter>Framework\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Render\CameraRender.h">
+      <Filter>Framework\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Render\CRender.h">
+      <Filter>Framework\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Render\DefferedRender.h">
+      <Filter>Framework\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
@@ -148,6 +160,12 @@
     </ClCompile>
     <ClCompile Include="Framework\Resources\Model.cpp">
       <Filter>Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Render\DefferedRender.cpp">
+      <Filter>Framework\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Render\CameraRender.cpp">
+      <Filter>Framework\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

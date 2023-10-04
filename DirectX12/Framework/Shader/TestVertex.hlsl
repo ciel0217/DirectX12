@@ -20,6 +20,13 @@ cbuffer wv : register(b0)
 	matrix p;
 };
 
+cbuffer pv : register(b1)
+{
+	float s;
+};
+
+
+
 Output main(VERTEX_3D parameter)
 {
 	Output o;
@@ -30,7 +37,6 @@ Output main(VERTEX_3D parameter)
 
 	o.Position = mul(position, a);
 
-
-	o.TexCoord = parameter.TexCoord;
+	o.TexCoord = parameter.TexCoord * s;
 	return o;
 }

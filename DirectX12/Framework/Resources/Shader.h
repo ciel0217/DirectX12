@@ -1,5 +1,6 @@
 #pragma once
 #include "../LowLevel/DirectX12Helper.h"
+#include <unordered_map>
 
 //TODO:::ƒ‹[ƒg32Bit’è”‚É‚Â‚¢‚Ä‚Ìˆ—‚ğ’Ç‰Á
 
@@ -9,10 +10,11 @@ struct ShaderObject
 	UINT m_Size;
 };
 
+
 struct ShaderReflectResult
 {
-	std::vector<D3D12_DESCRIPTOR_RANGE1> m_CBVRangeDescs;
-	std::vector<D3D12_DESCRIPTOR_RANGE1> m_SRVRangeDescs;
+	std::unordered_map<std::string, D3D12_DESCRIPTOR_RANGE1> m_CBVRangeDescs;
+	std::unordered_map<std::string, D3D12_DESCRIPTOR_RANGE1> m_SRVRangeDescs;
 };
 
 class Shader
@@ -26,9 +28,9 @@ protected:
 	ShaderReflectResult m_ShaderRefResult;
 
 	//SRV‚ÌRootParameter‚ğæ“¾
-	D3D12_ROOT_PARAMETER1 GetSrvRootParameter(const D3D12_SHADER_VISIBILITY visibility)const;
+	D3D12_ROOT_PARAMETER1 GetSrvRootParameter(const D3D12_SHADER_VISIBILITY visibility, const std::string name)const;
 	//CBV‚ÌRootParameter‚ğæ“¾
-	D3D12_ROOT_PARAMETER1 GetCbvRootParameter(const D3D12_SHADER_VISIBILITY visibility)const;
+	D3D12_ROOT_PARAMETER1 GetCbvRootParameter(const D3D12_SHADER_VISIBILITY visibility, const std::string name)const;
 	//TODO::::Root32BitConstant—p‚ÌCBV‚ÌRootParameter‚ğæ“¾
 	
 
@@ -61,9 +63,9 @@ public:
 	void Create(std::string fileName)override;
 
 	//SRV‚ÌRootParameter‚ğæ“¾
-	D3D12_ROOT_PARAMETER1 GetSrvRootParameter()const { return Shader::GetSrvRootParameter(D3D12_SHADER_VISIBILITY_VERTEX); }
+	D3D12_ROOT_PARAMETER1 GetSrvRootParameter(const std::string name)const { return Shader::GetSrvRootParameter(D3D12_SHADER_VISIBILITY_VERTEX, name); }
 	//CBV‚ÌRootParameter‚ğæ“¾
-	D3D12_ROOT_PARAMETER1 GetCbvRootParameter()const { return Shader::GetCbvRootParameter(D3D12_SHADER_VISIBILITY_VERTEX); }
+	D3D12_ROOT_PARAMETER1 GetCbvRootParameter(const std::string name)const { return Shader::GetCbvRootParameter(D3D12_SHADER_VISIBILITY_VERTEX, name); }
 
 	const std::vector<D3D12_INPUT_ELEMENT_DESC>& GetInputLayouts()const { return m_InputLayouts; }
 };
@@ -77,9 +79,9 @@ public:
 	void Create(std::string fileName)override;
 
 	//SRV‚ÌRootParameter‚ğæ“¾
-	D3D12_ROOT_PARAMETER1 GetSrvRootParameter()const { return Shader::GetSrvRootParameter(D3D12_SHADER_VISIBILITY_PIXEL); }
+	D3D12_ROOT_PARAMETER1 GetSrvRootParameter(const std::string name)const { return Shader::GetSrvRootParameter(D3D12_SHADER_VISIBILITY_PIXEL, name); }
 	//CBV‚ÌRootParameter‚ğæ“¾
-	D3D12_ROOT_PARAMETER1 GetCbvRootParameter()const { return Shader::GetCbvRootParameter(D3D12_SHADER_VISIBILITY_PIXEL); }
+	D3D12_ROOT_PARAMETER1 GetCbvRootParameter(const std::string name)const { return Shader::GetCbvRootParameter(D3D12_SHADER_VISIBILITY_PIXEL, name); }
 
 };
 
