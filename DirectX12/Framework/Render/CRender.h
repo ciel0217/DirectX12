@@ -1,23 +1,29 @@
 #pragma once
+#include "../Resources/Material.h"
 
-class VertexShader;
-class PixelShader;
-class RootSignature;
-class PipelineStateObject;
+class CGameObject;
 
 class CRender
 {
 protected:
-	VertexShader* m_VertexShader;
-	PixelShader* m_PixelShader;
-	RootSignature* m_RootSignature;
-	PipelineStateObject* m_PSO;
+	Material* m_Material;
+	CGameObject* m_GameObject;
 
 public:
-	CRender(){}
+	CRender() = delete;
+	CRender(CGameObject* obj):m_GameObject(obj){}
 	virtual ~CRender(){}
 
-	virtual void SetUpRender() = 0;
-	virtual void UninitRender() = 0;
+
 	virtual void Draw() = 0;
+
+	Material* GetMaterial() { return m_Material; }
+
+	bool operator < (CRender* const rhs)const
+	{
+		if(m_Material->GetRenderQueue() == rhs->GetMaterial()->GetRenderQueue())
+			return m_Material->GetMaterialName() < rhs->GetMaterial()->GetMaterialName();
+
+		return m_Material->GetRenderQueue() < rhs->GetMaterial()->GetRenderQueue();
+	}
 };

@@ -1,7 +1,7 @@
 #pragma once
-#include "CRender.h"
+#include "CRenderPipeline.h"
 
-class DefferedRender : public CRender
+class DefferedRender : public CRenderPipeline
 {
 public:
 	DefferedRender(){}

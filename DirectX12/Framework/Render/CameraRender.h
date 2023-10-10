@@ -1,11 +1,16 @@
 #pragma once
+#include <list>
 
-class CRender;
+class CRenderPipeline;
+class CGameObject;
 
 class CameraRender
 {
 private:
-	CRender* m_CurrentRender;
+	CRenderPipeline* m_CurrentRender;
+
+	const int OPACITY_RENDER_QUEUE = 3000;
+	const int TRANSPARENT_RENDER_QUEUE = 7500;
 
 public:
 	CameraRender() { SetUpRender(); }
@@ -13,5 +18,5 @@ public:
 
 	void SetUpRender();
 	void UninitRender();
-	void Draw();
+	void Draw(std::list<CGameObject*> gameObjects[]);
 };

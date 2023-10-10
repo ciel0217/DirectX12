@@ -154,9 +154,14 @@
     <ClInclude Include="Framework\MemoryAllocator\TLSFAllocator.h" />
     <ClInclude Include="Framework\Render\CameraRender.h" />
     <ClInclude Include="Framework\Render\CRender.h" />
+    <ClInclude Include="Framework\Render\CRenderPipeline.h" />
     <ClInclude Include="Framework\Render\DefferedRender.h" />
+    <ClInclude Include="Framework\Render\MeshRender.h" />
+    <ClInclude Include="Framework\Resources\CGameObject.h" />
     <ClInclude Include="Framework\Resources\FrameResources.h" />
     <ClInclude Include="Framework\Resources\GpuBuffer.h" />
+    <ClInclude Include="Framework\Resources\Material.h" />
+    <ClInclude Include="Framework\Resources\MaterialManager.h" />
     <ClInclude Include="Framework\Resources\Model.h" />
     <ClInclude Include="Framework\Resources\Shader.h" />
     <ClInclude Include="Framework\Resources\Texture2D.h" />
@@ -177,8 +182,10 @@
     <ClCompile Include="Framework\MemoryAllocator\TLSFAllocator.cpp" />
     <ClCompile Include="Framework\Render\CameraRender.cpp" />
     <ClCompile Include="Framework\Render\DefferedRender.cpp" />
+    <ClCompile Include="Framework\Render\MeshRender.cpp" />
     <ClCompile Include="Framework\Resources\FrameResources.cpp" />
     <ClCompile Include="Framework\Resources\GpuBuffer.cpp" />
+    <ClCompile Include="Framework\Resources\MaterialManager.cpp" />
     <ClCompile Include="Framework\Resources\Model.cpp" />
     <ClCompile Include="Framework\Resources\Shader.cpp" />
     <ClCompile Include="Framework\Resources\Texture2D.cpp" />

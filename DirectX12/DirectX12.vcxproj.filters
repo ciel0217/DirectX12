@@ -102,10 +102,25 @@
     <ClInclude Include="Framework\Render\CameraRender.h">
       <Filter>Framework\Render</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Render\DefferedRender.h">
+      <Filter>Framework\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Resources\Material.h">
+      <Filter>Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Resources\MaterialManager.h">
+      <Filter>Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Resources\CGameObject.h">
+      <Filter>Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Render\CRenderPipeline.h">
+      <Filter>Framework\Render</Filter>
+    </ClInclude>
     <ClInclude Include="Framework\Render\CRender.h">
       <Filter>Framework\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\Render\DefferedRender.h">
+    <ClInclude Include="Framework\Render\MeshRender.h">
       <Filter>Framework\Render</Filter>
     </ClInclude>
   </ItemGroup>
@@ -166,6 +181,12 @@
     </ClCompile>
     <ClCompile Include="Framework\Render\CameraRender.cpp">
       <Filter>Framework\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Resources\MaterialManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Render\MeshRender.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
