@@ -32,15 +32,17 @@ void Shader::CalcShaderReflection(const D3D12_SHADER_BYTECODE & byteCode)
 	UINT textureCount = 0;
 	UINT constantBufferCount = 0;
 
-	/*for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++)
+	std::vector<D3D12_SHADER_BUFFER_DESC> cBufferDescs;
+	cBufferDescs.resize(shaderDesc.ConstantBuffers);
+
+	for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++)
 	{
 		ID3D12ShaderReflectionConstantBuffer* cBuffer = m_ShaderRef->GetConstantBufferByIndex(i);
 		
 		D3D12_SHADER_BUFFER_DESC cBufferDesc = {};
 		cBuffer->GetDesc(&cBufferDesc);
-
-		
-	}*/
+		cBufferDescs[i] = cBufferDesc;
+	}
 	/*for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
 		D3D12_SHADER_INPUT_BIND_DESC bindDesc = {};
 		m_ShaderRef.Get()->GetResourceBindingDesc(i, &bindDesc);
@@ -71,12 +73,13 @@ void Shader::CalcShaderReflection(const D3D12_SHADER_BYTECODE & byteCode)
 		{
 		case D3D_SIT_CBUFFER:
 		
-			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].NumDescriptors = 1;
-			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].BaseShaderRegister = bindDesc.BindPoint;
-			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].RegisterSpace = 0;
-			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].Flags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
-			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].range.NumDescriptors = 1;
+			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].range.BaseShaderRegister = bindDesc.BindPoint;
+			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].range.RegisterSpace = 0;
+			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].range.Flags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
+			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+			m_ShaderRefResult.m_CBVRangeDescs[bindDesc.Name].desc = cBufferDescs[cbCount];
 			cbCount++;
 			
 			break;
@@ -133,7 +136,7 @@ D3D12_ROOT_PARAMETER1 Shader::GetCbvRootParameter(const D3D12_SHADER_VISIBILITY 
 	parameter.ShaderVisibility = visibility;
 	parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	parameter.DescriptorTable.NumDescriptorRanges = 1;
-	parameter.DescriptorTable.pDescriptorRanges = &m_ShaderRefResult.m_CBVRangeDescs.at(name);
+	parameter.DescriptorTable.pDescriptorRanges = &m_ShaderRefResult.m_CBVRangeDescs.at(name).range;
 	/*parameter.DescriptorTable.NumDescriptorRanges = static_cast<UINT>(m_ShaderRefResult.m_CBVRangeDescs.size());
 	parameter.DescriptorTable.pDescriptorRanges = m_ShaderRefResult.m_CBVRangeDescs.data();*/
 	return parameter;

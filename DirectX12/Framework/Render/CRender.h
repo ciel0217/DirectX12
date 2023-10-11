@@ -1,23 +1,27 @@
 #pragma once
 #include "../Resources/Material.h"
+#include "../Resources/GpuBuffer.h"
+#include "../LowLevel/BufferView.h"
 
 class CGameObject;
 
 class CRender
 {
 protected:
-	Material* m_Material;
-	CGameObject* m_GameObject;
+	std::shared_ptr<Material> m_Material;
+	std::shared_ptr<CGameObject> m_Self;
+	std::shared_ptr<ConstantBuffer> m_WVPCBuffer;
+	std::shared_ptr<BufferView> m_WVPCView;
 
 public:
 	CRender() = delete;
-	CRender(CGameObject* obj):m_GameObject(obj){}
+	CRender(CGameObject* obj):m_Self(obj){}
 	virtual ~CRender(){}
 
 
 	virtual void Draw() = 0;
 
-	Material* GetMaterial() { return m_Material; }
+	std::shared_ptr<Material> GetMaterial() { return m_Material; }
 
 	bool operator < (CRender* const rhs)const
 	{

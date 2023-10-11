@@ -33,7 +33,9 @@ void RootSignature::Create(const ComPtr<ID3D12Device>& device, const VertexShade
 		for (const auto& desc : vShader->GetShaderReflectResult().m_CBVRangeDescs)
 		{
 			m_DescriptorTableIndex[desc.first] = rootParameter.size();
-			rootParameter.push_back(vShader->GetCbvRootParameter(desc.first));
+
+			D3D12_ROOT_PARAMETER1 parameter = vShader->GetCbvRootParameter(desc.first);
+			rootParameter.push_back(parameter);
 		}
 
 	if (!vShader->GetShaderReflectResult().m_SRVRangeDescs.empty())

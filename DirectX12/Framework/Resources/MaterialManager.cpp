@@ -1,5 +1,4 @@
 #include "MaterialManager.h"
-#include "Material.h"
 #include "../Resources/Shader.h"
 #include "../LowLevel/RootSignature.h"
 #include "../LowLevel/PipelineStateObject.h"
@@ -7,12 +6,22 @@
 
 MaterialManager* MaterialManager::m_Instance = nullptr;
 
-Material * MaterialManager::CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue)
+std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue)
 {
+	//すでに生成済み
 	if (m_Materials.count(material_name))
-		return m_Materials[material_name].get();//TODO:::shared_ptrごと渡した方がいいのか...？
+		return m_Materials[material_name];
 
-	m_Materials[material_name].reset(new Material(material_name, vertex_name, pixel_name, render_queue));
+	//マテリアルは違うけど、使ってるshaderが全部一緒のマテリアルがある場合、shaderやrootSignatureは生成しない
+	for (auto material : m_Materials)
+	{
+		if (material.second.get()->GetVertexShaderName() == vertex_name && material.second.get()->GetPixelShaderName() == pixel_name)
+		{
+			
+			return m_Materials[material_name];
+		}
+	}
+	
 
 	ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
 
@@ -28,8 +37,7 @@ Material * MaterialManager::CreateMaterial(std::string material_name, std::strin
 	PipelineStateObject pso;
 	pso.CreateGraphicPipeline(device, &signature, &v, &p);
 
-	m_RenderSets[material_name].reset(new RenderSet(&v, &p, &signature, &pso));
-	
+	m_Materials[material_name].reset(new Material(material_name, vertex_name, pixel_name, new RenderSet(&v, &p, &signature, &pso), render_queue));
 
-	return m_Materials[material_name].get();
+	return m_Materials[material_name];
 }

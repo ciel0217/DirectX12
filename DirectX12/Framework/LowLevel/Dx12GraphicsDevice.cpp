@@ -128,7 +128,7 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	m_IndexBuffer.CreateIndexBuffer(m_Device, &m_GraphicsCommandContext, index);
 	m_VBuffer.CreateVertexBuffer(m_Device, &m_GraphicsCommandContext, pos);
 
-	m_RootSignature.Create(m_Device, m_VShader, m_PShader);
+	m_RootSignature.Create(m_Device, &m_VShader, &m_PShader);
 	m_PSO.CreateGraphicPipeline(m_Device, &m_RootSignature, &m_VShader, &m_PShader);
 	
 

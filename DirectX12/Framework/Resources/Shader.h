@@ -11,9 +11,15 @@ struct ShaderObject
 };
 
 
+struct CBVData
+{
+	D3D12_DESCRIPTOR_RANGE1 range;
+	D3D12_SHADER_BUFFER_DESC desc;
+};
+
 struct ShaderReflectResult
 {
-	std::unordered_map<std::string, D3D12_DESCRIPTOR_RANGE1> m_CBVRangeDescs;
+	std::unordered_map<std::string, CBVData> m_CBVRangeDescs;
 	std::unordered_map<std::string, D3D12_DESCRIPTOR_RANGE1> m_SRVRangeDescs;
 };
 
