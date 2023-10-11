@@ -15,10 +15,10 @@ protected:
 
 public:
 	CRender() = delete;
-	CRender(CGameObject* obj):m_Self(obj){}
+	CRender(CGameObject* obj) :m_Self(obj) { SetUpRender(); }
 	virtual ~CRender(){}
 
-
+	virtual void SetUpRender() = 0;
 	virtual void Draw() = 0;
 
 	std::shared_ptr<Material> GetMaterial() { return m_Material; }

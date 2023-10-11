@@ -17,7 +17,16 @@ std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_n
 	{
 		if (material.second.get()->GetVertexShaderName() == vertex_name && material.second.get()->GetPixelShaderName() == pixel_name)
 		{
+			std::shared_ptr<RenderSet> renderSet = material.second->GetRenderSet();
+
 			
+			VertexShader* v = renderSet->vShader;
+			PixelShader* p = renderSet->pShader;
+			RootSignature* r = renderSet->rootSignature;
+			PipelineStateObject* pso = renderSet->pipelineStateObj;
+
+			m_Materials[material_name].reset(new Material(material_name, vertex_name, pixel_name, new RenderSet(v, p, r, pso), render_queue));
+
 			return m_Materials[material_name];
 		}
 	}

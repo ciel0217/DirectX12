@@ -37,10 +37,12 @@ public:
 	Material() = delete;
 	Material(std::string material_name, std::string vertex_name, std::string pixel_name, RenderSet* render_set, int render_queue) : 
 		m_MaterialName(material_name), m_VertexShaderName(m_VertexShaderName), m_PixelShaderName(pixel_name), m_RenderSet(render_set), m_RenderQueue(render_queue){}
+	
 	~Material() {};
 
 	std::string GetMaterialName() { return m_MaterialName; }
 	std::string GetVertexShaderName() { return m_VertexShaderName; }
 	std::string GetPixelShaderName() { return m_PixelShaderName; }
 	int GetRenderQueue() { return m_RenderQueue; }
+	std::shared_ptr<RenderSet> GetRenderSet() { return m_RenderSet; }
 };
