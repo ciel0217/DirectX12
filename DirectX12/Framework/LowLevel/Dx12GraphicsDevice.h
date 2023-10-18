@@ -60,4 +60,8 @@ public:
 
 	const ComPtr<ID3D12Device> &GetDevice()const { return m_Device; }
 	CommandContext* const GetGraphicContext(){ return &m_GraphicsCommandContext; }
+	FrameResources* const GetFrameResource(UINT index) { return &m_FrameResource[index]; }
+	BufferView* GetDSV() { return &m_DSV; }
+	UINT GetFrameIndex() { return m_FrameIndex; }
+
 };

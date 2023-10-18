@@ -20,10 +20,10 @@ std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_n
 			std::shared_ptr<RenderSet> renderSet = material.second->GetRenderSet();
 
 			
-			VertexShader* v = renderSet->vShader;
-			PixelShader* p = renderSet->pShader;
-			RootSignature* r = renderSet->rootSignature;
-			PipelineStateObject* pso = renderSet->pipelineStateObj;
+			std::shared_ptr<VertexShader> v = renderSet->vShader;
+			std::shared_ptr<PixelShader> p = renderSet->pShader;
+			std::shared_ptr<RootSignature> r = renderSet->rootSignature;
+			std::shared_ptr<PipelineStateObject> pso = renderSet->pipelineStateObj;
 
 			m_Materials[material_name].reset(new Material(material_name, vertex_name, pixel_name, new RenderSet(v, p, r, pso), render_queue));
 

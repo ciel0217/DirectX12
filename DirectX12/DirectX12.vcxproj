@@ -157,6 +157,7 @@
     <ClInclude Include="Framework\Render\CRenderPipeline.h" />
     <ClInclude Include="Framework\Render\DefferedRender.h" />
     <ClInclude Include="Framework\Render\MeshRender.h" />
+    <ClInclude Include="Framework\Resources\Camera.h" />
     <ClInclude Include="Framework\Resources\CGameObject.h" />
     <ClInclude Include="Framework\Resources\FrameResources.h" />
     <ClInclude Include="Framework\Resources\GpuBuffer.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="Framework\Render\CameraRender.cpp" />
     <ClCompile Include="Framework\Render\DefferedRender.cpp" />
     <ClCompile Include="Framework\Render\MeshRender.cpp" />
+    <ClCompile Include="Framework\Resources\Camera.cpp" />
     <ClCompile Include="Framework\Resources\FrameResources.cpp" />
     <ClCompile Include="Framework\Resources\GpuBuffer.cpp" />
     <ClCompile Include="Framework\Resources\MaterialManager.cpp" />

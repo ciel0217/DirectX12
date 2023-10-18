@@ -123,6 +123,9 @@
     <ClInclude Include="Framework\Render\MeshRender.h">
       <Filter>Framework\Render</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Resources\Camera.h">
+      <Filter>Framework\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
@@ -186,6 +189,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Render\MeshRender.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Resources\Camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

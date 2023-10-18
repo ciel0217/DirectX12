@@ -12,15 +12,25 @@ class PipelineStateObject;
 
 struct RenderSet
 {
-	VertexShader* vShader;
-	PixelShader* pShader;
-	RootSignature* rootSignature;
-	PipelineStateObject* pipelineStateObj;
+	std::shared_ptr<VertexShader> vShader;
+	std::shared_ptr<PixelShader> pShader;
+	std::shared_ptr<RootSignature> rootSignature;
+	std::shared_ptr<PipelineStateObject> pipelineStateObj;
 
 	RenderSet() = delete;
 	RenderSet(VertexShader* v, PixelShader* p,
-		RootSignature* signature, PipelineStateObject* pso) :vShader(v), pShader(p), rootSignature(signature), pipelineStateObj(pso) {}
-	~RenderSet() { delete vShader; delete pShader; delete rootSignature; delete pipelineStateObj; }
+		RootSignature* signature, PipelineStateObject* pso) 
+	{
+		vShader.reset(v); pShader.reset(p); rootSignature.reset(signature); pipelineStateObj.reset(pso);
+	}
+
+	RenderSet(std::shared_ptr<VertexShader> v, std::shared_ptr<PixelShader> p,
+		std::shared_ptr<RootSignature> signature, std::shared_ptr<PipelineStateObject> pso)
+	{
+		vShader = v; pShader = p; rootSignature = signature; pipelineStateObj = pso;
+	}
+
+	~RenderSet() { }
 };
 
 class Material
