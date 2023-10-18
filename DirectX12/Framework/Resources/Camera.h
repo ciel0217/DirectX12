@@ -13,4 +13,6 @@ public:
 	void Uninit()override;
 	void Init()override;
 	void Update()override;
+
+	void PreRender();
 };

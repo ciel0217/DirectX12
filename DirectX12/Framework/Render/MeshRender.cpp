@@ -9,18 +9,17 @@ void MeshRender::SetUpRender()
 {
 	ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
 
-	m_WVPCBuffer.reset(new ConstantBuffer());
-	m_WVPCBuffer->CreateConstantBuffer(device, sizeof(WVP));
+	m_WorldCBuffer.reset(new ConstantBuffer());
+	m_WorldCBuffer->CreateConstantBuffer(device, sizeof(WorldMatrix));
 	
-	m_WVPCView.reset(new BufferView());
-	DescriptorHeapManager::Intance().CreateConstantBufferView(m_WVPCBuffer->GetResource().GetAddressOf(), m_WVPCView.get(), 1);
+	m_WorldView.reset(new BufferView());
+	DescriptorHeapManager::Intance().CreateConstantBufferView(m_WorldCBuffer->GetResource().GetAddressOf(), m_WorldView.get(), 1);
 
 }
 
 void MeshRender::Draw()
 {
-	std::shared_ptr<Model> model = m_Self->GetModel();
-	if (!model)
+	if (!m_Model)
 		return;
 
 
@@ -28,9 +27,12 @@ void MeshRender::Draw()
 	auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
 
 	//sizeはみんな一緒
-	std::vector<VertexBuffer> vBuffer = model->GetVertexBuffer();
-	std::vector<IndexBuffer> iBuffer = model->GetIndexBuffer();
-	std::vector<UINT> indexNum = model->GetIndexNum();
+	std::vector<VertexBuffer> vBuffer = m_Model->GetVertexBuffer();
+	std::vector<IndexBuffer> iBuffer = m_Model->GetIndexBuffer();
+	std::vector<UINT> indexNum = m_Model->GetIndexNum();
+
+	//TODO::World行列計算
+	//TODO::定数バッファの設定
 	
 	for (int i = 0; i < vBuffer.size(); i++)
 	{
@@ -40,6 +42,8 @@ void MeshRender::Draw()
 
 		commandListSet.m_CommandList.Get()->IASetVertexBuffers(0, 1, &vB.GetVertexBufferView());
 		commandListSet.m_CommandList.Get()->IASetIndexBuffer(&iB.GetIndexBufferView());
+
+
 
 		commandListSet.m_CommandList.Get()->DrawIndexedInstanced(iNum, 1, 0, 0, 0);
 	}

@@ -10,8 +10,8 @@ class CRender
 protected:
 	std::shared_ptr<Material> m_Material;
 	std::shared_ptr<CGameObject> m_Self;
-	std::shared_ptr<ConstantBuffer> m_WVPCBuffer;
-	std::shared_ptr<BufferView> m_WVPCView;
+	std::shared_ptr<ConstantBuffer> m_WorldCBuffer;
+	std::shared_ptr<BufferView> m_WorldView;
 
 public:
 	CRender() = delete;

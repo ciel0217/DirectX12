@@ -3,7 +3,6 @@
 #include <unordered_map>
 
 
-class Material;
 class VertexShader;
 class PixelShader;
 class RootSignature;

@@ -4,13 +4,21 @@
 #include "CRender.h"
 #include "../Resources/Material.h"
 #include "../LowLevel/Dx12GraphicsDevice.h"
-//#include "../LowLevel/DirectX12.h"
-
+#include "../LowLevel/BufferView.h"
+#include "../Resources/GpuBuffer.h"
 
 void CameraRender::SetUpRender()
 {
 	m_CurrentRender.reset(new DefferedRender());
 	m_CurrentRender->SetUpRender();
+
+	m_VPCBuffer.reset(new ConstantBuffer());
+	m_VPView.reset(new BufferView());
+
+	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
+	m_VPCBuffer->CreateConstantBuffer(dxDevice->GetDevice(), sizeof(VP));
+	DescriptorHeapManager::Intance().CreateConstantBufferView(m_VPCBuffer->GetResource().GetAddressOf(), m_VPView.get(), 1);
+	
 }
 
 void CameraRender::UninitRender()
@@ -63,6 +71,7 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 
 		UINT frameIndex = dxDevice->GetFrameIndex();
 		FrameResources* frameResource = dxDevice->GetFrameResource(frameIndex);
+
 		//ResourceBarrier‚Ìİ’è(•`‰æ‘OVer)
 		D3D12_RESOURCE_BARRIER barrier;
 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
