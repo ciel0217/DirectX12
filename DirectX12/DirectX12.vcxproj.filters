@@ -185,14 +185,14 @@
     <ClCompile Include="Framework\Render\CameraRender.cpp">
       <Filter>Framework\Render</Filter>
     </ClCompile>
+    <ClCompile Include="Framework\Resources\Camera.cpp">
+      <Filter>Framework\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="Framework\Resources\MaterialManager.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Framework\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Render\MeshRender.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\Resources\Camera.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Framework\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
