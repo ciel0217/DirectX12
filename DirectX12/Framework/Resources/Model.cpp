@@ -28,7 +28,7 @@ void Model::LoadModel()
 	meshes.resize(scene->mNumMeshes);
 	m_IndexNum.resize(scene->mNumMeshes);
 
-	for (int i = 0; i < scene->mNumMeshes; i++)
+	for (UINT i = 0; i < scene->mNumMeshes; i++)
 	{
 		const auto  mesh = scene->mMeshes[i];
 		
@@ -36,7 +36,7 @@ void Model::LoadModel()
 		meshes[i].m_Indices.resize(mesh->mNumFaces * 3);//1Face‚ÍŽOŠpŒ`‚¾‚©‚ç
 		m_IndexNum[i] = mesh->mNumFaces * 3;
 
-		for (int j = 0; j < mesh->mNumVertices; j++)
+		for (UINT j = 0; j < mesh->mNumVertices; j++)
 		{
 			auto position = mesh->mVertices[j];
 			auto normal = mesh->mNormals[j];
@@ -49,7 +49,7 @@ void Model::LoadModel()
 			meshes[i].m_Vertices[j].m_Diffuse = XMFLOAT4(color.r, color.g, color.b, color.a);
 		}
 
-		for (int j = 0; j < mesh->mNumFaces; j++)
+		for (UINT j = 0; j < mesh->mNumFaces; j++)
 		{
 			const auto & face = mesh->mFaces[j];
 

@@ -22,7 +22,7 @@ void PipelineStateObject::CreateGraphicPipeline(ComPtr<ID3D12Device>& device, Ro
 	desc.PrimitiveTopologyType = psoDesc.m_Topology;
 
 	desc.NumRenderTargets = psoDesc.m_RenderTargetsNum;
-	for (int i = 0; i < desc.NumRenderTargets; i++)
+	for (UINT i = 0; i < desc.NumRenderTargets; i++)
 		desc.RTVFormats[i] = psoDesc.m_RTVFormat[i];
 
 	desc.DSVFormat = DXGI_FORMAT_D32_FLOAT;

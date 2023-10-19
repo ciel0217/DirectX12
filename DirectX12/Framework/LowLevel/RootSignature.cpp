@@ -32,7 +32,7 @@ void RootSignature::Create(const ComPtr<ID3D12Device>& device, const VertexShade
 	if (!vShader->GetShaderReflectResult().m_CBVRangeDescs.empty())
 		for (const auto& desc : vShader->GetShaderReflectResult().m_CBVRangeDescs)
 		{
-			m_DescriptorTableIndex[desc.first] = rootParameter.size();
+			m_DescriptorTableIndex[desc.first] = static_cast<UINT>(rootParameter.size());
 
 			D3D12_ROOT_PARAMETER1 parameter = vShader->GetCbvRootParameter(desc.first);
 			rootParameter.push_back(parameter);
@@ -41,21 +41,21 @@ void RootSignature::Create(const ComPtr<ID3D12Device>& device, const VertexShade
 	if (!vShader->GetShaderReflectResult().m_SRVRangeDescs.empty())
 		for (const auto& desc : vShader->GetShaderReflectResult().m_SRVRangeDescs)
 		{
-			m_DescriptorTableIndex[desc.first] = rootParameter.size();
+			m_DescriptorTableIndex[desc.first] = static_cast<UINT>(rootParameter.size());
 			rootParameter.push_back(vShader->GetSrvRootParameter(desc.first));
 		}
 
 	if (!pShader->GetShaderReflectResult().m_CBVRangeDescs.empty())
 		for (const auto& desc : pShader->GetShaderReflectResult().m_CBVRangeDescs)
 		{
-			m_DescriptorTableIndex[desc.first] = rootParameter.size();
+			m_DescriptorTableIndex[desc.first] = static_cast<UINT>(rootParameter.size());
 			rootParameter.push_back(pShader->GetCbvRootParameter(desc.first));
 		}
 
 	if (!pShader->GetShaderReflectResult().m_SRVRangeDescs.empty())
 		for (const auto& desc : pShader->GetShaderReflectResult().m_SRVRangeDescs)
 		{
-			m_DescriptorTableIndex[desc.first] = rootParameter.size();
+			m_DescriptorTableIndex[desc.first] = static_cast<UINT>(rootParameter.size());
 			rootParameter.push_back(pShader->GetSrvRootParameter(desc.first));
 		}
 
