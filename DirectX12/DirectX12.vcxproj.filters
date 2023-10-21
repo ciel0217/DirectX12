@@ -126,6 +126,15 @@
     <ClInclude Include="Framework\Resources\Camera.h">
       <Filter>Framework\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Resources\CScene.h">
+      <Filter>Framework\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="TestObject.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
@@ -193,6 +202,15 @@
     </ClCompile>
     <ClCompile Include="Framework\Render\MeshRender.cpp">
       <Filter>Framework\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Resources\CScene.cpp">
+      <Filter>Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObject.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

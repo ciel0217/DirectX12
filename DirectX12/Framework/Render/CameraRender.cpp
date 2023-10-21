@@ -2,7 +2,7 @@
 #include "DefferedRender.h"
 #include "../Resources/CGameObject.h"
 #include "CRender.h"
-#include "../Resources/Material.h"
+#include "../Resources/MaterialManager.h"
 #include "../LowLevel/Dx12GraphicsDevice.h"
 #include "../LowLevel/BufferView.h"
 #include "../Resources/GpuBuffer.h"
@@ -46,7 +46,7 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 			if (!render)continue;
 
 			//TODO::2D‘Î‰ž‚µ‚Ä‚È‚¢‚æ
-			if (render->GetMaterial()->GetRenderQueue() < OPACITY_RENDER_QUEUE)
+			if (render->GetMaterial()->GetRenderQueue() < MaterialManager::OPACITY_RENDER_QUEUE)
 				opacityList.push_back(render);
 			else
 				transparentList.push_back(render);

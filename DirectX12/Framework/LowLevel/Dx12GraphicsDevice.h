@@ -10,6 +10,7 @@
 #include "RootSignature.h"
 #include "../Resources/GpuBuffer.h"
 #include "../Resources/Model.h"
+#include "../../TestScene.h"
 
 //ダブルバッファリング
 constexpr UINT FRAME_COUNT = 2;
@@ -46,6 +47,9 @@ private:
 	ConstantBuffer m_Constantt;
 	BufferView m_Constantbf;
 	Model* m_Model;
+
+	TestScene* test;
+
 
 	void MoveToNextFrame();
 

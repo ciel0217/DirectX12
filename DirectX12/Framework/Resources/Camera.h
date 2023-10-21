@@ -2,7 +2,7 @@
 #include "../Render/CameraRender.h"
 #include "CGameObject.h"
 
-class Camera : public CameraRender, CGameObject
+class Camera : public CameraRender, public CGameObject
 {
 private:
 	XMFLOAT3 m_LookAtPoint;

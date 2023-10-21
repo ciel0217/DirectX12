@@ -159,6 +159,7 @@
     <ClInclude Include="Framework\Render\MeshRender.h" />
     <ClInclude Include="Framework\Resources\Camera.h" />
     <ClInclude Include="Framework\Resources\CGameObject.h" />
+    <ClInclude Include="Framework\Resources\CScene.h" />
     <ClInclude Include="Framework\Resources\FrameResources.h" />
     <ClInclude Include="Framework\Resources\GpuBuffer.h" />
     <ClInclude Include="Framework\Resources\Material.h" />
@@ -168,6 +169,8 @@
     <ClInclude Include="Framework\Resources\Texture2D.h" />
     <ClInclude Include="Framework\Utility\Utility.h" />
     <ClInclude Include="MainApplication.h" />
+    <ClInclude Include="TestObject.h" />
+    <ClInclude Include="TestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DirectXTex\WICTextureLoader12.cpp" />
@@ -185,6 +188,7 @@
     <ClCompile Include="Framework\Render\DefferedRender.cpp" />
     <ClCompile Include="Framework\Render\MeshRender.cpp" />
     <ClCompile Include="Framework\Resources\Camera.cpp" />
+    <ClCompile Include="Framework\Resources\CScene.cpp" />
     <ClCompile Include="Framework\Resources\FrameResources.cpp" />
     <ClCompile Include="Framework\Resources\GpuBuffer.cpp" />
     <ClCompile Include="Framework\Resources\MaterialManager.cpp" />
@@ -192,6 +196,8 @@
     <ClCompile Include="Framework\Resources\Shader.cpp" />
     <ClCompile Include="Framework\Resources\Texture2D.cpp" />
     <ClCompile Include="MainApplication.cpp" />
+    <ClCompile Include="TestObject.cpp" />
+    <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Framework\Shader\TestPixel.hlsl">

@@ -15,6 +15,10 @@ private:
 	~MaterialManager() = default;
 
 public:
+
+	static const int OPACITY_RENDER_QUEUE = 3000;
+	static const int TRANSPARENT_RENDER_QUEUE = 7500;
+
 	//ÉRÉsÅ[ã÷é~
 	MaterialManager(const MaterialManager&) = delete;
 	MaterialManager& operator=(const MaterialManager&) = delete;
@@ -23,7 +27,7 @@ public:
 	MaterialManager& operator=(MaterialManager&&) = delete;
 	
 	static MaterialManager* GetInstance() { return m_Instance; }
-	static void Create() { if (!m_Instance)m_Instance = new MaterialManager(); }
+	static void Create() { if (!m_Instance)m_Instance = new MaterialManager();  }
 	static void Destroy() { delete m_Instance; m_Instance = nullptr; }
 
 	std::shared_ptr<Material> CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue);

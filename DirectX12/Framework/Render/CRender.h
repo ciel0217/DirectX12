@@ -12,13 +12,14 @@ protected:
 	std::shared_ptr<CGameObject> m_Self;
 	std::shared_ptr<ConstantBuffer> m_WorldCBuffer;
 	std::shared_ptr<BufferView> m_WorldView;
-
+	
+	virtual void SetUpRender() = 0;
+	
 public:
 	CRender() = delete;
-	CRender(CGameObject* obj) :m_Self(obj) { SetUpRender(); }
+	CRender(CGameObject* obj) : m_Self(obj) {}
 	virtual ~CRender(){}
 
-	virtual void SetUpRender() = 0;
 	virtual void Draw() = 0;
 
 	std::shared_ptr<Material> GetMaterial() { return m_Material; }

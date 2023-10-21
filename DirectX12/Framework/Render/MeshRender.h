@@ -11,9 +11,12 @@ class Model;
 
 class MeshRender : public CRender
 {
-private:
+protected:
 	std::shared_ptr<Model> m_Model;
-public:
 	void SetUpRender()override;
+
+public:
+	MeshRender(CGameObject* self) : CRender(self) { SetUpRender(); }
+	
 	void Draw()override;
 };
