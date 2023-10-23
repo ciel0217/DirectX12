@@ -13,7 +13,7 @@ void MeshRender::SetUpRender()
 	m_WorldCBuffer->CreateConstantBuffer(device, sizeof(WorldMatrix));
 	
 	m_WorldView.reset(new BufferView());
-	DescriptorHeapManager::Intance().CreateConstantBufferView(m_WorldCBuffer->GetResource().GetAddressOf(), m_WorldView.get(), 1);
+	DescriptorHeapManager::Instance().CreateConstantBufferView(m_WorldCBuffer->GetResource().GetAddressOf(), m_WorldView.get(), 1);
 
 }
 

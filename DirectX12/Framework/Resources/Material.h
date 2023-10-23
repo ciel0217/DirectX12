@@ -7,7 +7,8 @@ class VertexShader;
 class PixelShader;
 class RootSignature;
 class PipelineStateObject;
-
+class ConstantBuffer;
+struct BufferView;
 
 struct RenderSet
 {
@@ -32,20 +33,37 @@ struct RenderSet
 	~RenderSet() { }
 };
 
+struct CBufferSet
+{
+	std::unique_ptr<ConstantBuffer> constantBuffer;
+	std::unique_ptr<BufferView> constantBufferView;
+
+	CBufferSet(ConstantBuffer* buffer, BufferView* bufferView) : constantBuffer(buffer), constantBufferView(bufferView){}
+};
+
 class Material
 {
 private:
+
+
 	std::string m_VertexShaderName;
 	std::string m_PixelShaderName;
 	std::string m_MaterialName;
 	std::shared_ptr<RenderSet> m_RenderSet;
+	std::unordered_map<std::string, std::shared_ptr<CBufferSet>> m_CBufferSet;
 
 	int m_RenderQueue;
+
+	void CalcConstantBuffer();
 
 public:
 	Material() = delete;
 	Material(std::string material_name, std::string vertex_name, std::string pixel_name, RenderSet* render_set, int render_queue) : 
-		m_MaterialName(material_name), m_VertexShaderName(vertex_name), m_PixelShaderName(pixel_name), m_RenderSet(render_set), m_RenderQueue(render_queue){}
+		m_MaterialName(material_name), m_VertexShaderName(vertex_name), m_PixelShaderName(pixel_name),
+		m_RenderSet(render_set), m_RenderQueue(render_queue)
+	{
+		CalcConstantBuffer();
+	}
 	
 	~Material() {};
 

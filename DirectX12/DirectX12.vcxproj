@@ -191,6 +191,7 @@
     <ClCompile Include="Framework\Resources\CScene.cpp" />
     <ClCompile Include="Framework\Resources\FrameResources.cpp" />
     <ClCompile Include="Framework\Resources\GpuBuffer.cpp" />
+    <ClCompile Include="Framework\Resources\Material.cpp" />
     <ClCompile Include="Framework\Resources\MaterialManager.cpp" />
     <ClCompile Include="Framework\Resources\Model.cpp" />
     <ClCompile Include="Framework\Resources\Shader.cpp" />

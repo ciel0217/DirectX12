@@ -212,6 +212,9 @@
     <ClCompile Include="TestObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Framework\Resources\Material.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Framework\Shader\TestVertex.hlsl">

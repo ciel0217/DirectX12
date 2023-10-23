@@ -94,7 +94,7 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 		m_DepthStencil.CreateDepth(m_Device, info);
 		const ComPtr<ID3D12Resource>& res = m_DepthStencil.GetResource();
 		
-		DescriptorHeapManager::Intance().CreateDepthStencilView(res.GetAddressOf(), &m_DSV, 1);
+		DescriptorHeapManager::Instance().CreateDepthStencilView(res.GetAddressOf(), &m_DSV, 1);
 	}
 
 	for (int i = 0; i < FRAME_COUNT; i++)
@@ -109,7 +109,7 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	ComPtr<ID3D12Resource> re;
 	m_Texture.CreateTexture(m_Device, &m_GraphicsCommandContext, re, "Asset/Texture/test.png");
 
-	DescriptorHeapManager::Intance().CreateTextureShaderResourceView(m_Texture.GetResource().GetAddressOf(), &m_TexV, 1);*/
+	DescriptorHeapManager::Instance().CreateTextureShaderResourceView(m_Texture.GetResource().GetAddressOf(), &m_TexV, 1);*/
 
 	////ˆÈ‰ºTest—p
 	//m_VShader.Create("Framework/Shader/TestVertex.cso");
@@ -145,13 +145,13 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	//da.p = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.1, 10000);
 	//da.p = XMMatrixTranspose(da.p);
 	//m_Constant.WriteData(&da, sizeof(wvp));
-	//DescriptorHeapManager::Intance().CreateConstantBufferView(m_Constant.GetResource().GetAddressOf(), &m_ConstantB, 1);
+	//DescriptorHeapManager::Instance().CreateConstantBufferView(m_Constant.GetResource().GetAddressOf(), &m_ConstantB, 1);
 
 	//m_Constantt.CreateConstantBuffer(m_Device, sizeof(float));
 
 	//float t = 0.3;
 	//m_Constantt.WriteData(&t, sizeof(float));
-	//DescriptorHeapManager::Intance().CreateConstantBufferView(m_Constantt.GetResource().GetAddressOf(), &m_Constantbf, 1);
+	//DescriptorHeapManager::Instance().CreateConstantBufferView(m_Constantt.GetResource().GetAddressOf(), &m_Constantbf, 1);
 	//m_Model = new Model("Asset/Model/Sphere.obj");
 	//m_Model->LoadModel();
 
@@ -170,7 +170,7 @@ void Dx12GraphicsDevice::Render()
 		test->Draw();
 		//auto commandListSet = m_GraphicsCommandContext.RequestCommandListSet();
 		//
-		//ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Intance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get()};
+		//ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get()};
 
 		////Žg‚¤DescriptorHeap‚ÌÝ’è
 		//commandListSet.m_CommandList.Get()->SetDescriptorHeaps(1, ppHeaps);

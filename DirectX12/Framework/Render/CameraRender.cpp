@@ -17,7 +17,7 @@ void CameraRender::SetUpRender()
 
 	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
 	m_VPCBuffer->CreateConstantBuffer(dxDevice->GetDevice(), sizeof(VP));
-	DescriptorHeapManager::Intance().CreateConstantBufferView(m_VPCBuffer->GetResource().GetAddressOf(), m_VPView.get(), 1);
+	DescriptorHeapManager::Instance().CreateConstantBufferView(m_VPCBuffer->GetResource().GetAddressOf(), m_VPView.get(), 1);
 	
 }
 
@@ -64,7 +64,7 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 
 		auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
 
-		ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Intance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
+		ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
 
 		//Žg‚¤DescriptorHeap‚ÌÝ’è
 		commandListSet.m_CommandList.Get()->SetDescriptorHeaps(1, ppHeaps);

@@ -53,7 +53,7 @@ public:
 	DescriptorHeapManager();
 	~DescriptorHeapManager();
 
-	static DescriptorHeapManager& Intance() { return *m_Singleton; }
+	static DescriptorHeapManager& Instance() { return *m_Singleton; }
 
 	void Create(const ComPtr<ID3D12Device> &device);
 	void Shutdown();

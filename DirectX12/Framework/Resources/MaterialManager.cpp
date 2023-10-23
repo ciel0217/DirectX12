@@ -3,6 +3,8 @@
 #include "../LowLevel/RootSignature.h"
 #include "../LowLevel/PipelineStateObject.h"
 #include "../LowLevel/Dx12GraphicsDevice.h"
+#include "../Resources/GpuBuffer.h"
+#include "../LowLevel/BufferView.h"
 
 MaterialManager* MaterialManager::m_Instance = nullptr;
 
