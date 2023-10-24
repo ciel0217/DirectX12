@@ -18,4 +18,6 @@ public:
 	virtual void Uninit() = 0;
 	virtual void Update() = 0;
 
+	XMFLOAT3 GetPosition() { return m_Position; }
+
 };

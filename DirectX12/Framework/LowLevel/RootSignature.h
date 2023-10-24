@@ -4,6 +4,8 @@
 #include "../Resources/Shader.h"
 #include <unordered_map>
 
+struct BufferView;
+struct CommandListSet;
 
 class RootSignature
 {
@@ -21,4 +23,6 @@ public:
 	void ShutDown();
 
 	const ComPtr<ID3D12RootSignature>& GetRootSignature()const { return m_RootSignature; }
+
+	void SetGraphicsRootDescriptorTable(const CommandListSet &commandListSet , const std::string name, const std::shared_ptr<BufferView> &bufferView);
 };

@@ -26,9 +26,23 @@ void CameraRender::UninitRender()
 	//delete m_CurrentRender;
 }
 
+//TODO:::LookAtPointをQuaternionで計算できたら引数減る
 void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3 LookAtPoint)
 {
-	
+	VP vp;
+	XMVECTOR eyePosition = XMVectorSet(Position.x, Position.y, Position.z, 0.0);
+	//TODO::QuaternionからFocusPositionを計算すればいいかも
+	XMVECTOR forcusPosition = XMVectorSet(LookAtPoint.x, LookAtPoint.y, LookAtPoint.z, 0.0);
+	XMVECTOR upDirection = XMVectorSet(0, 1, 0, 0);
+	XMMATRIX view =  DirectX::XMMatrixLookAtLH(eyePosition, forcusPosition, upDirection);
+	vp.View = XMMatrixTranspose(view);
+	vp.InverseView = XMMatrixInverse(nullptr, vp.View);
+
+	XMMATRIX proj = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1, 10000);
+	vp.Proj = XMMatrixTranspose(proj);
+	vp.InverseProj = XMMatrixInverse(nullptr, vp.Proj);
+
+	m_VPCBuffer->WriteData(&vp, sizeof(VP));
 }
 
 void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
@@ -105,8 +119,11 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 
 				commandListSet.m_CommandList.Get()->SetPipelineState(pso->GetPipelineState().Get());
 				commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(gameObject->GetMaterial()->GetRenderSet()->rootSignature->GetRootSignature().Get());
+				//セットはオブジェクトの数関係なく一回だけ
+				gameObject->GetMaterial()->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(commandListSet, "VP", m_VPView);
 
 			}
+
 			gameObject->Draw();
 		}
 

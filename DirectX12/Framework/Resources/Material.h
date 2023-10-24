@@ -1,14 +1,12 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include "GpuBuffer.h"
+#include "Shader.h"
+#include "../LowLevel/PipelineStateObject.h"
+#include "../LowLevel/RootSignature.h"
+#include "../LowLevel/BufferView.h"
 
-
-class VertexShader;
-class PixelShader;
-class RootSignature;
-class PipelineStateObject;
-class ConstantBuffer;
-struct BufferView;
 
 struct RenderSet
 {

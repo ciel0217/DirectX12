@@ -22,7 +22,6 @@ void MeshRender::Draw()
 	if (!m_Model)
 		return;
 
-
 	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
 	auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
 
@@ -31,9 +30,16 @@ void MeshRender::Draw()
 	std::vector<IndexBuffer> iBuffer = m_Model->GetIndexBuffer();
 	std::vector<UINT> indexNum = m_Model->GetIndexNum();
 
-	//TODO::World行列計算
-	//TODO::定数バッファの設定
+	//TODO::World行列計算(回転、拡大未対応)
+	WorldMatrix worldMat;
+	worldMat.w = XMMatrixTranslation(m_Self->GetPosition().x, m_Self->GetPosition().y, m_Self->GetPosition().z);
+	worldMat.w = XMMatrixTranspose(worldMat.w);
 	
+	m_WorldCBuffer->WriteData(&worldMat, sizeof(WorldMatrix));
+
+	m_Material->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(commandListSet, "World", m_WorldView);
+
+
 	for (int i = 0; i < vBuffer.size(); i++)
 	{
 		VertexBuffer vB = vBuffer[i];

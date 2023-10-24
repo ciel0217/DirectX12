@@ -1,5 +1,6 @@
 #include "RootSignature.h"
-
+#include "BufferView.h"
+#include "CommandContext.h"
 
 void RootSignature::Create(const ComPtr<ID3D12Device> &device, const std::vector<D3D12_ROOT_PARAMETER1>& parameters, D3D12_STATIC_SAMPLER_DESC * sampler)
 {
@@ -83,4 +84,11 @@ void RootSignature::Create(const ComPtr<ID3D12Device>& device, const VertexShade
 void RootSignature::ShutDown()
 {
 	//ComPtrÇæÇ©ÇÁâΩÇ‡èëÇ©Ç»Ç≠ÇƒÇ‡Ç¢Ç¢ê‡ÅH
+}
+
+void RootSignature::SetGraphicsRootDescriptorTable(const CommandListSet &commandListSet, const std::string name, const std::shared_ptr<BufferView> &bufferView)
+{
+	UINT index = m_DescriptorTableIndex[name];
+
+	commandListSet.m_CommandList->SetGraphicsRootDescriptorTable(index, bufferView->m_GpuHandle);
 }

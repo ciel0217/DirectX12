@@ -1,7 +1,6 @@
 #include "Material.h"
-#include "Shader.h"
-#include "GpuBuffer.h"
-#include "../LowLevel/BufferView.h"
+
+
 #include "../LowLevel/DescriptorHeap.h"
 #include "../LowLevel/Dx12GraphicsDevice.h"
 

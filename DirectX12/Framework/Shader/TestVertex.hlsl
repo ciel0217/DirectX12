@@ -13,16 +13,17 @@ struct Output
 	float2 TexCoord : TEXCOORD;
 };
 
-cbuffer wv : register(b0)
+cbuffer VP : register(b0)
 {
-	matrix w;
-	matrix v;
-	matrix p;
+	matrix view;
+	matrix proj;
+	matrix inverseView;
+	matrix inverseProj;
 };
 
-cbuffer pv : register(b1)
+cbuffer World : register(b1)
 {
-	float s;
+	matrix world;
 };
 
 
@@ -32,11 +33,11 @@ Output main(VERTEX_3D parameter)
 	Output o;
 	float4 position = float4(parameter.Position, 1.0);
 
-	matrix a = mul(w, v);
-	a = mul(a, p);
+	matrix a = mul(world, view);
+	a = mul(a, proj);
 
 	o.Position = mul(position, a);
 
-	o.TexCoord = parameter.TexCoord * s;
+	o.TexCoord = parameter.TexCoord;
 	return o;
 }
