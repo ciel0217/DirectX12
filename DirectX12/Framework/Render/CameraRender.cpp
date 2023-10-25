@@ -30,11 +30,11 @@ void CameraRender::UninitRender()
 void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3 LookAtPoint)
 {
 	VP vp;
-	XMVECTOR eyePosition = XMVectorSet(Position.x, Position.y, Position.z, 0.0);
+	XMVECTOR eyePosition = XMVectorSet(Position.x, Position.y, Position.z, 1.0);
 	//TODO::Quaternion‚©‚çFocusPosition‚ðŒvŽZ‚·‚ê‚Î‚¢‚¢‚©‚à
-	XMVECTOR forcusPosition = XMVectorSet(LookAtPoint.x, LookAtPoint.y, LookAtPoint.z, 0.0);
-	XMVECTOR upDirection = XMVectorSet(0, 1, 0, 0);
-	XMMATRIX view =  DirectX::XMMatrixLookAtLH(eyePosition, forcusPosition, upDirection);
+	XMVECTOR forcusPosition = XMVectorSet(LookAtPoint.x, LookAtPoint.y, LookAtPoint.z, 1.0);
+	XMVECTOR upDirection = XMVectorSet(0, 1, 0, 1);
+	XMMATRIX view =  XMMatrixLookAtLH(eyePosition, forcusPosition, upDirection);
 	vp.View = XMMatrixTranspose(view);
 	vp.InverseView = XMMatrixInverse(nullptr, vp.View);
 
@@ -60,7 +60,7 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 			if (!render)continue;
 
 			//TODO::2D‘Î‰ž‚µ‚Ä‚È‚¢‚æ
-			if (render->GetMaterial()->GetRenderQueue() < MaterialManager::OPACITY_RENDER_QUEUE)
+			if (render->GetMaterial()->GetRenderQueue() <= MaterialManager::OPACITY_RENDER_QUEUE)
 				opacityList.push_back(render);
 			else
 				transparentList.push_back(render);

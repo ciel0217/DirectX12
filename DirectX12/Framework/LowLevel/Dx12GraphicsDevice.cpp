@@ -104,7 +104,7 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	MaterialManager::Create();
 	test = new TestScene();
 	test->Config();
-	
+	test->Init();
 	/*auto set = m_GraphicsCommandContext.RequestCommandListSet();
 	ComPtr<ID3D12Resource> re;
 	m_Texture.CreateTexture(m_Device, &m_GraphicsCommandContext, re, "Asset/Texture/test.png");

@@ -17,6 +17,7 @@ void MeshRender::SetUpRender()
 
 }
 
+//TODO::引数にコマンドリストセットを入れる
 void MeshRender::Draw()
 {
 	if (!m_Model)
