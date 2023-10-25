@@ -8,11 +8,11 @@
 
 MaterialManager* MaterialManager::m_Instance = nullptr;
 
-std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue)
+void MaterialManager::CalcMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue)
 {
 	//すでに生成済み
 	if (m_Materials.count(material_name))
-		return m_Materials[material_name];
+		return;
 
 	//マテリアルは違うけど、使ってるshaderが全部一緒のマテリアルがある場合、shaderやrootSignatureは生成しない
 	for (auto material : m_Materials)
@@ -21,7 +21,7 @@ std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_n
 		{
 			std::shared_ptr<RenderSet> renderSet = material.second->GetRenderSet();
 
-			
+
 			std::shared_ptr<VertexShader> v = renderSet->vShader;
 			std::shared_ptr<PixelShader> p = renderSet->pShader;
 			std::shared_ptr<RootSignature> r = renderSet->rootSignature;
@@ -29,10 +29,10 @@ std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_n
 
 			m_Materials[material_name].reset(new Material(material_name, vertex_name, pixel_name, new RenderSet(v, p, r, pso), render_queue));
 
-			return m_Materials[material_name];
+			return;
 		}
 	}
-	
+
 
 	ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
 
@@ -49,6 +49,25 @@ std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_n
 	pso->CreateGraphicPipeline(device, signature, v, p);
 
 	m_Materials[material_name].reset(new Material(material_name, vertex_name, pixel_name, new RenderSet(v, p, signature, pso), render_queue));
+
+	return;
+}
+
+//textureあり
+std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name,
+	int render_queue, std::unordered_map<TextureType, std::shared_ptr<BufferView>> textures)
+{
+	CalcMaterial(material_name, vertex_name, pixel_name, render_queue);
+
+	m_Materials[material_name]->SetTextures(textures);
+
+	return m_Materials[material_name];
+}
+
+//textureなし
+std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue)
+{
+	CalcMaterial(material_name, vertex_name, pixel_name, render_queue);
 
 	return m_Materials[material_name];
 }
