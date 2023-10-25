@@ -157,17 +157,6 @@ void Model::LoadTexture(const aiScene * scene)
 
 	UINT materialNums = scene->mNumMaterials;
 
-	//ƒ}ƒeƒŠƒAƒ‹‚È‚µ
-	if (materialNums == 0)
-	{
-		std::shared_ptr<Material> myMaterial =
-		MaterialManager::GetInstance()->CreateMaterial(scene->mName.C_Str(), DEFAULT_VERTEX_SHADER_NAME, DEFAULT_PIXEL_SHADER_NAME,
-			MaterialManager::OPACITY_RENDER_QUEUE);
-
-		m_Materials[0] = myMaterial;
-
-		return;
-	}
 
 	std::unordered_map<TextureType, std::shared_ptr<BufferView>> textures;
 
