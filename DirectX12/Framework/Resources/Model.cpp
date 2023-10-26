@@ -22,6 +22,7 @@ void Model::LoadModel()
 	flag |= aiProcess_OptimizeMeshes;
 
 	auto scene = importer.ReadFile(m_Name, flag);
+	
 	LoadMesh(scene);
 	LoadTexture(scene);
 }
@@ -155,8 +156,8 @@ void Model::LoadTexture(const aiScene * scene)
 	if (!scene)
 		return;
 
-	UINT materialNums = scene->mNumMaterials;
 
+	UINT materialNums = scene->mNumMaterials;
 
 	std::unordered_map<TextureType, std::shared_ptr<BufferView>> textures;
 
@@ -166,6 +167,8 @@ void Model::LoadTexture(const aiScene * scene)
 	{
 		aiMaterial* material = scene->mMaterials[i];
 
+		aiString a;
+		material->Get(AI_MATKEY_NAME, a);
 		CreateTexture(eDiffuse, material, textures);
 
 		CreateTexture(eNormal, material, textures);
