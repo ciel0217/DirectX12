@@ -4,6 +4,7 @@
 #include "../LowLevel/BufferView.h"
 
 class CGameObject;
+struct CommandListSet;
 
 class CRender
 {
@@ -20,9 +21,9 @@ public:
 	CRender(CGameObject* obj) : m_Self(obj) {}
 	virtual ~CRender(){}
 
-	virtual void Draw() = 0;
+	virtual void Draw(CommandListSet *commandListSet) = 0;
 
-	std::shared_ptr<Material> GetMaterial() { return m_Material; }
+	virtual std::shared_ptr<Material> GetMaterial() { return m_Material; }
 
 	bool operator < (CRender* const rhs)const
 	{

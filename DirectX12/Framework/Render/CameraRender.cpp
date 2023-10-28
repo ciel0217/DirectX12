@@ -18,6 +18,16 @@ void CameraRender::SetUpRender()
 	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
 	m_VPCBuffer->CreateConstantBuffer(dxDevice->GetDevice(), sizeof(VP));
 	DescriptorHeapManager::Instance().CreateConstantBufferView(m_VPCBuffer->GetResource().GetAddressOf(), m_VPView.get(), 1);
+
+	//ビューポート初期化&TODO:::これも色々できるといいかも
+	m_ViewPort.TopLeftX = 0.0f;
+	m_ViewPort.TopLeftY = 0.0f;
+	m_ViewPort.Width = static_cast<float>(SCREEN_WIDTH);
+	m_ViewPort.Height = static_cast<float>(SCREEN_HEIGHT );
+	m_ViewPort.MinDepth = 0.0f;
+	m_ViewPort.MaxDepth = 1.0f;
+
+	m_ScissorRect = { 0, 0, static_cast<LONG>(SCREEN_WIDTH), static_cast<LONG>(SCREEN_HEIGHT) };
 	
 }
 
@@ -30,10 +40,10 @@ void CameraRender::UninitRender()
 void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3 LookAtPoint)
 {
 	VP vp;
-	XMVECTOR eyePosition = XMVectorSet(Position.x, Position.y, Position.z, 1.0);
+	XMVECTOR eyePosition = XMVectorSet(Position.x, Position.y, Position.z, 0.0);
 	//TODO::QuaternionからFocusPositionを計算すればいいかも
-	XMVECTOR forcusPosition = XMVectorSet(LookAtPoint.x, LookAtPoint.y, LookAtPoint.z, 1.0);
-	XMVECTOR upDirection = XMVectorSet(0, 1, 0, 1);
+	XMVECTOR forcusPosition = XMVectorSet(LookAtPoint.x, LookAtPoint.y, LookAtPoint.z, 0.0);
+	XMVECTOR upDirection = XMVectorSet(0, 1, 0, 0);
 	XMMATRIX view =  XMMatrixLookAtLH(eyePosition, forcusPosition, upDirection);
 	vp.View = XMMatrixTranspose(view);
 	vp.InverseView = XMMatrixInverse(nullptr, vp.View);
@@ -78,6 +88,10 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 
 		auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
 
+		//ビューポート&シザー矩形設定
+		commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
+		commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
+
 		ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
 
 		//使うDescriptorHeapの設定
@@ -120,26 +134,25 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 				commandListSet.m_CommandList.Get()->SetPipelineState(pso->GetPipelineState().Get());
 				commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(gameObject->GetMaterial()->GetRenderSet()->rootSignature->GetRootSignature().Get());
 				//セットはオブジェクトの数関係なく一回だけ
-				gameObject->GetMaterial()->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(commandListSet, "VP", m_VPView);
+				gameObject->GetMaterial()->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(&commandListSet, "VP", m_VPView);
 
 			}
 
-			gameObject->Draw();
+			gameObject->Draw(&commandListSet);
+
+			D3D12_RESOURCE_BARRIER barriera;
+			barriera.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			barriera.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+			barriera.Transition.pResource = frameResource->GetTexture()->GetResource().Get();
+			barriera.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			barriera.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+			barriera.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+			commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barriera);
+
+
+			dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
+			dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
 		}
-
-		D3D12_RESOURCE_BARRIER barriera;
-		barriera.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barriera.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barriera.Transition.pResource = frameResource->GetTexture()->GetResource().Get();
-		barriera.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		barriera.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-		barriera.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-		commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barriera);
-
-
-		dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
-		dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
-
 	}
 }

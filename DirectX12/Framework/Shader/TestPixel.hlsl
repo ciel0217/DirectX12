@@ -14,7 +14,7 @@ SamplerState	g_SamplerState : register(s0);
 float4 main(Output i) : SV_TARGET
 {
 	float4 color;
-	color = g_Texture.Sample(g_SamplerState, i.TexCoord);
+	color = float4(1.0, 1.0, 1.0, 1.0);
 	/*color *= (data);*/
 	return color;
 }

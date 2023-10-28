@@ -24,6 +24,9 @@ private:
 	std::shared_ptr<ConstantBuffer> m_VPCBuffer;
 	std::shared_ptr<BufferView> m_VPView;
 
+	D3D12_VIEWPORT m_ViewPort;
+	D3D12_RECT m_ScissorRect;
+
 	void SetUpRender();
 	void UninitRender();
 

@@ -6,8 +6,8 @@ void Camera::Config()
 
 void Camera::Init()
 {
-	m_Position = XMFLOAT3(0.0, -5.0, 0.0);
-	m_Rotation = XMQuaternionIdentity();
+	m_Position = XMFLOAT3(0.0, 0.0, -5.0);
+	m_Rotation = XMVectorSet(0,0,0,0);
 	m_LookAtPoint = XMFLOAT3(0.0, 0.0, 100.0);
 }
 

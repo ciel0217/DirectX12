@@ -1,13 +1,11 @@
 #pragma once
 #include "CRender.h"
-
+#include "../Resources/Model.h"
 struct WorldMatrix
 {
 	XMMATRIX w;
 };
 
-
-class Model;
 
 class MeshRender : public CRender
 {
@@ -18,5 +16,6 @@ protected:
 public:
 	MeshRender(CGameObject* self) : CRender(self) { SetUpRender(); }
 	
-	void Draw()override;
+	void Draw(CommandListSet *commandListSet)override;
+	std::shared_ptr<Material> GetMaterial()override { return m_Model->GetMaterials()[0]; }
 };

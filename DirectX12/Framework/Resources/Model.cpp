@@ -156,7 +156,6 @@ void Model::LoadTexture(const aiScene * scene)
 	if (!scene)
 		return;
 
-
 	UINT materialNums = scene->mNumMaterials;
 
 	std::unordered_map<TextureType, std::shared_ptr<BufferView>> textures;
@@ -167,8 +166,6 @@ void Model::LoadTexture(const aiScene * scene)
 	{
 		aiMaterial* material = scene->mMaterials[i];
 
-		aiString a;
-		material->Get(AI_MATKEY_NAME, a);
 		CreateTexture(eDiffuse, material, textures);
 
 		CreateTexture(eNormal, material, textures);

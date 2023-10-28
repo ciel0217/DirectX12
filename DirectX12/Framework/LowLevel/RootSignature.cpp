@@ -86,9 +86,9 @@ void RootSignature::ShutDown()
 	//ComPtr‚¾‚©‚ç‰½‚à‘‚©‚È‚­‚Ä‚à‚¢‚¢àH
 }
 
-void RootSignature::SetGraphicsRootDescriptorTable(const CommandListSet &commandListSet, const std::string name, const std::shared_ptr<BufferView> &bufferView)
+void RootSignature::SetGraphicsRootDescriptorTable(const CommandListSet* commandListSet, const std::string name, const std::shared_ptr<BufferView> &bufferView)
 {
 	UINT index = m_DescriptorTableIndex[name];
 
-	commandListSet.m_CommandList->SetGraphicsRootDescriptorTable(index, bufferView->m_GpuHandle);
+	commandListSet->m_CommandList->SetGraphicsRootDescriptorTable(index, bufferView->m_GpuHandle);
 }

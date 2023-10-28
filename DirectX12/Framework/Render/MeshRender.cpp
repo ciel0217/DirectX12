@@ -17,15 +17,14 @@ void MeshRender::SetUpRender()
 
 }
 
-//TODO::引数にコマンドリストセットを入れる
-void MeshRender::Draw()
+void MeshRender::Draw(CommandListSet* commandListSet)
 {
 	if (!m_Model)
 		return;
 
 	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
-	auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
-
+	//auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
+	std::vector<std::shared_ptr<Material>> material = m_Model->GetMaterials();
 	//sizeはみんな一緒
 	std::vector<VertexBuffer> vBuffer = m_Model->GetVertexBuffer();
 	std::vector<IndexBuffer> iBuffer = m_Model->GetIndexBuffer();
@@ -38,7 +37,7 @@ void MeshRender::Draw()
 	
 	m_WorldCBuffer->WriteData(&worldMat, sizeof(WorldMatrix));
 
-	m_Material->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(commandListSet, "World", m_WorldView);
+	material[0]->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(commandListSet, "World", m_WorldView);
 
 
 	for (int i = 0; i < vBuffer.size(); i++)
@@ -47,12 +46,11 @@ void MeshRender::Draw()
 		IndexBuffer iB = iBuffer[i];
 		UINT iNum = indexNum[i];
 
-		commandListSet.m_CommandList.Get()->IASetVertexBuffers(0, 1, &vB.GetVertexBufferView());
-		commandListSet.m_CommandList.Get()->IASetIndexBuffer(&iB.GetIndexBufferView());
+		commandListSet->m_CommandList.Get()->IASetVertexBuffers(0, 1, &vB.GetVertexBufferView());
+		commandListSet->m_CommandList.Get()->IASetIndexBuffer(&iB.GetIndexBufferView());
 
 
-
-		commandListSet.m_CommandList.Get()->DrawIndexedInstanced(iNum, 1, 0, 0, 0);
+		commandListSet->m_CommandList.Get()->DrawIndexedInstanced(iNum, 1, 0, 0, 0);
 	}
 	
 }

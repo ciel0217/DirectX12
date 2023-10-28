@@ -3,13 +3,6 @@
 
 Dx12GraphicsDevice* Dx12GraphicsDevice::m_Instance;
 
-struct wvp
-{
-	XMMATRIX w;
-	XMMATRIX v;
-	XMMATRIX p;
-};
-
 BOOL Dx12GraphicsDevice::Init(HWND hWND)
 {
 
@@ -79,16 +72,6 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	DescriptorHeapManager& heapManager = DescriptorHeapManager::CreateInstance();
 	heapManager.Create(m_Device);
 
-	//ビューポート初期化
-	m_ViewPort.TopLeftX = 0.0f;
-	m_ViewPort.TopLeftY = 0.0f;
-	m_ViewPort.Width = static_cast<float>(SCREEN_WIDTH);
-	m_ViewPort.Height = static_cast<float>(SCREEN_HEIGHT);
-	m_ViewPort.MinDepth = 0.0f;
-	m_ViewPort.MaxDepth = 1.0f;
-
-	m_ScissorRect = { 0, 0, static_cast<LONG>(SCREEN_WIDTH), static_cast<LONG>(SCREEN_HEIGHT) };
-
 	{
 		DepthInfo info(SCREEN_WIDTH, SCREEN_HEIGHT, DXGI_FORMAT_D32_FLOAT);
 		m_DepthStencil.CreateDepth(m_Device, info);
@@ -101,59 +84,12 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 		m_FrameResource[i].Create(m_Device, m_SwapChain, i);
 
 	m_FrameIndex = m_SwapChain.Get()->GetCurrentBackBufferIndex();
+
 	MaterialManager::Create();
+
 	test = new TestScene();
 	test->Config();
 	test->Init();
-	/*auto set = m_GraphicsCommandContext.RequestCommandListSet();
-	ComPtr<ID3D12Resource> re;
-	m_Texture.CreateTexture(m_Device, &m_GraphicsCommandContext, re, "Asset/Texture/test.png");
-
-	DescriptorHeapManager::Instance().CreateTextureShaderResourceView(m_Texture.GetResource().GetAddressOf(), &m_TexV, 1);*/
-
-	////以下Test用
-	//m_VShader.Create("Framework/Shader/TestVertex.cso");
-	//m_PShader.Create("Framework/Shader/TestPixel.cso");
-
-	//std::vector<VERTEX_3D> pos;
-	//pos.push_back({XMFLOAT3(-1.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f,1.0f, 1.0f)});
-	//pos.push_back({ XMFLOAT3(1.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT4(1.0f, 1.0f,1.0f, 1.0f) });
-	//pos.push_back({ XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT4(1.0f, 1.0f,1.0f, 1.0f) });
-	//pos.push_back({ XMFLOAT3(1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f,1.0f, 1.0f) });
-
-	//std::vector<UINT> index;
-	//index.push_back({ 0 });
-	//index.push_back({ 1 });
-	//index.push_back({ 2 });
-	//index.push_back({ 1 });
-	//index.push_back({ 3 });
-	//index.push_back({ 2 });
-	//m_IndexBuffer.CreateIndexBuffer(m_Device, &m_GraphicsCommandContext, index);
-	//m_VBuffer.CreateVertexBuffer(m_Device, &m_GraphicsCommandContext, pos);
-
-	//m_RootSignature.Create(m_Device, &m_VShader, &m_PShader);
-	//m_PSO.CreateGraphicPipeline(m_Device, &m_RootSignature, &m_VShader, &m_PShader);
-	//
-
-	//m_Constant.CreateConstantBuffer(m_Device, sizeof(wvp));
-
-	//wvp da;
-	//da.w = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
-	//da.w = XMMatrixTranspose(da.w);
-	//da.v = XMMatrixLookAtLH(XMVectorSet(0,0,-5, 0), XMVectorSet(0, 0, 0, 0), XMVectorSet(0, 1, 0, 0));
-	//da.v = XMMatrixTranspose(da.v);
-	//da.p = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.1, 10000);
-	//da.p = XMMatrixTranspose(da.p);
-	//m_Constant.WriteData(&da, sizeof(wvp));
-	//DescriptorHeapManager::Instance().CreateConstantBufferView(m_Constant.GetResource().GetAddressOf(), &m_ConstantB, 1);
-
-	//m_Constantt.CreateConstantBuffer(m_Device, sizeof(float));
-
-	//float t = 0.3;
-	//m_Constantt.WriteData(&t, sizeof(float));
-	//DescriptorHeapManager::Instance().CreateConstantBufferView(m_Constantt.GetResource().GetAddressOf(), &m_Constantbf, 1);
-	//m_Model = new Model("Asset/Model/Sphere.obj");
-	//m_Model->LoadModel();
 
 	return 0;
 }
@@ -168,73 +104,6 @@ void Dx12GraphicsDevice::Render()
 
 	{
 		test->Draw();
-		//auto commandListSet = m_GraphicsCommandContext.RequestCommandListSet();
-		//
-		//ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get()};
-
-		////使うDescriptorHeapの設定
-		//commandListSet.m_CommandList.Get()->SetDescriptorHeaps(1, ppHeaps);
-		//
-		////ビューポート&シザー矩形設定
-		//commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
-		//commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
-		//
-		//
-		//	//ResourceBarrierの設定(描画前Ver)
-		//	D3D12_RESOURCE_BARRIER barrier;
-		//	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		//	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		//	barrier.Transition.pResource = m_FrameResource[m_FrameIndex].GetTexture()->GetResource().Get();
-		//	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-		//	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		//	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-		//	commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
-		//
-
-		////レンダーターゲットの設定
-		//D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_FrameResource[m_FrameIndex].GetBufferView().m_CpuHandle;
-		//commandListSet.m_CommandList.Get()->OMSetRenderTargets(1, &rtvHandle, FALSE, &m_DSV.m_CpuHandle);
-
-		////レンダーターゲットクリア
-		//const float clearColor[] = { 0.0f, 1.0f, 0.4f, 1.0f };
-		//commandListSet.m_CommandList.Get()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-		//commandListSet.m_CommandList.Get()->ClearDepthStencilView(m_DSV.m_CpuHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-		////各オブジェクト描画
-		//
-		//commandListSet.m_CommandList.Get()->SetPipelineState(m_PSO.GetPipelineState().Get());
-		//commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(m_RootSignature.GetRootSignature().Get());
-		//commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//
-		//commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(2, m_TexV.m_GpuHandle);
-		//commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(1, m_Constantbf.m_GpuHandle);
-		//commandListSet.m_CommandList.Get()->SetGraphicsRootDescriptorTable(0, m_ConstantB.m_GpuHandle);
-		//
-
-		//VertexBuffer vb = m_Model->GetVertexBuffer()[0];
-		//IndexBuffer ib = m_Model->GetIndexBuffer()[0];
-		//UINT in = m_Model->GetIndexNum()[0];
-
-		//commandListSet.m_CommandList.Get()->IASetVertexBuffers(0, 1, &vb.GetVertexBufferView());
-		//commandListSet.m_CommandList.Get()->IASetIndexBuffer(&ib.GetIndexBufferView());
-
-		//commandListSet.m_CommandList.Get()->DrawIndexedInstanced(in, 1, 0, 0, 0);
-
-		////ResourceBarrierの設定(描画後)
-		//
-		//	D3D12_RESOURCE_BARRIER barriera;
-		//	barriera.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		//	barriera.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		//	barriera.Transition.pResource = m_FrameResource[m_FrameIndex].GetTexture()->GetResource().Get();
-		//	barriera.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		//	barriera.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-		//	barriera.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-		//	commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barriera);
-		//
-
-		//m_GraphicsCommandContext.ExecuteCommandList(commandListSet);
-		//m_GraphicsCommandContext.DiscardCommandListSet(commandListSet);
 	}
 
 	ThrowIfFailed(m_SwapChain.Get()->Present(1, 0));
@@ -259,5 +128,5 @@ BOOL Dx12GraphicsDevice::Release()
 {
 	test->Uninit();
 	delete test;
-	return 0;
+	return 1;
 }

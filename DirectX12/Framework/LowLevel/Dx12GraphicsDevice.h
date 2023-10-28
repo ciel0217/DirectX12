@@ -22,9 +22,6 @@ private:
 
 	UINT m_FrameIndex;
 
-	D3D12_VIEWPORT m_ViewPort;
-	D3D12_RECT m_ScissorRect;
-
 	ComPtr<ID3D12Device> m_Device;
 	ComPtr<IDXGISwapChain3> m_SwapChain;
 
@@ -33,21 +30,6 @@ private:
 	Texture2D m_DepthStencil;
 	BufferView m_DSV;
 	
-	//Test—p
-	VertexShader m_VShader;
-	PixelShader m_PShader;
-	PipelineStateObject m_PSO;
-	RootSignature m_RootSignature;
-	VertexBuffer m_VBuffer;
-	IndexBuffer m_IndexBuffer;
-	BufferView m_TexV;
-	Texture2D m_Texture;
-	ConstantBuffer m_Constant;
-	BufferView m_ConstantB;
-	ConstantBuffer m_Constantt;
-	BufferView m_Constantbf;
-	Model* m_Model;
-
 	TestScene* test;
 
 

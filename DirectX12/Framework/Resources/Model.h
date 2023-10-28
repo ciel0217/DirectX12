@@ -47,4 +47,5 @@ public:
 	std::vector<VertexBuffer> const &GetVertexBuffer() const{ return m_VertexBuffer; }
 	std::vector<IndexBuffer> const &GetIndexBuffer() const{ return m_IndexBuffer; }
 	std::vector<UINT> const &GetIndexNum()const { return m_IndexNum; }
+	std::vector<std::shared_ptr<Material>> const &GetMaterials() { return m_Materials; }
 };
