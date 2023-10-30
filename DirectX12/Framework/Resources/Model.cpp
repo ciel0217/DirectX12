@@ -8,7 +8,7 @@
 #include "MaterialManager.h"
 
 //TODO::animation–¢‘Î‰ž
-void Model::LoadModel()
+std::vector<std::shared_ptr<Material>> Model::LoadModel()
 {
 	Assimp::Importer importer;
 
@@ -25,6 +25,8 @@ void Model::LoadModel()
 	
 	LoadMesh(scene);
 	LoadTexture(scene);
+
+	return m_Materials;
 }
 
 void Model::CreateVertexBuffer(const std::vector<Mesh> &meshes)
@@ -162,6 +164,8 @@ void Model::LoadTexture(const aiScene * scene)
 
 	m_Materials.resize(materialNums);
 
+	std::string root_name = scene->mRootNode->mName.C_Str();
+
 	for (int i = 0; i < materialNums; i++)
 	{
 		aiMaterial* material = scene->mMaterials[i];
@@ -175,7 +179,7 @@ void Model::LoadTexture(const aiScene * scene)
 		CreateTexture(eSpecular, material, textures);
 
 		std::shared_ptr<Material> myMaterial = 
-		MaterialManager::GetInstance()->CreateMaterial(material->GetName().C_Str(), DEFAULT_VERTEX_SHADER_NAME, DEFAULT_PIXEL_SHADER_NAME, 
+		MaterialManager::GetInstance()->CreateMaterial(root_name + material->GetName().C_Str(), DEFAULT_VERTEX_SHADER_NAME, DEFAULT_PIXEL_SHADER_NAME, 
 			MaterialManager::OPACITY_RENDER_QUEUE, textures);
 
 		m_Materials[i] = myMaterial;

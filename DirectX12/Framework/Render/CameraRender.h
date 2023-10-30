@@ -1,7 +1,8 @@
 #pragma once
 #include <list>
 #include "../LowLevel/DirectX12.h"
-
+#include "CRender.h"
+#include "../Resources/Material.h"
 
 class CRenderPipeline;
 class CGameObject;
@@ -14,6 +15,26 @@ struct VP
 	XMMATRIX Proj;
 	XMMATRIX InverseView;
 	XMMATRIX InverseProj;
+};
+
+struct RenderingSet
+{
+	CRender* Render;
+	Material* Mat;
+
+	RenderingSet(CRender* render, Material* material)
+	{
+		Render = render;
+		Mat = material;
+	}
+
+	bool operator < (RenderingSet* const rhs)const
+	{
+		if (Mat->GetRenderQueue() == rhs->Mat->GetRenderQueue())
+			return Mat->GetMaterialName() < rhs->Mat->GetMaterialName();
+
+		return Mat->GetRenderQueue() < rhs->Mat->GetRenderQueue();
+	}
 };
 
 class CameraRender

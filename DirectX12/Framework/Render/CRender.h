@@ -9,7 +9,7 @@ struct CommandListSet;
 class CRender
 {
 protected:
-	std::shared_ptr<Material> m_Material;
+	std::vector<std::shared_ptr<Material>> m_Materials;
 	std::shared_ptr<CGameObject> m_Self;
 	std::shared_ptr<ConstantBuffer> m_WorldCBuffer;
 	std::shared_ptr<BufferView> m_WorldView;
@@ -23,13 +23,13 @@ public:
 
 	virtual void Draw(CommandListSet *commandListSet) = 0;
 
-	virtual std::shared_ptr<Material> GetMaterial() { return m_Material; }
+	virtual std::vector<std::shared_ptr<Material>> GetMaterials() { return m_Materials; }
 
-	bool operator < (CRender* const rhs)const
+	/*bool operator < (CRender* const rhs)const
 	{
 		if(m_Material->GetRenderQueue() == rhs->GetMaterial()->GetRenderQueue())
 			return m_Material->GetMaterialName() < rhs->GetMaterial()->GetMaterialName();
 
 		return m_Material->GetRenderQueue() < rhs->GetMaterial()->GetRenderQueue();
-	}
+	}*/
 };

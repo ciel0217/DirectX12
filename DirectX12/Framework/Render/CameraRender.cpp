@@ -57,8 +57,8 @@ void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3
 
 void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 {
-	std::list<CRender*> opacityList;//不透明
-	std::list<CRender*> transparentList;//半透明
+	std::list<std::shared_ptr<RenderingSet>> opacityList;//不透明
+	std::list<std::shared_ptr<RenderingSet>> transparentList;//半透明
 
 	
 	//3Dと2DでLayer分けてるため
@@ -66,14 +66,26 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 	{
 		for (auto gameObject : gameObjects[i])
 		{
-			CRender* render = dynamic_cast<CRender*>(gameObject);
+			CRender * render = dynamic_cast<CRender*>(gameObject);
+		
 			if (!render)continue;
 
-			//TODO::2D対応してないよ
-			if (render->GetMaterial()->GetRenderQueue() <= MaterialManager::OPACITY_RENDER_QUEUE)
-				opacityList.push_back(render);
-			else
-				transparentList.push_back(render);
+			std::vector<std::shared_ptr<Material>> materials = render->GetMaterials();
+
+			for (UINT i = 0; i < materials.size(); i++)
+			{
+
+				std::shared_ptr<Material> material = materials[i];
+				std::shared_ptr<RenderingSet> renderingSet;
+				renderingSet.reset(new RenderingSet(render, material.get()));
+
+				//TODO::2D対応してないよ
+				if (material->GetRenderQueue() <= MaterialManager::OPACITY_RENDER_QUEUE)
+					opacityList.push_back(renderingSet);
+				else
+					transparentList.push_back(renderingSet);
+			}
+			
 		}
 	}
 
@@ -126,19 +138,19 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 		for (auto gameObject : opacityList)
 		{
 			//各オブジェクト描画
-			std::shared_ptr<PipelineStateObject> pso = gameObject->GetMaterial()->GetRenderSet()->pipelineStateObj;
+			std::shared_ptr<PipelineStateObject> pso = gameObject->Mat->GetRenderSet()->pipelineStateObj;
 			if (currentPSO != pso)
 			{
 				currentPSO = pso;
 
 				commandListSet.m_CommandList.Get()->SetPipelineState(pso->GetPipelineState().Get());
-				commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(gameObject->GetMaterial()->GetRenderSet()->rootSignature->GetRootSignature().Get());
+				commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(gameObject->Mat->GetRenderSet()->rootSignature->GetRootSignature().Get());
 				//セットはオブジェクトの数関係なく一回だけ
-				gameObject->GetMaterial()->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(&commandListSet, "VP", m_VPView);
+				gameObject->Mat->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(&commandListSet, "VP", m_VPView);
 
 			}
 
-			gameObject->Draw(&commandListSet);
+			gameObject->Render->Draw(&commandListSet);
 
 			D3D12_RESOURCE_BARRIER barriera;
 			barriera.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -149,7 +161,6 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 			barriera.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 			commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barriera);
-
 
 			dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
 			dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);

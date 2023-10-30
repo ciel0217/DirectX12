@@ -41,7 +41,7 @@ public:
 	Model(std::string name):m_Name(name){}
 	virtual ~Model(){}
 
-	void LoadModel();
+	 std::vector<std::shared_ptr<Material>> LoadModel();
 	
 
 	std::vector<VertexBuffer> const &GetVertexBuffer() const{ return m_VertexBuffer; }
