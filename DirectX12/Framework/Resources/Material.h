@@ -6,7 +6,7 @@
 #include "../LowLevel/PipelineStateObject.h"
 #include "../LowLevel/RootSignature.h"
 #include "../LowLevel/BufferView.h"
-
+#include "Texture2D.h"
 
 struct RenderSet
 {
@@ -33,18 +33,22 @@ struct RenderSet
 
 struct CBufferSet
 {
-	std::unique_ptr<ConstantBuffer> constantBuffer;
-	std::unique_ptr<BufferView> constantBufferView;
+	std::shared_ptr<ConstantBuffer> constantBuffer;
+	std::shared_ptr<BufferView> constantBufferView;
 
 	CBufferSet(ConstantBuffer* buffer, BufferView* bufferView) : constantBuffer(buffer), constantBufferView(bufferView){}
 };
 
-enum TextureType
+struct TextureSet
 {
-	eDiffuse = 0,
-	eNormal,
-	eShiness,
-	eSpecular
+	std::shared_ptr<Texture2D> TextureResource;
+	std::shared_ptr<BufferView> TextureView;
+
+	TextureSet(Texture2D* texRes, BufferView* texView)
+	{
+		TextureResource.reset(texRes);
+		TextureView.reset(texView);
+	}
 };
 
 
@@ -57,7 +61,7 @@ private:
 	std::string m_MaterialName;
 	std::shared_ptr<RenderSet> m_RenderSet;
 	std::unordered_map<std::string, std::shared_ptr<CBufferSet>> m_CBufferSet;
-	std::unordered_map<TextureType, std::shared_ptr<BufferView>> m_Textures;
+	std::unordered_map<std::string, std::shared_ptr<TextureSet>> m_Textures;
 
 	int m_RenderQueue;
 
@@ -79,9 +83,13 @@ public:
 	std::string GetPixelShaderName() { return m_PixelShaderName; }
 	int GetRenderQueue() { return m_RenderQueue; }
 	std::shared_ptr<RenderSet> GetRenderSet() { return m_RenderSet; }
+	std::unordered_map<std::string, std::shared_ptr<TextureSet>> GetTextures() { return m_Textures; }
+	std::unordered_map<std::string, std::shared_ptr<CBufferSet>> GetCBuffers() { return m_CBufferSet; }
 
+	void SetTextures(std::unordered_map<std::string, std::shared_ptr<TextureSet>> textures) { m_Textures = textures; }
+	void SetTextureByTextureType(std::string name, TextureSet* textureSet ) { m_Textures[name].reset(textureSet); }
+	void SetCBufferData(std::string name, void* data, UINT size) { m_CBufferSet[name]->constantBuffer->WriteData(data, size); }
 
-	void SetTextures(std::unordered_map<TextureType, std::shared_ptr<BufferView>> textures) { m_Textures = textures; }
-	void SetTextureByTextureType(TextureType textureType, BufferView* bufferView) { m_Textures[textureType].reset(bufferView); }
-	bool HasTextureByTextureType(TextureType type) { return m_Textures.count(type); }
+	bool HasTextureByTextureType(std::string name) { return m_Textures.count(name); }
+
 };

@@ -11,6 +11,16 @@ struct Mesh
 struct aiScene;
 struct aiMaterial;
 
+enum TextureType
+{
+	eDiffuse = 0,
+	eNormal,
+	eShiness,
+	eSpecular
+};
+
+
+
 class Model
 {
 private:
@@ -24,16 +34,15 @@ private:
 	std::vector<VertexBuffer> m_VertexBuffer;
 	std::vector<IndexBuffer> m_IndexBuffer;
 	std::vector<UINT> m_IndexNum;
-	
 	std::vector<std::shared_ptr<Material>> m_Materials;
 
 
 	void CreateVertexBuffer(const std::vector<Mesh> &mesh);
 	void CreateIndexBuffer(const std::vector<Mesh> &mesh);
 	
-	void CreateTexture(TextureType type, aiMaterial* material, std::unordered_map<TextureType, std::shared_ptr<BufferView>> &textures);
+	void CreateTexture(TextureType type, aiMaterial* material, std::unordered_map<std::string, std::shared_ptr<TextureSet>> &textures);
 
-	void LoadMesh(const aiScene* scene);
+	void LoadMesh(const aiScene* scene, bool inverseU, bool inverseV);
 	void LoadTexture(const aiScene* scene);
 	
 public:
@@ -41,11 +50,11 @@ public:
 	Model(std::string name):m_Name(name){}
 	virtual ~Model(){}
 
-	 std::vector<std::shared_ptr<Material>> LoadModel();
+	 std::vector<std::shared_ptr<Material>> LoadModel(bool inverseU, bool inverseV);
 	
 
 	std::vector<VertexBuffer> const &GetVertexBuffer() const{ return m_VertexBuffer; }
 	std::vector<IndexBuffer> const &GetIndexBuffer() const{ return m_IndexBuffer; }
 	std::vector<UINT> const &GetIndexNum()const { return m_IndexNum; }
-	std::vector<std::shared_ptr<Material>> const &GetMaterials() { return m_Materials; }
+	//std::vector<std::shared_ptr<Material>> const &GetMaterials() { return m_Materials; }
 };

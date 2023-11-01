@@ -17,14 +17,11 @@ void MeshRender::SetUpRender()
 
 }
 
-void MeshRender::Draw(CommandListSet* commandListSet)
+void MeshRender::Draw(CommandListSet* commandListSet, UINT materialIndex)
 {
-	if (!m_Model)
-		return;
 
 	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
 	//auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
-	std::vector<std::shared_ptr<Material>> material = m_Model->GetMaterials();
 	//sizeはみんな一緒
 	std::vector<VertexBuffer> vBuffer = m_Model->GetVertexBuffer();
 	std::vector<IndexBuffer> iBuffer = m_Model->GetIndexBuffer();
@@ -37,8 +34,26 @@ void MeshRender::Draw(CommandListSet* commandListSet)
 	
 	m_WorldCBuffer->WriteData(&worldMat, sizeof(WorldMatrix));
 
-	material[0]->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(commandListSet, "World", m_WorldView);
+	std::shared_ptr<Material> material = m_Materials[materialIndex];
+	std::unordered_map<std::string, std::shared_ptr<TextureSet>> textures = material->GetTextures();
+	std::unordered_map<std::string, std::shared_ptr<CBufferSet>> cBuffers = material->GetCBuffers();
+	//固定
+	material->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(commandListSet, "World", m_WorldView);
 
+	//テクスチャセット
+	for (auto tex : textures)
+	{
+		material->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(commandListSet, tex.first, tex.second->TextureView);
+	}
+
+	//定数バッファセット
+	for (auto cBuf : cBuffers)
+	{
+		if (cBuf.first == "VP" || cBuf.first == "World")
+			continue;
+
+		material->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(commandListSet, cBuf.first, cBuf.second->constantBufferView);
+	}
 
 	for (int i = 0; i < vBuffer.size(); i++)
 	{

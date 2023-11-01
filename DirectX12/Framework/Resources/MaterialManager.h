@@ -34,7 +34,7 @@ public:
 	static void Destroy() { delete m_Instance; m_Instance = nullptr; }
 
 	std::shared_ptr<Material> CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, 
-		int render_queue, std::unordered_map<TextureType, std::shared_ptr<BufferView>> textures);
+		int render_queue, std::unordered_map<std::string, std::shared_ptr<TextureSet>> textures);
 
 	std::shared_ptr<Material> CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name,
 		int render_queue);

@@ -3,12 +3,11 @@
 #include <Assimp/Importer.hpp>
 #include <Assimp/scene.h>
 #include <Assimp/postprocess.h>
-#include "Texture2D.h"
 #include "../LowLevel/DescriptorHeap.h"
 #include "MaterialManager.h"
 
 //TODO::animation–¢‘Î‰ž
-std::vector<std::shared_ptr<Material>> Model::LoadModel()
+std::vector<std::shared_ptr<Material>> Model::LoadModel(bool inverseU, bool inverseV)
 {
 	Assimp::Importer importer;
 
@@ -23,7 +22,7 @@ std::vector<std::shared_ptr<Material>> Model::LoadModel()
 
 	auto scene = importer.ReadFile(m_Name, flag);
 	
-	LoadMesh(scene);
+	LoadMesh(scene, inverseU, inverseV);
 	LoadTexture(scene);
 
 	return m_Materials;
@@ -62,25 +61,32 @@ void Model::CreateIndexBuffer(const std::vector<Mesh> &meshes)
 	context->WaitForIdle();
 }
 
-void Model::CreateTexture(TextureType type, aiMaterial* material, std::unordered_map<TextureType, std::shared_ptr<BufferView>> &textures)
+void Model::CreateTexture(TextureType type, aiMaterial* material, std::unordered_map<std::string, std::shared_ptr<TextureSet>> &textures)
 {
 	aiTextureType textureType;
+
+	std::string textureName;
 	switch (type)
 	{
 	case eDiffuse:
 		textureType = aiTextureType_DIFFUSE;
+		textureName = "DiffuseTexture";
 		break;
 	case eNormal:
 		textureType = aiTextureType_NORMALS;
+		textureName = "NormalTexture";
 		break;
 	case eShiness:
 		textureType = aiTextureType_SHININESS;
+		textureName = "ShininessTexture";
 		break;
 	case eSpecular:
 		textureType = aiTextureType_SPECULAR;
+		textureName = "SpecularTexture";
 		break;
 	default:
 		textureType = aiTextureType_NONE;
+		textureName = "None";
 		break;
 	}
 
@@ -98,18 +104,18 @@ void Model::CreateTexture(TextureType type, aiMaterial* material, std::unordered
 
 			ComPtr<ID3D12Resource> upLoadHeap;
 			//‚±‚ê‚Å‚¾‚ß‚¾‚Á‚½‚ç•Ï‚¦‚é
-			Texture2D texture;
-			texture.CreateTexture(device, commandContext, upLoadHeap, fullPath);
+			Texture2D* texture = new Texture2D();
+			texture->CreateTexture(device, commandContext, upLoadHeap, fullPath);
 
 			BufferView* bufferView = new BufferView();
-			DescriptorHeapManager::Instance().CreateTextureShaderResourceView(texture.GetResource().GetAddressOf(), bufferView, 1);
+			DescriptorHeapManager::Instance().CreateTextureShaderResourceView(texture->GetResource().GetAddressOf(), bufferView, 1);
 
-			textures[type].reset(bufferView);
+			textures[textureName].reset(new TextureSet(texture, bufferView));
 		}
 	}
 }
 
-void Model::LoadMesh(const aiScene* scene)
+void Model::LoadMesh(const aiScene* scene, bool inverseU, bool inverseV)
 {
 	if (!scene)
 		return;
@@ -130,13 +136,18 @@ void Model::LoadMesh(const aiScene* scene)
 		{
 			auto position = mesh->mVertices[j];
 			auto normal = mesh->mNormals[j];
-			auto texCoord = (mesh->HasTextureCoords(0)) ? (mesh->mTextureCoords[0][i]) : (aiVector3D(0.0f, 0.0f, 0.0f));
-			auto color = (mesh->HasVertexColors(0)) ? (mesh->mColors[0][i]) : (aiColor4D(0.0f, 0.0f, 0.0f, 1.0f));
+			auto texCoord = (mesh->HasTextureCoords(0)) ?  (mesh->mTextureCoords[0][j]) : (aiVector3D(0.0f, 0.0f, 0.0f));
+			auto color = (mesh->HasVertexColors(0)) ? (mesh->mColors[0][j]) : (aiColor4D(0.0f, 0.0f, 0.0f, 1.0f));
 
 			meshes[i].m_Vertices[j].m_Position = XMFLOAT3(position.x, position.y, position.z);
 			meshes[i].m_Vertices[j].m_Normal = XMFLOAT3(normal.x, normal.y, normal.z);
 			meshes[i].m_Vertices[j].m_TexCoord = XMFLOAT2(texCoord.x, texCoord.y);
 			meshes[i].m_Vertices[j].m_Diffuse = XMFLOAT4(color.r, color.g, color.b, color.a);
+
+			if (inverseU)
+				meshes[i].m_Vertices[j].m_TexCoord.x = 1.0 - meshes[i].m_Vertices[j].m_TexCoord.x;
+			else if (inverseV)
+				meshes[i].m_Vertices[j].m_TexCoord.y = 1.0 - meshes[i].m_Vertices[j].m_TexCoord.y;
 		}
 
 		for (UINT j = 0; j < mesh->mNumFaces; j++)
@@ -160,7 +171,7 @@ void Model::LoadTexture(const aiScene * scene)
 
 	UINT materialNums = scene->mNumMaterials;
 
-	std::unordered_map<TextureType, std::shared_ptr<BufferView>> textures;
+	std::unordered_map<std::string, std::shared_ptr<TextureSet>> textures;
 
 	m_Materials.resize(materialNums);
 

@@ -16,6 +16,6 @@ protected:
 public:
 	MeshRender(CGameObject* self) : CRender(self) { SetUpRender(); }
 	
-	void Draw(CommandListSet *commandListSet)override;
-	std::vector<std::shared_ptr<Material>> GetMaterials()override { return m_Model->GetMaterials(); }
+	void Draw(CommandListSet *commandListSet, UINT materialIndex)override;
+	std::vector<std::shared_ptr<Material>> GetMaterials()override { return m_Materials; }
 };

@@ -10,8 +10,6 @@ void Material::CalcConstantBuffer()
 	ShaderReflectResult pRef = m_RenderSet->pShader->GetShaderReflectResult();
 	ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
 
-	//TODO:::SRVは書いてない
-
 	//vertex_shader
 	for (auto desc : vRef.m_CBVRangeDescs)
 	{
@@ -40,7 +38,6 @@ void Material::CalcConstantBuffer()
 		BufferView* cBufferView = new BufferView();
 		//TODO:::ダブルバッファリングを考えたほうがいいかも
 		DescriptorHeapManager::Instance().CreateConstantBufferView(cBuffer->GetResource().GetAddressOf(), cBufferView, 1);
-
 
 		m_CBufferSet[name].reset(new CBufferSet(cBuffer, cBufferView));
 	}

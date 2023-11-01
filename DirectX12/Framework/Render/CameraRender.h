@@ -21,11 +21,13 @@ struct RenderingSet
 {
 	CRender* Render;
 	Material* Mat;
+	UINT MatIndex;
 
-	RenderingSet(CRender* render, Material* material)
+	RenderingSet(CRender* render, Material* material, UINT matIndex)
 	{
 		Render = render;
 		Mat = material;
+		MatIndex = matIndex;
 	}
 
 	bool operator < (RenderingSet* const rhs)const

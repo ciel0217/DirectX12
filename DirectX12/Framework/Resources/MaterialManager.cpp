@@ -55,7 +55,7 @@ void MaterialManager::CalcMaterial(std::string material_name, std::string vertex
 
 //texture‚ ‚è
 std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name,
-	int render_queue, std::unordered_map<TextureType, std::shared_ptr<BufferView>> textures)
+	int render_queue, std::unordered_map<std::string, std::shared_ptr<TextureSet>> textures)
 {
 	CalcMaterial(material_name, vertex_name, pixel_name, render_queue);
 

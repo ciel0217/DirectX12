@@ -21,7 +21,7 @@ public:
 	CRender(CGameObject* obj) : m_Self(obj) {}
 	virtual ~CRender(){}
 
-	virtual void Draw(CommandListSet *commandListSet) = 0;
+	virtual void Draw(CommandListSet *commandListSet, UINT materialIndex) = 0;
 
 	virtual std::vector<std::shared_ptr<Material>> GetMaterials() { return m_Materials; }
 

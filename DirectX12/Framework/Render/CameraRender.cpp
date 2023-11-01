@@ -77,7 +77,7 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 
 				std::shared_ptr<Material> material = materials[i];
 				std::shared_ptr<RenderingSet> renderingSet;
-				renderingSet.reset(new RenderingSet(render, material.get()));
+				renderingSet.reset(new RenderingSet(render, material.get(), i));
 
 				//TODO::2D‘Î‰ž‚µ‚Ä‚È‚¢‚æ
 				if (material->GetRenderQueue() <= MaterialManager::OPACITY_RENDER_QUEUE)
@@ -150,7 +150,7 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 
 			}
 
-			gameObject->Render->Draw(&commandListSet);
+			gameObject->Render->Draw(&commandListSet, gameObject->MatIndex);
 
 			D3D12_RESOURCE_BARRIER barriera;
 			barriera.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;

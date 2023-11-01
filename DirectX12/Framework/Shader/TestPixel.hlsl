@@ -6,15 +6,18 @@ struct Output
 
 
 
-Texture2D		g_Texture : register(t0);
-SamplerState	g_SamplerState : register(s0);
+Texture2D		DiffuseTexture : register(t0);
+SamplerState	Sampler : register(s0);
 
-
+cbuffer data : register(b0)
+{
+	float a;
+}
 
 float4 main(Output i) : SV_TARGET
 {
 	float4 color;
-	color = float4(1.0, 1.0, 1.0, 1.0);
-	/*color *= (data);*/
+	color = DiffuseTexture.Sample(Sampler, i.TexCoord);
+	color *= (a);
 	return color;
 }
