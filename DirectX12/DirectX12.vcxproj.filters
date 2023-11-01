@@ -102,9 +102,6 @@
     <ClInclude Include="Framework\Render\CameraRender.h">
       <Filter>Framework\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\Render\DefferedRender.h">
-      <Filter>Framework\Render</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\Resources\Material.h">
       <Filter>Framework\Resources</Filter>
     </ClInclude>
@@ -134,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="TestObject.h">
       <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Render\DeferredRender.h">
+      <Filter>Framework\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -188,9 +188,6 @@
     <ClCompile Include="Framework\Resources\Model.cpp">
       <Filter>Framework\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\Render\DefferedRender.cpp">
-      <Filter>Framework\Render</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\Render\CameraRender.cpp">
       <Filter>Framework\Render</Filter>
     </ClCompile>
@@ -214,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="Framework\Resources\Material.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Render\DeferredRender.cpp">
+      <Filter>Framework\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

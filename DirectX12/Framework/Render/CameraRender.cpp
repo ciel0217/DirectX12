@@ -1,5 +1,5 @@
 #include "CameraRender.h"
-#include "DefferedRender.h"
+#include "DeferredRender.h"
 #include "../Resources/CGameObject.h"
 #include "CRender.h"
 #include "../Resources/MaterialManager.h"
@@ -9,7 +9,7 @@
 
 void CameraRender::SetUpRender()
 {
-	m_CurrentRender.reset(new DefferedRender());
+	m_CurrentRender.reset(new DeferredRender());
 	m_CurrentRender->SetUpRender();
 
 	m_VPCBuffer.reset(new ConstantBuffer());

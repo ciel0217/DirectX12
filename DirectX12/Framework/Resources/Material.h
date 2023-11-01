@@ -39,18 +39,6 @@ struct CBufferSet
 	CBufferSet(ConstantBuffer* buffer, BufferView* bufferView) : constantBuffer(buffer), constantBufferView(bufferView){}
 };
 
-struct TextureSet
-{
-	std::shared_ptr<Texture2D> TextureResource;
-	std::shared_ptr<BufferView> TextureView;
-
-	TextureSet(Texture2D* texRes, BufferView* texView)
-	{
-		TextureResource.reset(texRes);
-		TextureView.reset(texView);
-	}
-};
-
 
 class Material
 {
