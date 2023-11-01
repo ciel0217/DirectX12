@@ -4,6 +4,13 @@
 #include "../LowLevel/PipelineStateObject.h"
 #include "../LowLevel/Dx12GraphicsDevice.h"
 
+
+
+/*
+GBuffer - > LightŒvŽZ - > ”¼“§–¾ - > 2D
+‚Ü‚Å‚Ìˆê˜A‚ðŽÀ‘•
+*/
+
 void DefferedRender::SetUpRender()
 {
 	
