@@ -84,6 +84,12 @@ void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, CommandContext
 	context->WaitForIdle();
 }
 
+void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, CommandContext * const context, ComPtr<ID3D12Resource>& uploadHeap)
+{
+	auto commandListSet = context->RequestCommandListSet();
+
+}
+
 void Texture2D::ShutDown()
 {
 	//ComPtr‚¾‚©‚ç—v‚ç‚È‚¢à
