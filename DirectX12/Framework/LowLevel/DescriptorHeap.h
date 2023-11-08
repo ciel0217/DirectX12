@@ -26,7 +26,7 @@ public:
 	void Shutdown();
 
 	void AllocateBufferView(BufferView* bufferView, UINT descriptorNum);
-	void DiscardBufferView(const BufferView &bufferView);
+	void DiscardBufferView(BufferView* const bufferView);
 
 	const D3D12_GPU_DESCRIPTOR_HANDLE GetGpuHandle(unsigned int location);
 	const D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandle(unsigned int location);
@@ -65,10 +65,10 @@ public:
 	void CreateDepthStencilView(ID3D12Resource*const* depthStencils, BufferView* dstView, unsigned int viewCount);
 	void CreateUnorederdAcsessView(ID3D12Resource** unorederdAccess, BufferView* dstView, unsigned int viewCount, const std::vector<D3D12_BUFFER_UAV>& buffers);
 
-	void DiscardRenderTargetView(const BufferView& bufferView);
-	void DiscardConstantBufferView(const BufferView& bufferView);
-	void DiscardShaderResourceView(const BufferView& bufferView);
-	void DiscardDepthStencilView(const BufferView& bufferView);
+	void DiscardRenderTargetView(BufferView* const bufferView);
+	void DiscardConstantBufferView(BufferView* const bufferView);
+	void DiscardShaderResourceView(BufferView* const bufferView);
+	void DiscardDepthStencilView(BufferView* const bufferView);
 
 	//Direct3Dのデスクリプタヒープをタイプから直接取得
 	const ComPtr<ID3D12DescriptorHeap>& GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type);

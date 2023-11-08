@@ -84,9 +84,35 @@ void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, CommandContext
 	context->WaitForIdle();
 }
 
-void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, CommandContext * const context, ComPtr<ID3D12Resource>& uploadHeap)
+void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, CommandContext * const context, D3D12_RESOURCE_DESC resDesc)
 {
 	auto commandListSet = context->RequestCommandListSet();
+	
+	//D3D12_HEAP_PROPERTIES prop = {};
+	//prop.Type = D3D12_HEAP_TYPE_DEFAULT;
+	//prop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY::D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	//prop.MemoryPoolPreference = D3D12_MEMORY_POOL::D3D12_MEMORY_POOL_UNKNOWN;
+	//prop.CreationNodeMask = 1;
+	//prop.VisibleNodeMask = 1;
+	
+	//リソースの作成
+	CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
+
+	//D3D12_RESOURCE_DESC resDesc = {};
+	//resDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	//resDesc.Width = ;   //テクスチャ幅　　
+	//resDesc.Height = windowHeight; //テクスチャ高さ　
+	//resDesc.DepthOrArraySize = 1;
+	//resDesc.MipLevels = 1;
+	//resDesc.Format = DXGI_FORMAT_R16G16_FLOAT;
+	//resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	//resDesc.SampleDesc.Count = 1;
+	//resDesc.SampleDesc.Quality = 0;
+	//resDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET |
+	//	D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+	ThrowIfFailed(
+		device.Get()->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, nullptr, IID_PPV_ARGS(m_TextureResource.ReleaseAndGetAddressOf())));
 
 }
 

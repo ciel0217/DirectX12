@@ -125,7 +125,7 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 
 
 		//レンダーターゲットの設定
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = frameResource->GetBufferView().m_CpuHandle;
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = frameResource->GetRTVBufferView()->m_CpuHandle;
 		commandListSet.m_CommandList.Get()->OMSetRenderTargets(1, &rtvHandle, FALSE, &(dxDevice->GetDSV()->m_CpuHandle));
 
 		//レンダーターゲットクリア

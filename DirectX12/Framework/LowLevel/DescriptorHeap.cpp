@@ -42,10 +42,10 @@ void DescriptorHeap::AllocateBufferView(BufferView * bufferView, UINT descriptor
 	bufferView->m_CpuHandle = GetCpuHandle(bufferView->m_Location);
 }
 
-void DescriptorHeap::DiscardBufferView(const BufferView & bufferView)
+void DescriptorHeap::DiscardBufferView(BufferView* const bufferView)
 {
 	//デスクリプターのインデックスからメモリアロケーターの管理するデータポインタを復元
-	void* bufferViewPtr = m_Allocator->GetDataPtrFromBlockLocation(bufferView.m_Location);
+	void* bufferViewPtr = m_Allocator->GetDataPtrFromBlockLocation(bufferView->m_Location);
 	m_Allocator->ReleaseMemory(bufferViewPtr);
 }
 
@@ -244,22 +244,22 @@ void DescriptorHeapManager::CreateUnorederdAcsessView(ID3D12Resource ** unorderd
 	device->Release();
 }
 
-void DescriptorHeapManager::DiscardRenderTargetView(const BufferView & bufferView)
+void DescriptorHeapManager::DiscardRenderTargetView(BufferView* const bufferView)
 {
 	m_RtvHeap.DiscardBufferView(bufferView);
 }
 
-void DescriptorHeapManager::DiscardConstantBufferView(const BufferView & bufferView)
+void DescriptorHeapManager::DiscardConstantBufferView(BufferView* const bufferView)
 {
 	m_CbvSrvHeap.DiscardBufferView(bufferView);
 }
 
-void DescriptorHeapManager::DiscardShaderResourceView(const BufferView & bufferView)
+void DescriptorHeapManager::DiscardShaderResourceView(BufferView* const bufferView)
 {
 	m_CbvSrvHeap.DiscardBufferView(bufferView);
 }
 
-void DescriptorHeapManager::DiscardDepthStencilView(const BufferView & bufferView)
+void DescriptorHeapManager::DiscardDepthStencilView(BufferView* const bufferView)
 {
 	m_DsvHeap.DiscardBufferView(bufferView);
 }
