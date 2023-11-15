@@ -111,8 +111,15 @@ void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, CommandContext
 	//resDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET |
 	//	D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
+	D3D12_CLEAR_VALUE clearValue;
+	clearValue.Format = resDesc.Format;
+	clearValue.Color[0] = 0.0f;
+	clearValue.Color[1] = 0.0f;
+	clearValue.Color[2] = 0.0f;
+	clearValue.Color[3] = 1.0f;
+
 	ThrowIfFailed(
-		device.Get()->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, nullptr, IID_PPV_ARGS(m_TextureResource.ReleaseAndGetAddressOf())));
+		device.Get()->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &resDesc, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, &clearValue, IID_PPV_ARGS(m_TextureResource.ReleaseAndGetAddressOf())));
 
 }
 

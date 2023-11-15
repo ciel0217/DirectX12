@@ -38,8 +38,7 @@ void GpuReadOnlyBuffer::CreateWithData(const ComPtr<ID3D12Device>& device, const
 		nullptr,
 		IID_PPV_ARGS(m_Resource.ReleaseAndGetAddressOf())
 	));
-	m_Resource.Get()->SetName(L"s");
-
+	
 	//VRAMを直接Mapは出来ないから、一旦Map可能なbufferに書き込んで、コピーを行う
 	T* mapPtr = nullptr;
 	ThrowIfFailed((*(uploadHeap.GetAddressOf()))->Map(0, nullptr, reinterpret_cast<void**>(&mapPtr)));//CPU からリードバック データを認識できるようにする。今回はnullptrのため認識できなくしてる(GPUReadOnly)

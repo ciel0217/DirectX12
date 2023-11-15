@@ -57,7 +57,7 @@ public:
 	CameraRender() { SetUpRender(); }
 	virtual ~CameraRender() { UninitRender(); }
 
-	
+	std::shared_ptr<BufferView> GetVPBufferView() { return m_VPView; }
 	void SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3 LookAtPoint);
 	void Draw(std::list<CGameObject*> gameObjects[]);
 };

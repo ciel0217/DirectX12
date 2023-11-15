@@ -223,5 +223,11 @@
     <FxCompile Include="Framework\Shader\TestPixel.hlsl">
       <Filter>Framework\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Framework\Shader\DefaultGBufferVS.hlsl">
+      <Filter>Framework\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Framework\Shader\DefaultGBufferPS.hlsl">
+      <Filter>Framework\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

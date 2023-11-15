@@ -57,6 +57,7 @@ void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3
 
 void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 {
+	m_CurrentRender->Draw(gameObjects, this);
 	std::list<std::shared_ptr<RenderingSet>> opacityList;//•s“§–¾
 	std::list<std::shared_ptr<RenderingSet>> transparentList;//”¼“§–¾
 

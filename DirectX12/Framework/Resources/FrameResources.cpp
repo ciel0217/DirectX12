@@ -23,7 +23,7 @@ void FrameResources::Create(const ComPtr<ID3D12Device>& device, CommandContext* 
 	resDesc.Height = SCREEN_HEIGHT; //テクスチャ高さ　
 	resDesc.DepthOrArraySize = 1;
 	resDesc.MipLevels = 1;
-	resDesc.Format = DXGI_FORMAT_R16G16_FLOAT;
+	resDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	resDesc.SampleDesc.Count = 1;
 	resDesc.SampleDesc.Quality = 0;

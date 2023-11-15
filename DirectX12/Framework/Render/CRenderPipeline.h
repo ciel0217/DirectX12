@@ -1,6 +1,8 @@
 #pragma once
 #include "../LowLevel/DirectX12Helper.h"
 
+class CameraRender;
+class CGameObject;
 
 class CRenderPipeline
 {
@@ -13,5 +15,5 @@ public:
 
 	virtual void SetUpRender() = 0;
 	virtual void UninitRender() = 0;
-	virtual void Draw(std::list<CGameObject*> gameObjects[]) = 0;
+	virtual void Draw(std::list<CGameObject*> gameObjects[], CameraRender* cameraRender) = 0;
 };
