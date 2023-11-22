@@ -6,8 +6,12 @@ struct Output
 
 
 
+
 Texture2D		DiffuseTexture : register(t0);
 SamplerState	Sampler : register(s0);
+
+
+
 
 
 float4 main(Output i) : SV_TARGET

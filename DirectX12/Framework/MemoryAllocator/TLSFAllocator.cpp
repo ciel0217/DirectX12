@@ -2,6 +2,10 @@
 
 void TLSFAllocator::ShutDown()
 {
+	delete[] m_DataPtr;
+	delete[] m_BlockPtr;
+	
+	m_FreeList.clear();
 }
 
 void TLSFAllocator::Init(unsigned int allocate_block_num)
@@ -139,7 +143,7 @@ void TLSFAllocator::ReleaseMemory(void * ptr)
 			prev_block->SetSize(prev_block->m_Size + block->m_Size);
 
 			block = prev_block;
-			//DEBUG_PRINT("Prev Merge");
+			
 		}
 	}
 
@@ -150,7 +154,7 @@ void TLSFAllocator::ReleaseMemory(void * ptr)
 		{
 			RemoveFreeList(nextBlock);
 			block->SetSize(block->m_Size + nextBlock->m_Size);
-			//DEBUG_PRINT("Next Merge");
+			
 		}
 	}
 

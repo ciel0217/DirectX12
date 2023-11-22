@@ -28,6 +28,7 @@ bool DescriptorHeap::Create(const ComPtr<ID3D12Device> &device, UINT numDescript
 
 void DescriptorHeap::Shutdown()
 {
+//	m_DescriptorHeap->Release();
 	delete m_Allocator;
 }
 
@@ -78,13 +79,21 @@ DescriptorHeapManager::DescriptorHeapManager():
 
 DescriptorHeapManager & DescriptorHeapManager::CreateInstance()
 {
-	if (!m_Singleton)m_Singleton = new DescriptorHeapManager();
+	if (!m_Singleton) 
+	{
+		m_Singleton = new DescriptorHeapManager();
+	}
 	return *m_Singleton;
 }
 
 DescriptorHeapManager::~DescriptorHeapManager()
 {
 	Shutdown();
+}
+
+void DescriptorHeapManager::Destruct()
+{
+	delete m_Singleton;
 }
 
 void DescriptorHeapManager::Create(const ComPtr<ID3D12Device>& device)
@@ -96,6 +105,7 @@ void DescriptorHeapManager::Create(const ComPtr<ID3D12Device>& device)
 
 void DescriptorHeapManager::Shutdown()
 {
+
 }
 
 void DescriptorHeapManager::CreateRenderTargetView(ID3D12Resource *const* textureBuffers, BufferView * dstView, unsigned int viewCount)

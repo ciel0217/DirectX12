@@ -31,11 +31,12 @@ void CScene::Uninit()
 
 	for (int i = 0; i < eMaxLayer; i++)
 	{
-		for (auto gameobject : m_GameObjects[i]) {
+		for (auto gameobject : m_GameObjects[i]) 
+		{
 			gameobject->Uninit();
 		}
 
-		m_GameObjects[i].clear();
+		//m_GameObjects[i].clear();
 	}
 }
 

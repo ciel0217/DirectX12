@@ -23,7 +23,13 @@ protected:
 public:
 
 	CScene() {}
-	virtual ~CScene() {}
+	virtual ~CScene()
+	{
+		for (int i = 0; i < eMaxLayer; i++)
+		{
+			
+		}
+	}
 
 	virtual void SetObject() = 0;
 	virtual void Config();

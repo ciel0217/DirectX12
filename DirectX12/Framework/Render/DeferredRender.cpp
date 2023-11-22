@@ -147,17 +147,18 @@ void DeferredRender::Draw(std::list<CGameObject*> gameObjects[], CameraRender* c
 		}
 		commandListSet.m_CommandList.Get()->ResourceBarrier(beforeBarriers.size(), beforeBarriers.data());
 		
-		//clear
+		//clearColor
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		
 		//深度バッファclear
 		commandListSet.m_CommandList.Get()->ClearDepthStencilView(dxDevice->GetDSV()->m_CpuHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+		
 		//GBufferClear
 		for (int i = 0; i < m_ResoureceMax; i++)
 			commandListSet.m_CommandList.Get()->ClearRenderTargetView(rtvHandles[i], clearColor, 0, nullptr);
+		
 		//mainFrameResourceClear
 		commandListSet.m_CommandList.Get()->ClearRenderTargetView(mainFrameResource->GetRTVBufferView()->m_CpuHandle, clearColor, 0, nullptr);
-
-
 
 		//SetRenderTargets
 		commandListSet.m_CommandList.Get()->OMSetRenderTargets(m_ResoureceMax, rtvHandles.data(), NULL, &(dxDevice->GetDSV()->m_CpuHandle));
@@ -184,6 +185,7 @@ void DeferredRender::Draw(std::list<CGameObject*> gameObjects[], CameraRender* c
 		std::vector<D3D12_RESOURCE_BARRIER> afterBarriers;
 		afterBarriers.resize(m_ResoureceMax + 1);
 
+		//描画後ResourceBarrior
 		{
 			int count = 0;
 			for(auto res : m_TextureResourece)

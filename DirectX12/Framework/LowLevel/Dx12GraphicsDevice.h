@@ -25,10 +25,10 @@ private:
 	ComPtr<ID3D12Device> m_Device;
 	ComPtr<IDXGISwapChain3> m_SwapChain;
 
-	CommandContext m_GraphicsCommandContext;
-	FrameResources m_FrameResource[FRAME_COUNT];
-	Texture2D m_DepthStencil;
-	BufferView m_DSV;
+	std::unique_ptr<CommandContext> m_GraphicsCommandContext;
+	std::unique_ptr<FrameResources> m_FrameResource[FRAME_COUNT];
+	std::unique_ptr<Texture2D> m_DepthStencil;
+	std::unique_ptr<BufferView> m_DSV;
 	
 	TestScene* test;
 
@@ -37,6 +37,7 @@ private:
 
 public:
 	Dx12GraphicsDevice() { if (!m_Instance)m_Instance = this; }
+	~Dx12GraphicsDevice() { Release(); }
 
 	static Dx12GraphicsDevice* const GetInstance() { return m_Instance; }
 	BOOL Init(HWND hWND);
@@ -45,9 +46,10 @@ public:
 	BOOL Release();
 
 	const ComPtr<ID3D12Device> &GetDevice()const { return m_Device; }
-	CommandContext* const GetGraphicContext(){ return &m_GraphicsCommandContext; }
-	FrameResources* const GetFrameResource(UINT index) { return &m_FrameResource[index]; }
-	BufferView* GetDSV() { return &m_DSV; }
+	CommandContext* const GetGraphicContext(){ return m_GraphicsCommandContext.get(); }
+	FrameResources* const GetFrameResource(UINT index) { return m_FrameResource[index].get(); }
+	BufferView* GetDSV() { return m_DSV.get(); }
 	UINT GetFrameIndex() { return m_FrameIndex; }
+
 
 };

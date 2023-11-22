@@ -229,5 +229,8 @@
     <FxCompile Include="Framework\Shader\DefaultGBufferPS.hlsl">
       <Filter>Framework\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Framework\Shader\Common.hlsl">
+      <Filter>Framework\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

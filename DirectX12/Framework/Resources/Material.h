@@ -75,7 +75,7 @@ public:
 	std::unordered_map<std::string, std::shared_ptr<CBufferSet>> GetCBuffers() { return m_CBufferSet; }
 
 	void SetTextures(std::unordered_map<std::string, std::shared_ptr<TextureSet>> textures) { m_Textures = textures; }
-	void SetTextureByTextureType(std::string name, TextureSet* textureSet ) { m_Textures[name].reset(textureSet); }
+	void SetTextureByTextureName(std::string name, TextureSet* textureSet ) { m_Textures[name].reset(textureSet); }
 	void SetCBufferData(std::string name, void* data, UINT size) { m_CBufferSet[name]->constantBuffer->WriteData(data, size); }
 
 	bool HasTextureByTextureType(std::string name) { return m_Textures.count(name); }

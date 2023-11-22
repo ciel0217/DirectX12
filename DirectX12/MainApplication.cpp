@@ -1,8 +1,6 @@
 #include "MainApplication.h"
 #include <time.h>
-#include "Framework/MemoryAllocator/TLSFAllocator.h"
-#include "Framework/LowLevel/BufferView.h"
-#include "Framework/LowLevel/CommandContext.h"
+#include "Framework/Resources/MaterialManager.h"
 
 MainApplication *pApp = nullptr;
 
@@ -66,9 +64,10 @@ HRESULT MainApplication::Initialize()
 {
 	//初期化処理するやつ
 	
+	m_Dx12 = new Dx12GraphicsDevice();
+	m_Dx12->Init(m_DxWindow->GetHWND());
 
-	d = new Dx12GraphicsDevice();
-	d->Init(m_DxWindow->GetHWND());
+	m_Dx12->GetDevice().As(&debugDevice);
 
 	return S_OK;
 }
@@ -143,6 +142,14 @@ void MainApplication::Loop()
 
 void MainApplication::ReleaseApp()
 {
+	delete m_Dx12;
+
+	
+	DescriptorHeapManager::Destruct();
+	MaterialManager::Destruct();
+
+	debugDevice->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
+	
 	timeEndPeriod(1);				// 分解能を戻す
 
 	// ウィンドウクラスの登録を解除
@@ -151,11 +158,11 @@ void MainApplication::ReleaseApp()
 
 void MainApplication::Update()
 {
-	
+	m_Dx12->Update();
 	
 }
 
 void MainApplication::Draw()
 {
-	d->Render();
+	m_Dx12->Render();
 }

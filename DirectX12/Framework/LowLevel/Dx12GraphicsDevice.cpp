@@ -46,7 +46,9 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 	//デバイス生成
 	ThrowIfFailed(D3D12CreateDevice(adapter1.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_Device)));
 
-	m_GraphicsCommandContext.Create(m_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
+	m_GraphicsCommandContext = std::make_unique<CommandContext>();
+
+	m_GraphicsCommandContext->Create(m_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 	//スワップチェーン生成
 	{
@@ -60,29 +62,34 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 		swapChainDesc.SampleDesc.Count = 1;
 
 		ComPtr<IDXGISwapChain1> swapChain;
-		ID3D12CommandQueue* const queue = m_GraphicsCommandContext.GetDirectQueue();
+		ID3D12CommandQueue* const queue = m_GraphicsCommandContext->GetDirectQueue();
 
 		ThrowIfFailed(factory4->CreateSwapChainForHwnd(queue, hWND, &swapChainDesc, nullptr, nullptr, swapChain.ReleaseAndGetAddressOf()));
 
 		//フルスクリーンサポートをオフ
 		ThrowIfFailed(factory4->MakeWindowAssociation(hWND, DXGI_MWA_NO_ALT_ENTER));
 		ThrowIfFailed(swapChain.As(&m_SwapChain));
+	
 	}
 
 	DescriptorHeapManager& heapManager = DescriptorHeapManager::CreateInstance();
 	heapManager.Create(m_Device);
 
 	{
+		m_DepthStencil = std::make_unique<Texture2D>();
 		DepthInfo info(SCREEN_WIDTH, SCREEN_HEIGHT, DXGI_FORMAT_D32_FLOAT);
-		m_DepthStencil.CreateDepth(m_Device, info);
-		const ComPtr<ID3D12Resource>& res = m_DepthStencil.GetResource();
-		
-		DescriptorHeapManager::Instance().CreateDepthStencilView(res.GetAddressOf(), &m_DSV, 1);
+		m_DepthStencil->CreateDepth(m_Device, info);
+		const ComPtr<ID3D12Resource>& res = m_DepthStencil->GetResource();
+		m_DSV = std::make_unique<BufferView>();
+		DescriptorHeapManager::Instance().CreateDepthStencilView(res.GetAddressOf(), m_DSV.get(), 1);
+		res->SetName(L"DSV");
 	}
 
 	for (int i = 0; i < FRAME_COUNT; i++)
-		m_FrameResource[i].Create(m_Device, m_SwapChain, i);
-
+	{
+		m_FrameResource[i] = std::make_unique<FrameResources>();
+		m_FrameResource[i]->Create(m_Device, m_SwapChain, i);
+	}
 	m_FrameIndex = m_SwapChain.Get()->GetCurrentBackBufferIndex();
 
 	MaterialManager::Create();
@@ -113,14 +120,14 @@ void Dx12GraphicsDevice::Render()
 
 void Dx12GraphicsDevice::MoveToNextFrame()
 {
-	auto commandQueue = m_GraphicsCommandContext.GetCommandQueue();
-	const UINT64 currentFenceValue = m_FrameResource[m_FrameIndex].GetFenceValue();
+	auto commandQueue = m_GraphicsCommandContext->GetCommandQueue();
+	const UINT64 currentFenceValue = m_FrameResource[m_FrameIndex]->GetFenceValue();
 	commandQueue->WaitForFence(currentFenceValue);
 
 	m_FrameIndex = m_SwapChain->GetCurrentBackBufferIndex();
 
 	const UINT64 fenceValue = commandQueue->IncrementFence();
-	m_FrameResource[m_FrameIndex].SetFenceValue(fenceValue);
+	m_FrameResource[m_FrameIndex]->SetFenceValue(fenceValue);
 
 }
 
@@ -128,5 +135,6 @@ BOOL Dx12GraphicsDevice::Release()
 {
 	test->Uninit();
 	delete test;
+
 	return 1;
 }

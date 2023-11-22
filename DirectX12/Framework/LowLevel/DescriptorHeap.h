@@ -54,6 +54,7 @@ public:
 	~DescriptorHeapManager();
 
 	static DescriptorHeapManager& Instance() { return *m_Singleton; }
+	static void Destruct();
 
 	void Create(const ComPtr<ID3D12Device> &device);
 	void Shutdown();

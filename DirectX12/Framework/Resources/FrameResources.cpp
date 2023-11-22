@@ -7,6 +7,7 @@ void FrameResources::Create(const ComPtr<ID3D12Device>& device, const ComPtr<IDX
 {
 	m_Texture2D = std::make_unique<Texture2D>();
 	m_Texture2D->CreateFromBackBuffer(swapChain, frameIndex);
+	m_Texture2D->GetResource()->SetName(L"Texture");
 
 	m_RTVBufferView = std::make_shared<BufferView>();
 	DescriptorHeapManager& heapManager = DescriptorHeapManager::Instance();
