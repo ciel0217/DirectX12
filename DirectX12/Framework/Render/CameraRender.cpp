@@ -55,7 +55,7 @@ void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3
 	m_VPCBuffer->WriteData(&vp, sizeof(VP));
 }
 
-void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
+void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 {
 	m_CurrentRender->Draw(gameObjects, this);
 	std::list<std::shared_ptr<RenderingSet>> opacityList;//•s“§–¾
@@ -67,7 +67,7 @@ void CameraRender::Draw(std::list<CGameObject*> gameObjects[])
 	{
 		for (auto gameObject : gameObjects[i])
 		{
-			CRender * render = dynamic_cast<CRender*>(gameObject);
+			CRender * render = dynamic_cast<CRender*>(gameObject.get());
 		
 			if (!render)continue;
 

@@ -18,7 +18,7 @@ class CScene
 
 protected:
 	std::shared_ptr<Camera> m_CurrentMainCamera;
-	std::list<CGameObject *> m_GameObjects[eMaxLayer];				//ゲームオブジェクトのすべて
+	std::list<std::shared_ptr<CGameObject >> m_GameObjects[eMaxLayer];				//ゲームオブジェクトのすべて
 
 public:
 
@@ -54,8 +54,10 @@ public:
 			}
 			return obj;
 		}*/
+		std::shared_ptr<CGameObject> a;
+		a.reset(obj);
 
-		m_GameObjects[layer].push_back(obj);
+		m_GameObjects[layer].push_back(a);
 
 		return obj;
 	}
@@ -73,7 +75,7 @@ public:
 		return NULL;
 	}
 
-	std::list<CGameObject *>* GetGameObjectAll(){ return m_GameObjects; }
+	std::list<std::shared_ptr<CGameObject >>* GetGameObjectAll(){ return m_GameObjects; }
 
 	std::shared_ptr<Camera> GetCurrentMainCamera() { return m_CurrentMainCamera; }
 };

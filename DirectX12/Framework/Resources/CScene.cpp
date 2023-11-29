@@ -36,7 +36,7 @@ void CScene::Uninit()
 			gameobject->Uninit();
 		}
 
-		//m_GameObjects[i].clear();
+		m_GameObjects[i].clear();
 	}
 }
 

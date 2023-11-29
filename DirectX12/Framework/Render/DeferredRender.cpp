@@ -50,7 +50,7 @@ void DeferredRender::UninitRender()
 
 }
 
-void DeferredRender::Draw(std::list<CGameObject*> gameObjects[], CameraRender* cameraRender)
+void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[], CameraRender* cameraRender)
 {
 	std::list<std::shared_ptr<RenderingSet>> opacityList;//•s“§–¾
 	std::list<std::shared_ptr<RenderingSet>> transparentList;//”¼“§–¾
@@ -61,7 +61,7 @@ void DeferredRender::Draw(std::list<CGameObject*> gameObjects[], CameraRender* c
 	{
 		for (auto gameObject : gameObjects[i])
 		{
-			CRender * render = dynamic_cast<CRender*>(gameObject);
+			CRender * render = dynamic_cast<CRender*>(gameObject.get());
 
 			if (!render)continue;
 

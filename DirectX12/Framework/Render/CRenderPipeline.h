@@ -15,5 +15,5 @@ public:
 
 	virtual void SetUpRender() = 0;
 	virtual void UninitRender() = 0;
-	virtual void Draw(std::list<CGameObject*> gameObjects[], CameraRender* cameraRender) = 0;
+	virtual void Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[], CameraRender* cameraRender) = 0;
 };

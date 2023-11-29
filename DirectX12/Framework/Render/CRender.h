@@ -10,7 +10,7 @@ class CRender
 {
 protected:
 	std::vector<std::shared_ptr<Material>> m_Materials;
-	std::shared_ptr<CGameObject> m_Self;
+	CGameObject* m_Self;
 	std::shared_ptr<ConstantBuffer> m_WorldCBuffer;
 	std::shared_ptr<BufferView> m_WorldView;
 	

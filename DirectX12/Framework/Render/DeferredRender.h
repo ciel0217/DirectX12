@@ -23,5 +23,5 @@ public:
 	~DeferredRender(){}
 	void SetUpRender()override;
 	void UninitRender()override;
-	void Draw(std::list<CGameObject*> gameObjects[], CameraRender* cameraRender)override;
+	void Draw(std::list<std::shared_ptr<CGameObject>> gameObjects[], CameraRender* cameraRender)override;
 };
