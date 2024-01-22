@@ -58,113 +58,113 @@ void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3
 void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 {
 	m_CurrentRender->Draw(gameObjects, this);
-	std::list<std::shared_ptr<RenderingSet>> opacityList;//不透明
-	std::list<std::shared_ptr<RenderingSet>> transparentList;//半透明
+	//std::list<std::shared_ptr<RenderingSet>> opacityList;//不透明
+	//std::list<std::shared_ptr<RenderingSet>> transparentList;//半透明
 
-	
-	//3Dと2DでLayer分けてるため
-	for (int i = 0; i < 2; i++)
-	{
-		for (auto gameObject : gameObjects[i])
-		{
-			CRender * render = dynamic_cast<CRender*>(gameObject.get());
-		
-			if (!render)continue;
+	//
+	////3Dと2DでLayer分けてるため
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	for (auto gameObject : gameObjects[i])
+	//	{
+	//		CRender * render = dynamic_cast<CRender*>(gameObject.get());
+	//	
+	//		if (!render)continue;
 
-			std::vector<std::shared_ptr<Material>> materials = render->GetMaterials();
+	//		std::vector<std::shared_ptr<Material>> materials = render->GetMaterials();
 
-			for (UINT i = 0; i < materials.size(); i++)
-			{
+	//		for (UINT i = 0; i < materials.size(); i++)
+	//		{
 
-				std::shared_ptr<Material> material = materials[i];
-				std::shared_ptr<RenderingSet> renderingSet;
-				renderingSet.reset(new RenderingSet(render, material.get(), i));
+	//			std::shared_ptr<Material> material = materials[i];
+	//			std::shared_ptr<RenderingSet> renderingSet;
+	//			renderingSet.reset(new RenderingSet(render, material.get(), i));
 
-				//TODO::2D対応してないよ
-				if (material->GetRenderQueue() <= MaterialManager::OPACITY_RENDER_QUEUE)
-					opacityList.push_back(renderingSet);
-				else
-					transparentList.push_back(renderingSet);
-			}
-			
-		}
-	}
+	//			//TODO::2D対応してないよ
+	//			if (material->GetRenderQueue() <= MaterialManager::OPACITY_RENDER_QUEUE)
+	//				opacityList.push_back(renderingSet);
+	//			else
+	//				transparentList.push_back(renderingSet);
+	//		}
+	//		
+	//	}
+	//}
 
-	opacityList.sort();
-	transparentList.sort();
+	//opacityList.sort();
+	//transparentList.sort();
 
-	///テストで書いてる
-	{
-		
-		std::shared_ptr<PipelineStateObject> currentPSO = nullptr;
-		Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
+	/////テストで書いてる
+	//{
+	//	
+	//	std::shared_ptr<PipelineStateObject> currentPSO = nullptr;
+	//	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
 
-		auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
+	//	auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
 
-		//ビューポート&シザー矩形設定
-		commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
-		commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
+	//	//ビューポート&シザー矩形設定
+	//	commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
+	//	commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
 
-		ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
+	//	ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
 
-		//使うDescriptorHeapの設定
-		commandListSet.m_CommandList.Get()->SetDescriptorHeaps(1, ppHeaps);
+	//	//使うDescriptorHeapの設定
+	//	commandListSet.m_CommandList.Get()->SetDescriptorHeaps(1, ppHeaps);
 
-		UINT frameIndex = dxDevice->GetFrameIndex();
-		FrameResources* frameResource = dxDevice->GetFrameResource(frameIndex);
+	//	UINT frameIndex = dxDevice->GetFrameIndex();
+	//	FrameResources* frameResource = dxDevice->GetFrameResource(frameIndex);
 
-		//ResourceBarrierの設定(描画前Ver)
-		D3D12_RESOURCE_BARRIER barrier;
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barrier.Transition.pResource = frameResource->GetTexture()->GetResource().Get();
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	//	//ResourceBarrierの設定(描画前Ver)
+	//	D3D12_RESOURCE_BARRIER barrier;
+	//	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//	barrier.Transition.pResource = frameResource->GetTexture()->GetResource().Get();
+	//	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	//	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
-		commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
+	//	commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
 
 
-		//レンダーターゲットの設定
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = frameResource->GetRTVBufferView()->m_CpuHandle;
-		commandListSet.m_CommandList.Get()->OMSetRenderTargets(1, &rtvHandle, FALSE, &(dxDevice->GetDSV()->m_CpuHandle));
+	//	//レンダーターゲットの設定
+	//	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = frameResource->GetRTVBufferView()->m_CpuHandle;
+	//	commandListSet.m_CommandList.Get()->OMSetRenderTargets(1, &rtvHandle, FALSE, &(dxDevice->GetDSV()->m_CpuHandle));
 
-		//レンダーターゲットクリア
-		const float clearColor[] = { 0.0f, 1.0f, 0.4f, 1.0f };
-		commandListSet.m_CommandList.Get()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-		commandListSet.m_CommandList.Get()->ClearDepthStencilView(dxDevice->GetDSV()->m_CpuHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	//	//レンダーターゲットクリア
+	//	const float clearColor[] = { 0.0f, 1.0f, 0.4f, 1.0f };
+	//	commandListSet.m_CommandList.Get()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	//	commandListSet.m_CommandList.Get()->ClearDepthStencilView(dxDevice->GetDSV()->m_CpuHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//	commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		for (auto gameObject : opacityList)
-		{
-			//各オブジェクト描画
-			std::shared_ptr<PipelineStateObject> pso = gameObject->Mat->GetRenderSet()->pipelineStateObj;
-			if (currentPSO != pso)
-			{
-				currentPSO = pso;
+	//	for (auto gameObject : opacityList)
+	//	{
+	//		//各オブジェクト描画
+	//		std::shared_ptr<PipelineStateObject> pso = gameObject->Mat->GetRenderSet()->pipelineStateObj;
+	//		if (currentPSO != pso)
+	//		{
+	//			currentPSO = pso;
 
-				commandListSet.m_CommandList.Get()->SetPipelineState(pso->GetPipelineState().Get());
-				commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(gameObject->Mat->GetRenderSet()->rootSignature->GetRootSignature().Get());
-				//セットはオブジェクトの数関係なく一回だけ
-				gameObject->Mat->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(&commandListSet, "VP", m_VPView);
+	//			commandListSet.m_CommandList.Get()->SetPipelineState(pso->GetPipelineState().Get());
+	//			commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(gameObject->Mat->GetRenderSet()->rootSignature->GetRootSignature().Get());
+	//			//セットはオブジェクトの数関係なく一回だけ
+	//			gameObject->Mat->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(&commandListSet, "VP", m_VPView);
 
-			}
+	//		}
 
-			gameObject->Render->Draw(&commandListSet, gameObject->MatIndex);
+	//		gameObject->Render->Draw(&commandListSet, gameObject->MatIndex);
 
-			D3D12_RESOURCE_BARRIER barriera;
-			barriera.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-			barriera.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-			barriera.Transition.pResource = frameResource->GetTexture()->GetResource().Get();
-			barriera.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-			barriera.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-			barriera.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	//		D3D12_RESOURCE_BARRIER barriera;
+	//		barriera.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//		barriera.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//		barriera.Transition.pResource = frameResource->GetTexture()->GetResource().Get();
+	//		barriera.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//		barriera.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	//		barriera.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
-			commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barriera);
+	//		commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barriera);
 
-			dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
-			dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
-		}
-	}
+	//		dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
+	//		dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
+	//	}
+	//}
 }

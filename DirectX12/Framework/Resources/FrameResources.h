@@ -19,7 +19,7 @@ public:
 	~FrameResources() { ShutDown(); }
 
 	void Create(const ComPtr<ID3D12Device> &device, const ComPtr<IDXGISwapChain3> &swapChain, UINT frameIndex);
-	void Create(const ComPtr<ID3D12Device> &device, CommandContext* const commandContext);
+	void Create(const ComPtr<ID3D12Device> &device, CommandContext* const commandContext, DXGI_FORMAT format = DXGI_FORMAT_R16G16B16A16_FLOAT);
 
 	void ShutDown();
 

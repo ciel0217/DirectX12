@@ -13,13 +13,16 @@ GBuffer - > Light計算 - > 半透明 - > 2D
 void DeferredRender::CalcTextureResource(std::string name, const ComPtr<ID3D12Device>& device, CommandContext * const commandContext)
 {
 	m_TextureResourece[name] = std::make_shared<FrameResources>();
-	m_TextureResourece[name]->Create(device, commandContext);
+	m_TextureResourece[name]->Create(device, commandContext, m_DefaultMat->GetRenderSet()->pipelineStateObj);
 }
 
 void DeferredRender::SetUpRender()
 {
 	std::string resoureceName[] = {"BaseColor", "Normal", "RoughMetaSpe"};
 	m_ResoureceMax = sizeof(resoureceName) / sizeof(resoureceName[0]);
+
+	m_DefaultMat = MaterialManager::GetInstance()->CreateMaterial("DefaultDeferred", "Framework/Shader/DefaultGBufferVS.cso",
+		"Framework/Shader/DefaultGBufferPS.cso", MaterialManager::OPACITY_RENDER_QUEUE);
 
 	{
 		ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
@@ -31,8 +34,6 @@ void DeferredRender::SetUpRender()
 			m_TextureResourece[resoureceName[i]]->GetTexture()->GetResource()->SetName(L"ds");
 		}
 	}
-
-	m_DefaultMat = MaterialManager::GetInstance()->CreateMaterial("DefaultDeferred", "Framework/Shader/DefaultGBufferVS.cso", "Framework/Shader/DefaultGBufferPS.cso", MaterialManager::OPACITY_RENDER_QUEUE);
 	
 	//ビューポート初期化&TODO:::これも色々できるといいかも
 	m_ViewPort.TopLeftX = 0.0f;
@@ -163,6 +164,9 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 		//SetRenderTargets
 		commandListSet.m_CommandList.Get()->OMSetRenderTargets(m_ResoureceMax, rtvHandles.data(), NULL, &(dxDevice->GetDSV()->m_CpuHandle));
 		
+
+		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 		//DrawGBufer
 		for (auto gameObject : opacityList)
 		{
@@ -179,7 +183,7 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 
 			}
 
-			//gameObject->Render->Draw(&commandListSet, gameObject->MatIndex);
+			gameObject->Render->Draw(&commandListSet, gameObject->MatIndex);
 		}
 
 		std::vector<D3D12_RESOURCE_BARRIER> afterBarriers;
