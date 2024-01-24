@@ -6,6 +6,7 @@
 #define SCREEN_WIDTH	(1280)
 #define SCREEN_HEIGHT	(720)
 
+
 class Window {
 private:
 	HWND m_hWnd;
@@ -14,7 +15,7 @@ private:
 
 public:
 	Window() = delete;
-	Window(HINSTANCE hInstance) : m_hInstance(hInstance) {};
+	Window(HINSTANCE hInstance) : m_hInstance(hInstance){};
 	~Window() {};
 
 	HRESULT RegisterWindowClass(WNDCLASSEX *wnd);

@@ -17,7 +17,7 @@ private:
 	D3D12_VIEWPORT m_ViewPort;
 	D3D12_RECT m_ScissorRect;
 
-	void CalcTextureResource(std::string name, const ComPtr<ID3D12Device> &device, CommandContext* const commandContext);
+	void CalcTextureResource(std::string name, const ComPtr<ID3D12Device> &device, CommandContext* const commandContext, UINT index);
 public:
 	DeferredRender(){}
 	~DeferredRender(){}

@@ -27,6 +27,8 @@ void PipelineStateObject::CreateGraphicPipeline(ComPtr<ID3D12Device>& device, Ro
 
 	desc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	desc.SampleDesc.Count = 1;
+
+	m_PsoDesc = psoDesc;
 	//
 	ThrowIfFailed(device.Get()->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(m_PipelineState.ReleaseAndGetAddressOf())));
 }

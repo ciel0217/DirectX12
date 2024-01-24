@@ -19,7 +19,7 @@ BOOL Dx12GraphicsDevice::Init(HWND hWND)
 		dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 	}
 #else
-	SetDllDirectoryA("Assimp/lib/x64-Release");
+	SetDllDirectoryA("../Assimp/lib/x64-Release");
 	LoadLibraryExA("assimp-vc142-mt.dll", NULL, NULL);
 #endif
 

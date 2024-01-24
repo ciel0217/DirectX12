@@ -25,9 +25,9 @@ class Model
 {
 private:
 
-	const std::string DEFAULT_VERTEX_SHADER_NAME = "FrameWork/Shader/TestVertex.cso";
+	const std::string DEFAULT_VERTEX_SHADER_NAME = "FrameWork/Shader/DefaultGBufferVS.cso";
 
-	const std::string DEFAULT_PIXEL_SHADER_NAME = "FrameWork/Shader/TestPixel.cso";
+	const std::string DEFAULT_PIXEL_SHADER_NAME = "FrameWork/Shader/DefaultGBufferPS.cso";
 
 
 	const std::string m_Name;

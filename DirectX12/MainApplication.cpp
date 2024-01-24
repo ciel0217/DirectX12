@@ -64,10 +64,14 @@ HRESULT MainApplication::Initialize()
 {
 	//初期化処理するやつ
 	
-	m_Dx12 = new Dx12GraphicsDevice();
+	m_Dx12.reset(new Dx12GraphicsDevice());
 	m_Dx12->Init(m_DxWindow->GetHWND());
 
+#ifdef _DEBUG
 	m_Dx12->GetDevice().As(&debugDevice);
+#endif // _DEBUG
+
+	
 
 	return S_OK;
 }
@@ -142,14 +146,15 @@ void MainApplication::Loop()
 
 void MainApplication::ReleaseApp()
 {
-	delete m_Dx12;
-
+//	delete m_Dx12;
+	m_Dx12.release();
 	
 	DescriptorHeapManager::Destruct();
 	MaterialManager::Destruct();
-
+#ifdef _DEBUG
 	debugDevice->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
-	
+#endif
+
 	timeEndPeriod(1);				// 分解能を戻す
 
 	// ウィンドウクラスの登録を解除

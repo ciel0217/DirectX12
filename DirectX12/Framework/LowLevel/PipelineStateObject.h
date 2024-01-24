@@ -84,6 +84,7 @@ class PipelineStateObject
 {
 private:
 	ComPtr<ID3D12PipelineState> m_PipelineState;
+	PipelineStateDesc m_PsoDesc;
 
 public:
 	PipelineStateObject(){}
@@ -98,5 +99,6 @@ public:
 
 	void ShutDown();
 
+	PipelineStateDesc GetPsoDesc() { return m_PsoDesc; }
 	const ComPtr<ID3D12PipelineState>& GetPipelineState() const{ return m_PipelineState; }
 };

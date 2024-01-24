@@ -115,7 +115,7 @@ void Texture2D::CreateTexture(const ComPtr<ID3D12Device>& device, CommandContext
 	clearValue.Format = resDesc.Format;
 	clearValue.Color[0] = 0.0f;
 	clearValue.Color[1] = 0.0f;
-	clearValue.Color[2] = 0.0f;
+	clearValue.Color[2] = 1.0f;
 	clearValue.Color[3] = 1.0f;
 
 	ThrowIfFailed(

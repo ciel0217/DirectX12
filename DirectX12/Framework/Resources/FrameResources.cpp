@@ -14,7 +14,7 @@ void FrameResources::Create(const ComPtr<ID3D12Device>& device, const ComPtr<IDX
 	heapManager.CreateRenderTargetView(m_Texture2D.get()->GetResource().GetAddressOf(), m_RTVBufferView.get(), 1);
 }
 
-void FrameResources::Create(const ComPtr<ID3D12Device>& device, CommandContext* const commandContext, DXGI_FORMAT format = DXGI_FORMAT_R16G16B16A16_FLOAT)
+void FrameResources::Create(const ComPtr<ID3D12Device>& device, CommandContext* const commandContext, DXGI_FORMAT format)
 {	
 	m_Texture2D = std::make_unique<Texture2D>();
 

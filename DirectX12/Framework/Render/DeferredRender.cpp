@@ -10,10 +10,11 @@ GBuffer - > Light計算 - > 半透明 - > 2D
 までの一連を実装
 */
 
-void DeferredRender::CalcTextureResource(std::string name, const ComPtr<ID3D12Device>& device, CommandContext * const commandContext)
+void DeferredRender::CalcTextureResource(std::string name, const ComPtr<ID3D12Device>& device, CommandContext * const commandContext, UINT index)
 {
+	
 	m_TextureResourece[name] = std::make_shared<FrameResources>();
-	m_TextureResourece[name]->Create(device, commandContext, m_DefaultMat->GetRenderSet()->pipelineStateObj);
+	m_TextureResourece[name]->Create(device, commandContext, m_DefaultMat->GetRenderSet()->pipelineStateObj->GetPsoDesc().m_RTVFormat[index]);
 }
 
 void DeferredRender::SetUpRender()
@@ -21,16 +22,16 @@ void DeferredRender::SetUpRender()
 	std::string resoureceName[] = {"BaseColor", "Normal", "RoughMetaSpe"};
 	m_ResoureceMax = sizeof(resoureceName) / sizeof(resoureceName[0]);
 
-	m_DefaultMat = MaterialManager::GetInstance()->CreateMaterial("DefaultDeferred", "Framework/Shader/DefaultGBufferVS.cso",
+	/*m_DefaultMat = MaterialManager::GetInstance()->CreateMaterial("DefaultDeferred", "Framework/Shader/DefaultGBufferVS.cso",
 		"Framework/Shader/DefaultGBufferPS.cso", MaterialManager::OPACITY_RENDER_QUEUE);
-
+*/
 	{
 		ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
 		CommandContext* commandContext = Dx12GraphicsDevice::GetInstance()->GetGraphicContext();
 
-		for (int i = 0; i < m_ResoureceMax; i++)
+		for (UINT i = 0; i < m_ResoureceMax; i++)
 		{
-			CalcTextureResource(resoureceName[i], device, commandContext);
+			CalcTextureResource(resoureceName[i], device, commandContext, i);
 			m_TextureResourece[resoureceName[i]]->GetTexture()->GetResource()->SetName(L"ds");
 		}
 	}
@@ -89,7 +90,7 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 	transparentList.sort();
 
 	{
-		std::shared_ptr<PipelineStateObject> currentPSO = m_DefaultMat->GetRenderSet()->pipelineStateObj;
+		std::shared_ptr<PipelineStateObject> currentPSO =nullptr;
 		Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
 
 		auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
@@ -149,8 +150,8 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 		commandListSet.m_CommandList.Get()->ResourceBarrier(beforeBarriers.size(), beforeBarriers.data());
 		
 		//clearColor
-		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		
+		const float clearColor[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+
 		//深度バッファclear
 		commandListSet.m_CommandList.Get()->ClearDepthStencilView(dxDevice->GetDSV()->m_CpuHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 		

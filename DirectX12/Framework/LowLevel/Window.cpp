@@ -2,6 +2,8 @@
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+
+
 HRESULT Window::RegisterWindowClass(WNDCLASSEX * wnd)
 {
 	m_wndClass = {
@@ -63,6 +65,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case VK_ESCAPE:
+			//PostQuitMessage(0);
 			DestroyWindow(hWnd);
 			break;
 		}

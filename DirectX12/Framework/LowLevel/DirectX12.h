@@ -35,10 +35,9 @@ using namespace DirectX;
 #pragma comment (lib, "dxgi.lib")
 
 
-#if _DEBUG
+#ifdef _DEBUG
 #pragma comment (lib, "DirectXTex/x64/Debug/DirectXTex.lib")
 #pragma comment (lib, "assimp-vc142-mtd.lib")
-
 #else
 #pragma comment (lib, "DirectXTex/x64/Release/DirectXTex.lib")
 #pragma comment (lib, "assimp-vc142-mt.lib")

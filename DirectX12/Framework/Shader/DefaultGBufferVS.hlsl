@@ -9,7 +9,7 @@ OutputVS main(VERTEX_3D parameter)
 	a = mul(a, proj);
 
 	o.Position = mul(position, a);
-
 	o.TexCoord = parameter.TexCoord;
+
 	return o;
 }

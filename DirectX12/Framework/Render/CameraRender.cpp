@@ -58,48 +58,8 @@ void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3
 void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 {
 	m_CurrentRender->Draw(gameObjects, this);
-	//std::list<std::shared_ptr<RenderingSet>> opacityList;//不透明
-	//std::list<std::shared_ptr<RenderingSet>> transparentList;//半透明
 
-	//
-	////3Dと2DでLayer分けてるため
-	//for (int i = 0; i < 2; i++)
-	//{
-	//	for (auto gameObject : gameObjects[i])
-	//	{
-	//		CRender * render = dynamic_cast<CRender*>(gameObject.get());
-	//	
-	//		if (!render)continue;
-
-	//		std::vector<std::shared_ptr<Material>> materials = render->GetMaterials();
-
-	//		for (UINT i = 0; i < materials.size(); i++)
-	//		{
-
-	//			std::shared_ptr<Material> material = materials[i];
-	//			std::shared_ptr<RenderingSet> renderingSet;
-	//			renderingSet.reset(new RenderingSet(render, material.get(), i));
-
-	//			//TODO::2D対応してないよ
-	//			if (material->GetRenderQueue() <= MaterialManager::OPACITY_RENDER_QUEUE)
-	//				opacityList.push_back(renderingSet);
-	//			else
-	//				transparentList.push_back(renderingSet);
-	//		}
-	//		
-	//	}
-	//}
-
-	//opacityList.sort();
-	//transparentList.sort();
-
-	/////テストで書いてる
-	//{
-	//	
-	//	std::shared_ptr<PipelineStateObject> currentPSO = nullptr;
-	//	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
-
-	//	auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
+		
 
 	//	//ビューポート&シザー矩形設定
 	//	commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
@@ -110,8 +70,7 @@ void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 	//	//使うDescriptorHeapの設定
 	//	commandListSet.m_CommandList.Get()->SetDescriptorHeaps(1, ppHeaps);
 
-	//	UINT frameIndex = dxDevice->GetFrameIndex();
-	//	FrameResources* frameResource = dxDevice->GetFrameResource(frameIndex);
+
 
 	//	//ResourceBarrierの設定(描画前Ver)
 	//	D3D12_RESOURCE_BARRIER barrier;
@@ -126,13 +85,10 @@ void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 
 
 	//	//レンダーターゲットの設定
-	//	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = frameResource->GetRTVBufferView()->m_CpuHandle;
+		
 	//	commandListSet.m_CommandList.Get()->OMSetRenderTargets(1, &rtvHandle, FALSE, &(dxDevice->GetDSV()->m_CpuHandle));
 
-	//	//レンダーターゲットクリア
-	//	const float clearColor[] = { 0.0f, 1.0f, 0.4f, 1.0f };
-	//	commandListSet.m_CommandList.Get()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-	//	commandListSet.m_CommandList.Get()->ClearDepthStencilView(dxDevice->GetDSV()->m_CpuHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+		
 
 	//	commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
