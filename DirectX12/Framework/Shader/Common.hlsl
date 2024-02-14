@@ -24,5 +24,13 @@ struct VERTEX_3D
 struct OutputVS
 {
 	float4 Position : SV_POSITION;
+	float4 Normal : NORMAL;
 	float2 TexCoord : TEXCOORD;
+};
+
+struct OutputPS
+{
+	float4 BaseColor : SV_Target0;
+	float4 Normal : SV_Target1;
+	float4 RoughMetaSpe : SV_Target2;
 };

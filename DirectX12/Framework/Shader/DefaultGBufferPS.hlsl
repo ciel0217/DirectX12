@@ -1,17 +1,21 @@
-struct Output
-{
-	float4 BaseColor : SV_Target0;
-};
-
+#include "Common.hlsl"
 
 Texture2D		DiffuseTexture : register(t0);
+Texture2D		NormalMapTexture: register(t1);
+Texture2D		RoughMetaSpeTexture: register(t2);
+
 SamplerState	Sampler : register(s0);
 
 
-float4 main(Output i) : SV_TARGET
+OutputPS main(OutputVS i)
 {
-	float4 color;
-	color = DiffuseTexture.Sample(Sampler, i.TexCoord);
+	OutputPS o;
+	float4 baseColor;
+	baseColor = DiffuseTexture.Sample(Sampler, i.TexCoord);
+	o.Normal = i.Normal;
 
-	return color;
+	o.BaseColor = baseColor;
+
+
+	return o;
 }

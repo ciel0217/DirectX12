@@ -28,6 +28,50 @@ std::vector<std::shared_ptr<Material>> Model::LoadModel(bool inverseU, bool inve
 	return m_Materials;
 }
 
+void Model::LoadAndSetTexture(TextureType type, std::string fileName)
+{
+	std::string textureName;
+
+	switch (type)
+	{
+	case eDiffuse:
+		textureName = "DiffuseTexture";
+		break;
+	case eNormal:
+		textureName = "NormalTexture";
+		break;
+	case eShiness:
+		textureName = "ShinessTexture";
+		break;
+	case eSpecular:
+		textureName = "SpecularTexture";
+		break;
+	case eRoughMetaSpe:
+		textureName = "RoughMetaSpeTexture";
+		break;
+	default:
+		textureName = "None";
+		break;
+	}
+
+	ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
+	CommandContext* commandContext = Dx12GraphicsDevice::GetInstance()->GetGraphicContext();
+		
+	std::string fullPath = "Asset/Model/" + fileName;
+
+	ComPtr<ID3D12Resource> upLoadHeap;
+	//‚±‚ê‚Å‚¾‚ß‚¾‚Á‚½‚ç•Ï‚¦‚é
+	Texture2D* texture = new Texture2D();
+	texture->CreateTexture(device, commandContext, upLoadHeap, fullPath);
+	BufferView* bufferView = new BufferView();
+	DescriptorHeapManager::Instance().CreateTextureShaderResourceView(texture->GetResource().GetAddressOf(), bufferView, 1);
+
+	//TODO::‚Æ‚è‚ ‚¦‚¸ˆê”ÔÅ‰‚Ìƒ}ƒeƒŠƒAƒ‹‚É“ü‚ê‚Ä‚é
+	m_Materials[0]->SetTextureByTextureName(textureName, new TextureSet(texture, bufferView));
+		
+	
+}
+
 void Model::CreateVertexBuffer(const std::vector<Mesh> &meshes)
 {
 	m_VertexBuffer.resize(meshes.size());

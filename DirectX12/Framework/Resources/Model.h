@@ -16,7 +16,8 @@ enum TextureType
 	eDiffuse = 0,
 	eNormal,
 	eShiness,
-	eSpecular
+	eSpecular,
+	eRoughMetaSpe
 };
 
 
@@ -56,5 +57,6 @@ public:
 	std::vector<VertexBuffer> const &GetVertexBuffer() const{ return m_VertexBuffer; }
 	std::vector<IndexBuffer> const &GetIndexBuffer() const{ return m_IndexBuffer; }
 	std::vector<UINT> const &GetIndexNum()const { return m_IndexNum; }
+	void LoadAndSetTexture(TextureType type, std::string fileName);
 	//std::vector<std::shared_ptr<Material>> const &GetMaterials() { return m_Materials; }
 };

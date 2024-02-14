@@ -232,5 +232,11 @@
     <FxCompile Include="Framework\Shader\Common.hlsl">
       <Filter>Framework\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Framework\Shader\Default2DPS.hlsl">
+      <Filter>Framework\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Framework\Shader\Default2DVS.hlsl">
+      <Filter>Framework\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

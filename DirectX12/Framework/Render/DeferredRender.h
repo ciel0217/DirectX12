@@ -12,6 +12,7 @@ class DeferredRender : public CRenderPipeline
 private:
 	std::unordered_map<std::string, std::shared_ptr<FrameResources>> m_TextureResourece;
 	std::shared_ptr<Material> m_DefaultMat;
+	std::shared_ptr<Material> m_ChangeFrameTexMat;
 	UINT m_ResoureceMax;
 
 	D3D12_VIEWPORT m_ViewPort;
