@@ -10,6 +10,8 @@ cbuffer VP : register(b0)
 cbuffer World : register(b1)
 {
 	matrix world;
+	matrix invWorld;
+	matrix transposeInvWorld;
 };
 
 //ƒAƒ‰ƒCƒ“ƒƒ“ƒg‚µ‚½‚Ù‚¤‚ª‚¢‚¢‚Ì‚©‚È
@@ -33,4 +35,10 @@ struct OutputPS
 	float4 BaseColor : SV_Target0;
 	float4 Normal : SV_Target1;
 	float4 RoughMetaSpe : SV_Target2;
+};
+
+struct OutputVS2D
+{
+	float4 Position2D : SV_POSITION;
+	float2 TexCoord : TEXCOORD;
 };

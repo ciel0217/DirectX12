@@ -25,9 +25,9 @@ void DeferredRender::SetUpRender()
 	m_DefaultMat = MaterialManager::GetInstance()->CreateMaterial("DefaultDeferred", "Framework/Shader/DefaultGBufferVS.cso",
 		"Framework/Shader/DefaultGBufferPS.cso", MaterialManager::OPACITY_RENDER_QUEUE);
 
-	/*m_ChangeFrameTexMat = MaterialManager::GetInstance()->CreateMaterial("ChageFrameTex", "Framework/Shader/Default2DVS.cso",
-		"Framework/Shader/Default2DPS.cso", MaterialManager::D2_RENDER_QUEUE);
-*/
+	m_ChangeFrameTexMat = MaterialManager::GetInstance()->CreateMaterial("ChageFrameTex", "Framework/Shader/Default2DVS.cso",
+		"Framework/Shader/Default2DPS.cso", MaterialManager::D2_RENDER_QUEUE, e2DPipeline);
+
 	{
 		ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
 		CommandContext* commandContext = Dx12GraphicsDevice::GetInstance()->GetGraphicContext();
@@ -190,54 +190,61 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 			gameObject->Render->Draw(&commandListSet, gameObject->MatIndex);
 		}
 
-	
-
-		//TODO::mainFrame‚É‚¢‚Á‚½‚ñ–ß‚·
-		commandListSet.m_CommandList->OMSetRenderTargets(1, &(mainFrameResource->GetRTVBufferView()->m_CpuHandle), NULL, NULL);
-
-		{
-			std::shared_ptr<PipelineStateObject> pso = m_ChangeFrameTexMat->GetRenderSet()->pipelineStateObj;
-
-			commandListSet.m_CommandList->SetPipelineState(pso->GetPipelineState().Get());
-			commandListSet.m_CommandList->SetGraphicsRootSignature(m_ChangeFrameTexMat->GetRenderSet()->rootSignature->GetRootSignature().Get());
-			
-			commandListSet.m_CommandList->DrawInstanced(4, 1, 0, 0);
-		}
-
+		//ŽÀs‚ªI‚í‚é‚Ü‚Å‘Ò‚Â
+		dxDevice->GetGraphicContext()->WaitForIdle();
 
 		std::vector<D3D12_RESOURCE_BARRIER> afterBarriers;
-		afterBarriers.resize(m_ResoureceMax + 1);
+		afterBarriers.resize(m_ResoureceMax );
 
-		//•`‰æŒãResourceBarrior
 		{
 			int count = 0;
-			for(auto res : m_TextureResourece)
+			for (auto res : m_TextureResourece)
 			{
 				D3D12_RESOURCE_BARRIER barrier;
 				barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 				barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 				barrier.Transition.pResource = res.second->GetTexture()->GetResource().Get();
 				barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-				barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; 
+				barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 				barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 				afterBarriers[count++] = barrier;
 			}
+			
+		}
+		commandListSet.m_CommandList.Get()->ResourceBarrier(afterBarriers.size(), afterBarriers.data());
 
-			{
-				D3D12_RESOURCE_BARRIER barrier;
-				barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-				barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-				barrier.Transition.pResource = mainFrameResource->GetTexture()->GetResource().Get();
-				barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-				barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-				barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		//TODO::mainFrame‚É‚¢‚Á‚½‚ñ–ß‚·
+		commandListSet.m_CommandList->OMSetRenderTargets(1, &(mainFrameResource->GetRTVBufferView()->m_CpuHandle), NULL, NULL);
 
-				afterBarriers[count++] = barrier;
-			}
+		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		
+		std::shared_ptr<PipelineStateObject> pso = m_ChangeFrameTexMat->GetRenderSet()->pipelineStateObj;
+
+		commandListSet.m_CommandList->SetPipelineState(pso->GetPipelineState().Get());
+		commandListSet.m_CommandList->SetGraphicsRootSignature(m_ChangeFrameTexMat->GetRenderSet()->rootSignature->GetRootSignature().Get());
+		
+		UINT index = 0;
+		for (auto res : m_TextureResourece)
+		{
+			commandListSet.m_CommandList->SetGraphicsRootDescriptorTable(index++, res.second->GetSRVBufferView()->m_GpuHandle);
 		}
 
-		commandListSet.m_CommandList.Get()->ResourceBarrier(afterBarriers.size(), afterBarriers.data());
+		commandListSet.m_CommandList->DrawInstanced(4, 1, 0, 0);
+		
+
+		D3D12_RESOURCE_BARRIER barrier;
+		//•`‰æŒãResourceBarrier
+		{	
+			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+			barrier.Transition.pResource = mainFrameResource->GetTexture()->GetResource().Get();
+			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+			barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		}
+
+		commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
 		
 		dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
 		dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);

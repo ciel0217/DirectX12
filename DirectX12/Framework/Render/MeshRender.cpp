@@ -29,8 +29,11 @@ void MeshRender::Draw(CommandListSet* commandListSet, UINT materialIndex)
 
 	//TODO::Worlds—ñŒvŽZ(‰ñ“]AŠg‘å–¢‘Î‰ž)
 	WorldMatrix worldMat;
-	worldMat.w = XMMatrixTranslation(m_Self->GetPosition().x, m_Self->GetPosition().y, m_Self->GetPosition().z);
-	worldMat.w = XMMatrixTranspose(worldMat.w);
+	worldMat.world = XMMatrixTranslation(m_Self->GetPosition().x, m_Self->GetPosition().y, m_Self->GetPosition().z);
+	worldMat.invWorld = XMMatrixInverse(nullptr, worldMat.world);
+	worldMat.transposeInvWorld = XMMatrixTranspose(worldMat.invWorld);
+	worldMat.world = XMMatrixTranspose(worldMat.world);
+	
 	
 	m_WorldCBuffer->WriteData(&worldMat, sizeof(WorldMatrix));
 

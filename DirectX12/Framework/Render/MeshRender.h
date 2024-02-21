@@ -3,7 +3,9 @@
 #include "../Resources/Model.h"
 struct WorldMatrix
 {
-	XMMATRIX w;
+	XMMATRIX world;
+	XMMATRIX invWorld;
+	XMMATRIX transposeInvWorld;
 };
 
 

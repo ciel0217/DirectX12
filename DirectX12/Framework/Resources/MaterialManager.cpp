@@ -8,7 +8,7 @@
 
 MaterialManager* MaterialManager::m_Instance = nullptr;
 
-void MaterialManager::CalcMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue)
+void MaterialManager::CalcMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue, PipelineStateType pipeline_type)
 {
 	//‚·‚Å‚É¶¬Ï‚Ý
 	if (m_Materials.count(material_name))
@@ -46,7 +46,22 @@ void MaterialManager::CalcMaterial(std::string material_name, std::string vertex
 	signature->Create(device, v, p);
 
 	PipelineStateObject* pso = new PipelineStateObject();
-	pso->CreateGraphicPipeline(device, signature, v, p);
+	PipelineStateDesc desc; 
+	switch (pipeline_type)
+	{
+	case e3DPipeline:
+		desc = PipelineStateDesc(8);
+		break;
+	case e2DPipeline:
+		desc = PipelineStateDesc(1);
+		desc.m_DepthStencilDesc.DepthEnable = false;
+		desc.m_RasterizerDesc.DepthClipEnable = false;
+		desc.m_DSVFormat = DXGI_FORMAT_UNKNOWN;
+		break;
+	default:
+		break;
+	}
+	pso->CreateGraphicPipeline(device, signature, v, p, nullptr, desc);
 
 	m_Materials[material_name].reset(new Material(material_name, vertex_name, pixel_name, new RenderSet(v, p, signature, pso), render_queue));
 
@@ -55,9 +70,9 @@ void MaterialManager::CalcMaterial(std::string material_name, std::string vertex
 
 //texture‚ ‚è
 std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name,
-	int render_queue, std::unordered_map<std::string, std::shared_ptr<TextureSet>> textures)
+	int render_queue, std::unordered_map<std::string, std::shared_ptr<TextureSet>> textures, PipelineStateType pipeline_type)
 {
-	CalcMaterial(material_name, vertex_name, pixel_name, render_queue);
+	CalcMaterial(material_name, vertex_name, pixel_name, render_queue, pipeline_type);
 
 	m_Materials[material_name]->SetTextures(textures);
 
@@ -65,9 +80,10 @@ std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_n
 }
 
 //texture‚È‚µ
-std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue)
+std::shared_ptr<Material> MaterialManager::CreateMaterial(std::string material_name, std::string vertex_name, std::string pixel_name, int render_queue, 
+	PipelineStateType pipeline_type)
 {
-	CalcMaterial(material_name, vertex_name, pixel_name, render_queue);
+	CalcMaterial(material_name, vertex_name, pixel_name, render_queue, pipeline_type);
 
 	return m_Materials[material_name];
 }

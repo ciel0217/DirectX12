@@ -47,6 +47,8 @@ struct PipelineStateDesc
 			m_RTVFormat[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		}
 
+		m_DSVFormat = DXGI_FORMAT_D32_FLOAT;
+
 		m_DepthStencilDesc.DepthEnable = TRUE;
 		m_DepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 		m_DepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
@@ -70,6 +72,7 @@ struct PipelineStateDesc
 	D3D12_PRIMITIVE_TOPOLOGY_TYPE m_Topology;
 	UINT m_RenderTargetsNum;
 	DXGI_FORMAT m_RTVFormat[8];
+	DXGI_FORMAT m_DSVFormat;
 };
 
 
