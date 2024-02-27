@@ -9,7 +9,7 @@ OutputVS main(VERTEX_3D parameter)
 	a = mul(a, proj);
 
 	o.Position = mul(position, a);
-	o.Normal = normalize(mul(parameter.Normal, transposeInvWorld) * 0.5 + 0.5;
+	o.Normal = normalize(mul(float4(parameter.Normal, 0.0), transposeInvWorld));
 
 	o.TexCoord = parameter.TexCoord;
 

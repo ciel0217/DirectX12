@@ -9,7 +9,7 @@ SamplerState	Sampler : register(s0);
 
 OutputPS main(OutputVS i)
 {
-	OutputPS o;
+	OutputPS o = (OutputPS)0;
 	float4 baseColor;
 	baseColor = DiffuseTexture.Sample(Sampler, i.TexCoord);
 	o.Normal = i.Normal;
