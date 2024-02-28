@@ -4,7 +4,7 @@
 #include "../LowLevel/PipelineStateObject.h"
 #include "../LowLevel/Dx12GraphicsDevice.h"
 #include "CameraRender.h"
-
+#include "../Resources/FrameResources.h"
 /*
 GBuffer - > Light計算 - > 半透明 - > 2D
 までの一連を実装
@@ -39,15 +39,7 @@ void DeferredRender::SetUpRender()
 		}
 	}
 	
-	//ビューポート初期化&TODO:::これも色々できるといいかも
-	m_ViewPort.TopLeftX = 0.0f;
-	m_ViewPort.TopLeftY = 0.0f;
-	m_ViewPort.Width = static_cast<float>(SCREEN_WIDTH);
-	m_ViewPort.Height = static_cast<float>(SCREEN_HEIGHT);
-	m_ViewPort.MinDepth = 0.0f;
-	m_ViewPort.MaxDepth = 1.0f;
 
-	m_ScissorRect = { 0, 0, static_cast<LONG>(SCREEN_WIDTH), static_cast<LONG>(SCREEN_HEIGHT) };
 }
 
 void DeferredRender::UninitRender()
@@ -55,7 +47,7 @@ void DeferredRender::UninitRender()
 
 }
 
-void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[], CameraRender* cameraRender)
+void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[], CameraRender* cameraRender, CommandListSet& commandListSet)
 {
 	std::list<std::shared_ptr<RenderingSet>> opacityList;//不透明
 	std::list<std::shared_ptr<RenderingSet>> transparentList;//半透明
@@ -96,11 +88,11 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 		std::shared_ptr<PipelineStateObject> currentPSO =nullptr;
 		Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
 
-		auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
+		//auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
 
-		//ビューポート&シザー矩形設定
-		commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
-		commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
+		////ビューポート&シザー矩形設定
+		//commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
+		//commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
 
 		ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
 
@@ -120,7 +112,7 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 
 		/////////描画前ResourceBarrior
 		std::vector<D3D12_RESOURCE_BARRIER> beforeBarriers;
-		beforeBarriers.resize(m_ResoureceMax+1);
+		beforeBarriers.resize(m_ResoureceMax);
 
 		{
 			int count = 0;
@@ -138,7 +130,7 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 				beforeBarriers[count++] = barrier;
 			}
 
-			{
+		/*	{
 				D3D12_RESOURCE_BARRIER barrier;
 				barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 				barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
@@ -148,7 +140,7 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 				barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 				beforeBarriers[count++] = barrier;
-			}
+			}*/
 		}
 		commandListSet.m_CommandList.Get()->ResourceBarrier(beforeBarriers.size(), beforeBarriers.data());
 		
@@ -162,8 +154,8 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 		for (int i = 0; i < m_ResoureceMax; i++)
 			commandListSet.m_CommandList.Get()->ClearRenderTargetView(rtvHandles[i], clearColor, 0, nullptr);
 		
-		//mainFrameResourceClear
-		commandListSet.m_CommandList.Get()->ClearRenderTargetView(mainFrameResource->GetRTVBufferView()->m_CpuHandle, clearColor, 0, nullptr);
+		////mainFrameResourceClear
+	//	commandListSet.m_CommandList.Get()->ClearRenderTargetView(mainFrameResource->GetRTVBufferView()->m_CpuHandle, clearColor, 0, nullptr);
 
 		//SetRenderTargets
 		commandListSet.m_CommandList.Get()->OMSetRenderTargets(m_ResoureceMax, rtvHandles.data(), NULL, &(dxDevice->GetDSV()->m_CpuHandle));
@@ -214,38 +206,38 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 		}
 		commandListSet.m_CommandList.Get()->ResourceBarrier(afterBarriers.size(), afterBarriers.data());
 
-		//TODO::mainFrameにいったん戻す
-		commandListSet.m_CommandList->OMSetRenderTargets(1, &(mainFrameResource->GetRTVBufferView()->m_CpuHandle), NULL, NULL);
+		////TODO::mainFrameにいったん戻す
+		//commandListSet.m_CommandList->OMSetRenderTargets(1, &(mainFrameResource->GetRTVBufferView()->m_CpuHandle), NULL, NULL);
 
-		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		
-		std::shared_ptr<PipelineStateObject> pso = m_ChangeFrameTexMat->GetRenderSet()->pipelineStateObj;
+		//commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		//
+		//std::shared_ptr<PipelineStateObject> pso = m_ChangeFrameTexMat->GetRenderSet()->pipelineStateObj;
 
-		commandListSet.m_CommandList->SetPipelineState(pso->GetPipelineState().Get());
-		commandListSet.m_CommandList->SetGraphicsRootSignature(m_ChangeFrameTexMat->GetRenderSet()->rootSignature->GetRootSignature().Get());
-		
-		UINT index = 0;
-		for (auto res : m_TextureResourece)
-		{
-			commandListSet.m_CommandList->SetGraphicsRootDescriptorTable(index++, res.second->GetSRVBufferView()->m_GpuHandle);
-		}
+		//commandListSet.m_CommandList->SetPipelineState(pso->GetPipelineState().Get());
+		//commandListSet.m_CommandList->SetGraphicsRootSignature(m_ChangeFrameTexMat->GetRenderSet()->rootSignature->GetRootSignature().Get());
+		//
+		//UINT index = 0;
+		//for (auto res : m_TextureResourece)
+		//{
+		//	commandListSet.m_CommandList->SetGraphicsRootDescriptorTable(index++, res.second->GetSRVBufferView()->m_GpuHandle);
+		//}
 
-		commandListSet.m_CommandList->DrawInstanced(4, 1, 0, 0);
-		
+		//commandListSet.m_CommandList->DrawInstanced(4, 1, 0, 0);
+		//
 
-		D3D12_RESOURCE_BARRIER barrier;
-		//描画後ResourceBarrier
-		{	
-			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-			barrier.Transition.pResource = mainFrameResource->GetTexture()->GetResource().Get();
-			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-			barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		}
+		//D3D12_RESOURCE_BARRIER barrier;
+		////描画後ResourceBarrier
+		//{	
+		//	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		//	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		//	barrier.Transition.pResource = mainFrameResource->GetTexture()->GetResource().Get();
+		//	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		//	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+		//	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		//}
 
-		commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
-		
+		//commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
+		//
 		dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
 		dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
 

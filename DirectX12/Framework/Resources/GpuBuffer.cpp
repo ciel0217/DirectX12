@@ -176,3 +176,8 @@ void ConstantBuffer::CreateConstantBuffer(const ComPtr<ID3D12Device>& device, co
 	const UINT constantBufferSize = (size + (D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT - 1)) & ~(D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT - 1);
 	CreateNonData(device, constantBufferSize);
 }
+
+void StructuredBuffer::CreateStructuredBuffer(const ComPtr<ID3D12Device>& device, const UINT bufferSize, const UINT byteStride)
+{
+	
+}

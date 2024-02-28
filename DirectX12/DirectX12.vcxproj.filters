@@ -135,6 +135,12 @@
     <ClInclude Include="Framework\Render\DeferredRender.h">
       <Filter>Framework\Render</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Render\LightRender.h">
+      <Filter>Framework\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Resources\CLight.h">
+      <Filter>Framework\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
@@ -214,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="Framework\Render\DeferredRender.cpp">
       <Filter>Framework\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Render\LightRender.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

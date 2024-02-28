@@ -158,9 +158,11 @@
     <ClInclude Include="Framework\Render\CRender.h" />
     <ClInclude Include="Framework\Render\CRenderPipeline.h" />
     <ClInclude Include="Framework\Render\DeferredRender.h" />
+    <ClInclude Include="Framework\Render\LightRender.h" />
     <ClInclude Include="Framework\Render\MeshRender.h" />
     <ClInclude Include="Framework\Resources\Camera.h" />
     <ClInclude Include="Framework\Resources\CGameObject.h" />
+    <ClInclude Include="Framework\Resources\CLight.h" />
     <ClInclude Include="Framework\Resources\CScene.h" />
     <ClInclude Include="Framework\Resources\FrameResources.h" />
     <ClInclude Include="Framework\Resources\GpuBuffer.h" />
@@ -188,6 +190,7 @@
     <ClCompile Include="Framework\MemoryAllocator\TLSFAllocator.cpp" />
     <ClCompile Include="Framework\Render\CameraRender.cpp" />
     <ClCompile Include="Framework\Render\DeferredRender.cpp" />
+    <ClCompile Include="Framework\Render\LightRender.cpp" />
     <ClCompile Include="Framework\Render\MeshRender.cpp" />
     <ClCompile Include="Framework\Resources\Camera.cpp" />
     <ClCompile Include="Framework\Resources\CScene.cpp" />

@@ -12,7 +12,7 @@ OutputPS main(OutputVS i)
 	OutputPS o = (OutputPS)0;
 	float4 baseColor;
 	baseColor = DiffuseTexture.Sample(Sampler, i.TexCoord);
-	o.Normal = i.Normal;
+	o.Normal = i.Normal * 0.5 + 0.5;
 
 	o.BaseColor = baseColor;
 

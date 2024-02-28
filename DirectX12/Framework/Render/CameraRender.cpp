@@ -57,13 +57,14 @@ void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3
 
 void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 {
-	m_CurrentRender->Draw(gameObjects, this);
+	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
+	auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
 
-		
+	//ビューポート&シザー矩形設定
+	commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
+	commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
 
-	//	//ビューポート&シザー矩形設定
-	//	commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
-	//	commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
+	m_CurrentRender->Draw(gameObjects, this, commandListSet);
 
 	//	ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
 

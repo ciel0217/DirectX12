@@ -4,10 +4,11 @@
 #include "CRender.h"
 #include "../Resources/Material.h"
 
-class CRenderPipeline;
+class CGeometryRenderPipeline;
 class CGameObject;
 class ConstantBuffer;
 struct BufferView;
+
 
 struct VP
 {
@@ -42,7 +43,7 @@ struct RenderingSet
 class CameraRender
 {
 private:
-	std::shared_ptr<CRenderPipeline> m_CurrentRender;
+	std::shared_ptr<CGeometryRenderPipeline> m_CurrentRender;
 
 	std::shared_ptr<ConstantBuffer> m_VPCBuffer;
 	std::shared_ptr<BufferView> m_VPView;

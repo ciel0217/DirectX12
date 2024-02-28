@@ -93,3 +93,12 @@ public:
 	void CreateConstantBuffer(const ComPtr<ID3D12Device> &device, const UINT size);
 };
 
+class StructuredBuffer : public GpuAndCpuBuffer
+{
+private:
+	UINT m_ByteStride;
+	UINT m_BufferSize;
+	
+public:
+	void CreateStructuredBuffer(const ComPtr<ID3D12Device> &device, const UINT bufferSize, const UINT byteStride);
+};
