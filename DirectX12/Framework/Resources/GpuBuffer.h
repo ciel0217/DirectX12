@@ -96,9 +96,10 @@ public:
 class StructuredBuffer : public GpuAndCpuBuffer
 {
 private:
-	UINT m_ByteStride;
+	UINT m_ByteSize;
+	UINT m_ElementNum;
 	UINT m_BufferSize;
 	
 public:
-	void CreateStructuredBuffer(const ComPtr<ID3D12Device> &device, const UINT bufferSize, const UINT byteStride);
+	void CreateStructuredBuffer(const ComPtr<ID3D12Device> &device, const UINT elementNum, const UINT byteSize);
 };

@@ -141,6 +141,9 @@
     <ClInclude Include="Framework\Resources\CLight.h">
       <Filter>Framework\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\LowLevel\BufferView.h">
+      <Filter>Framework\LowLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">

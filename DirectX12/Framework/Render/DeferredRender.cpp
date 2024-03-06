@@ -1,10 +1,11 @@
+#include "../Resources/FrameResources.h"
 #include "DeferredRender.h"
 #include "../Resources/Shader.h"
 #include "../LowLevel/RootSignature.h"
 #include "../LowLevel/PipelineStateObject.h"
 #include "../LowLevel/Dx12GraphicsDevice.h"
 #include "CameraRender.h"
-#include "../Resources/FrameResources.h"
+
 /*
 GBuffer - > LightŒvŽZ - > ”¼“§–¾ - > 2D
 ‚Ü‚Å‚Ìˆê˜A‚ðŽÀ‘•
@@ -151,7 +152,7 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 		commandListSet.m_CommandList.Get()->ClearDepthStencilView(dxDevice->GetDSV()->m_CpuHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 		
 		//GBufferClear
-		for (int i = 0; i < m_ResoureceMax; i++)
+		for (UINT i = 0; i < m_ResoureceMax; i++)
 			commandListSet.m_CommandList.Get()->ClearRenderTargetView(rtvHandles[i], clearColor, 0, nullptr);
 		
 		////mainFrameResourceClear

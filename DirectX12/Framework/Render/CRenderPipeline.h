@@ -9,8 +9,8 @@ class CameraRender;
 class CGameObject;
 class FrameResources;
 class CLight;
-class ConstantBuffer;
-class BufferView;
+class StructuredBuffer;
+struct BufferView;
 
 class CGeometryRenderPipeline
 {
@@ -32,8 +32,12 @@ public:
 class CLightRenderPipeline
 {
 protected:
-	std::shared_ptr<ConstantBuffer> m_LightCBuffer;
+	std::shared_ptr<StructuredBuffer> m_LightStructuredBuffer;
 	std::shared_ptr<BufferView> m_LightView;
+
+	const UINT MAX_LIGHT = 10;
+	
+
 public:
 	CLightRenderPipeline(){}
 	virtual ~CLightRenderPipeline(){}

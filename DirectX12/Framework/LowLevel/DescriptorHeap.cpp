@@ -154,7 +154,7 @@ void DescriptorHeapManager::CreateConstantBufferView(ID3D12Resource *const* cons
 	device->Release();
 }
 
-void DescriptorHeapManager::CreateShaderResourceView(ID3D12Resource ** shaderResources, BufferView * dstView, unsigned int viewCount, const std::vector<D3D12_BUFFER_SRV>& buffers)
+void DescriptorHeapManager::CreateShaderResourceView(ID3D12Resource *const* shaderResources, BufferView * dstView, unsigned int viewCount, const std::vector<D3D12_BUFFER_SRV>& buffers)
 {
 	m_CbvSrvHeap.AllocateBufferView(dstView, viewCount);
 
@@ -165,7 +165,7 @@ void DescriptorHeapManager::CreateShaderResourceView(ID3D12Resource ** shaderRes
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-
+	
 	for (unsigned int i = 0; i < viewCount; i++) {
 		srvDesc.Format = buffers[i].Flags == D3D12_BUFFER_SRV_FLAG_RAW ? DXGI_FORMAT_R32_TYPELESS : DXGI_FORMAT_UNKNOWN;
 		srvDesc.Buffer = buffers[i];
@@ -231,7 +231,7 @@ void DescriptorHeapManager::CreateDepthStencilView(ID3D12Resource *const* depthS
 	device->Release();
 }
 
-void DescriptorHeapManager::CreateUnorederdAcsessView(ID3D12Resource ** unorderdAccess, BufferView * dstView, unsigned int viewCount, const std::vector<D3D12_BUFFER_UAV>& buffers)
+void DescriptorHeapManager::CreateUnorederdAcsessView(ID3D12Resource *const* unorderdAccess, BufferView * dstView, unsigned int viewCount, const std::vector<D3D12_BUFFER_UAV>& buffers)
 {
 	m_CbvSrvHeap.AllocateBufferView(dstView, viewCount);
 
@@ -249,6 +249,30 @@ void DescriptorHeapManager::CreateUnorederdAcsessView(ID3D12Resource ** unorderd
 
 		device->CreateUnorderedAccessView(unorderdAccess[i], unorderdAccess[i], &uavDesc, uavHandle);
 		uavHandle.ptr += m_CbvSrvHeap.GetIncrimentSize();
+	}
+
+	device->Release();
+}
+
+void DescriptorHeapManager::CreateStructuredBufferView(ID3D12Resource *const* shaderResources, BufferView * dstView, unsigned int viewCount, const std::vector<D3D12_BUFFER_SRV>& buffers)
+{
+	m_CbvSrvHeap.AllocateBufferView(dstView, viewCount);
+
+	ID3D12Device* device = nullptr;
+	shaderResources[0]->GetDevice(__uuidof(*device), reinterpret_cast<void**>(&device));
+
+	D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle = dstView->m_CpuHandle;
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+
+	for (unsigned int i = 0; i < viewCount; i++) {
+		
+		srvDesc.Buffer = buffers[i];
+
+		device->CreateShaderResourceView(shaderResources[i], &srvDesc, descriptorHandle);
+		descriptorHandle.ptr += m_CbvSrvHeap.GetIncrimentSize();
 	}
 
 	device->Release();

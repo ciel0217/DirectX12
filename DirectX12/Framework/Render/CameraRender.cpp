@@ -1,5 +1,6 @@
 #include "CameraRender.h"
 #include "DeferredRender.h"
+#include "LightRender.h"
 #include "../Resources/CGameObject.h"
 #include "CRender.h"
 #include "../Resources/MaterialManager.h"
@@ -9,8 +10,11 @@
 
 void CameraRender::SetUpRender()
 {
-	m_CurrentRender.reset(new DeferredRender());
-	m_CurrentRender->SetUpRender();
+	m_CurrentGeometryRender.reset(new DeferredRender());
+	m_CurrentGeometryRender->SetUpRender();
+
+	m_CurrentLightRender.reset(new LightRender());
+	m_CurrentLightRender->SetUpRender();
 
 	m_VPCBuffer.reset(new ConstantBuffer());
 	m_VPView.reset(new BufferView());
@@ -48,7 +52,7 @@ void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3
 	vp.View = XMMatrixTranspose(view);
 	vp.InverseView = XMMatrixInverse(nullptr, vp.View);
 
-	XMMATRIX proj = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1, 10000);
+	XMMATRIX proj = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 10000.0f);
 	vp.Proj = XMMatrixTranspose(proj);
 	vp.InverseProj = XMMatrixInverse(nullptr, vp.Proj);
 
@@ -64,7 +68,7 @@ void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 	commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
 	commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
 
-	m_CurrentRender->Draw(gameObjects, this, commandListSet);
+	m_CurrentGeometryRender->Draw(gameObjects, this, commandListSet);
 
 	//	ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
 

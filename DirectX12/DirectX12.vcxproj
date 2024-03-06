@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\DirectXTex\WICTextureLoader12.h" />
+    <ClInclude Include="Framework\LowLevel\BufferView.h" />
     <ClInclude Include="Framework\LowLevel\CommandAllocator.h" />
     <ClInclude Include="Framework\LowLevel\CommandContext.h" />
     <ClInclude Include="Framework\LowLevel\CommandList.h" />

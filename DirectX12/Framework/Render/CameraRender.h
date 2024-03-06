@@ -5,6 +5,7 @@
 #include "../Resources/Material.h"
 
 class CGeometryRenderPipeline;
+class CLightRenderPipeline;
 class CGameObject;
 class ConstantBuffer;
 struct BufferView;
@@ -43,7 +44,8 @@ struct RenderingSet
 class CameraRender
 {
 private:
-	std::shared_ptr<CGeometryRenderPipeline> m_CurrentRender;
+	std::shared_ptr<CGeometryRenderPipeline> m_CurrentGeometryRender;
+	std::shared_ptr<CLightRenderPipeline> m_CurrentLightRender;
 
 	std::shared_ptr<ConstantBuffer> m_VPCBuffer;
 	std::shared_ptr<BufferView> m_VPView;
