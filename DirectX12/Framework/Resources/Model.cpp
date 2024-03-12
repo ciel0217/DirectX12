@@ -189,9 +189,9 @@ void Model::LoadMesh(const aiScene* scene, bool inverseU, bool inverseV)
 			meshes[i].m_Vertices[j].m_Diffuse = XMFLOAT4(color.r, color.g, color.b, color.a);
 
 			if (inverseU)
-				meshes[i].m_Vertices[j].m_TexCoord.x = 1.0 - meshes[i].m_Vertices[j].m_TexCoord.x;
+				meshes[i].m_Vertices[j].m_TexCoord.x = 1.0f - meshes[i].m_Vertices[j].m_TexCoord.x;
 			else if (inverseV)
-				meshes[i].m_Vertices[j].m_TexCoord.y = 1.0 - meshes[i].m_Vertices[j].m_TexCoord.y;
+				meshes[i].m_Vertices[j].m_TexCoord.y = 1.0f - meshes[i].m_Vertices[j].m_TexCoord.y;
 		}
 
 		for (UINT j = 0; j < mesh->mNumFaces; j++)
@@ -221,7 +221,7 @@ void Model::LoadTexture(const aiScene * scene)
 
 	std::string root_name = scene->mRootNode->mName.C_Str();
 
-	for (int i = 0; i < materialNums; i++)
+	for (UINT i = 0; i < materialNums; i++)
 	{
 		aiMaterial* material = scene->mMaterials[i];
 

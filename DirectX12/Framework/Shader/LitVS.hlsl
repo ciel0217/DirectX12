@@ -1,7 +1,5 @@
 #include "common.hlsl"
 
-
-
 OutputVS2D main(uint VertexID : SV_VertexID)
 {
 	OutputVS2D ret;

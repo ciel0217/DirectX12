@@ -36,7 +36,7 @@ void DeferredRender::SetUpRender()
 		for (UINT i = 0; i < m_ResoureceMax; i++)
 		{
 			CalcTextureResource(resoureceName[i], device, commandContext, i);
-			m_TextureResourece[resoureceName[i]]->GetTexture()->GetResource()->SetName(L"ds");
+			m_TextureResourece[resoureceName[i]]->GetTexture()->GetResource()->SetName(L"deferred");
 		}
 	}
 	
@@ -48,42 +48,8 @@ void DeferredRender::UninitRender()
 
 }
 
-void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[], CameraRender* cameraRender, CommandListSet& commandListSet)
+void DeferredRender::Draw(std::list<std::shared_ptr<RenderingSet>> gameObjects, CameraRender* cameraRender, CommandListSet& commandListSet)
 {
-	std::list<std::shared_ptr<RenderingSet>> opacityList;//•s“§–¾
-	std::list<std::shared_ptr<RenderingSet>> transparentList;//”¼“§–¾
-
-
-	//3D‚Æ2D‚ÅLayer•ª‚¯‚Ä‚é‚½‚ß
-	for (int i = 0; i < 2; i++)
-	{
-		for (auto gameObject : gameObjects[i])
-		{
-			CRender * render = dynamic_cast<CRender*>(gameObject.get());
-
-			if (!render)continue;
-
-			std::vector<std::shared_ptr<Material>> materials = render->GetMaterials();
-
-			for (UINT i = 0; i < materials.size(); i++)
-			{
-
-				std::shared_ptr<Material> material = materials[i];
-				std::shared_ptr<RenderingSet> renderingSet;
-				renderingSet.reset(new RenderingSet(render, material.get(), i));
-
-				//TODO::2D‘Î‰ž‚µ‚Ä‚È‚¢‚æ
-				if (material->GetRenderQueue() <= MaterialManager::OPACITY_RENDER_QUEUE)
-					opacityList.push_back(renderingSet);
-				else
-					transparentList.push_back(renderingSet);
-			}
-
-		}
-	}
-
-	opacityList.sort();
-	transparentList.sort();
 
 	{
 		std::shared_ptr<PipelineStateObject> currentPSO =nullptr;
@@ -165,7 +131,7 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		//DrawGBufer
-		for (auto gameObject : opacityList)
+		for (auto gameObject : gameObjects)
 		{
 			std::shared_ptr<PipelineStateObject> pso = gameObject->Mat->GetRenderSet()->pipelineStateObj;
 
@@ -207,6 +173,9 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 		}
 		commandListSet.m_CommandList.Get()->ResourceBarrier(afterBarriers.size(), afterBarriers.data());
 
+		//dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
+		//dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
+
 		////TODO::mainFrame‚É‚¢‚Á‚½‚ñ–ß‚·
 		//commandListSet.m_CommandList->OMSetRenderTargets(1, &(mainFrameResource->GetRTVBufferView()->m_CpuHandle), NULL, NULL);
 
@@ -239,8 +208,8 @@ void DeferredRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[]
 
 		//commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
 		//
-		dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
-		dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
+		/*dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
+		dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);*/
 
 
 	}

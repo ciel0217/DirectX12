@@ -2,7 +2,7 @@
 #include <list>
 #include "../LowLevel/DirectX12.h"
 #include "CRender.h"
-#include "../Resources/Material.h"
+
 
 class CGeometryRenderPipeline;
 class CLightRenderPipeline;
@@ -19,27 +19,6 @@ struct VP
 	XMMATRIX InverseProj;
 };
 
-struct RenderingSet
-{
-	CRender* Render;
-	Material* Mat;
-	UINT MatIndex;
-
-	RenderingSet(CRender* render, Material* material, UINT matIndex)
-	{
-		Render = render;
-		Mat = material;
-		MatIndex = matIndex;
-	}
-
-	bool operator < (RenderingSet* const rhs)const
-	{
-		if (Mat->GetRenderQueue() == rhs->Mat->GetRenderQueue())
-			return Mat->GetMaterialName() < rhs->Mat->GetMaterialName();
-
-		return Mat->GetRenderQueue() < rhs->Mat->GetRenderQueue();
-	}
-};
 
 class CameraRender
 {

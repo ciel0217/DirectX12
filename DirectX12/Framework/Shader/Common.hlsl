@@ -23,6 +23,17 @@ struct VERTEX_3D
 	float4 Diffuse : COLOR;//í∏ì_ÉJÉâÅ[
 };
 
+struct Light
+{
+	
+	float3 lightDir;
+	float3 lightColor;
+	float lightPow;
+	float attenuation;
+	int lightType;//0:Dir 1:Point
+	bool isEnable;
+};
+
 struct OutputVS
 {
 	float4 Position : SV_POSITION;
@@ -41,4 +52,20 @@ struct OutputVS2D
 {
 	float4 Position2D : SV_POSITION;
 	float2 TexCoord : TEXCOORD;
+};
+
+static const float2 NDCPos[4] =
+{
+	float2(-1.0f, 1.0f),
+	float2(-1.0f, -1.0f),
+	float2(1.0f, 1.0f),
+	float2(1.0f, -1.0f)
+};
+
+static const float2 NDCUV[4] =
+{
+	float2(0.0f, 0.0f),
+	float2(0.0f, 1.0f),
+	float2(1.0f, 0.0f),
+	float2(1.0f, 1.0f)
 };

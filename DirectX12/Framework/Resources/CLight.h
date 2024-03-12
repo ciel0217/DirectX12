@@ -11,12 +11,12 @@ enum LightType
 
 struct Light
 {
-	bool isEnable;
-	XMVECTOR lightDir;
-	XMVECTOR lightColor;
+	XMFLOAT3 lightDir;
+	XMFLOAT3 lightColor;
 	float lightPow;
 	float attenuation;
 	LightType lightType;
+	bool isEnable;
 };
 
 class CLight : public CGameObject

@@ -68,7 +68,7 @@ void Shader::CalcShaderReflection(const D3D12_SHADER_BYTECODE & byteCode)
 	{
 		D3D12_SHADER_INPUT_BIND_DESC bindDesc = {};
 		m_ShaderRef.Get()->GetResourceBindingDesc(i, &bindDesc);
-
+		
 		switch (bindDesc.Type)
 		{
 		case D3D_SIT_CBUFFER:
@@ -96,6 +96,14 @@ void Shader::CalcShaderReflection(const D3D12_SHADER_BYTECODE & byteCode)
 			break;
 		//StructuredBufferŽg‚¤‚Æ‚«‚ÉŽg‚¤
 		case D3D_SIT_STRUCTURED:
+			m_ShaderRefResult.m_SRVRangeDescs[bindDesc.Name].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+			m_ShaderRefResult.m_SRVRangeDescs[bindDesc.Name].NumDescriptors = 1;
+			m_ShaderRefResult.m_SRVRangeDescs[bindDesc.Name].BaseShaderRegister = bindDesc.BindPoint;
+			m_ShaderRefResult.m_SRVRangeDescs[bindDesc.Name].RegisterSpace = 0;
+			m_ShaderRefResult.m_SRVRangeDescs[bindDesc.Name].Flags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
+			m_ShaderRefResult.m_SRVRangeDescs[bindDesc.Name].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+			srvCount++;
 			break;
 		default:
 			break;

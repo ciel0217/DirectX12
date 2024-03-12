@@ -30,7 +30,7 @@ public:
 	static const int OPACITY_RENDER_QUEUE = 3000;
 	static const int TRANSPARENT_RENDER_QUEUE = 7500;
 	static const int D2_RENDER_QUEUE = 10000;
-
+	static const int LIGHT_RENDER_QUEUE = 15000;
 	
 
 	//ÉRÉsÅ[ã÷é~

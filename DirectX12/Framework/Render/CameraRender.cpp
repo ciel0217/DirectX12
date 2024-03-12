@@ -7,6 +7,8 @@
 #include "../LowLevel/Dx12GraphicsDevice.h"
 #include "../LowLevel/BufferView.h"
 #include "../Resources/GpuBuffer.h"
+#include "../Resources/CLight.h"
+#include <memory>
 
 void CameraRender::SetUpRender()
 {
@@ -61,6 +63,60 @@ void CameraRender::SetVPCBuffer(XMFLOAT3 Position, XMVECTOR Quaternion, XMFLOAT3
 
 void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 {
+	std::list<std::shared_ptr<RenderingSet>> opacityList;//不透明
+	std::list<std::shared_ptr<RenderingSet>> transparentList;//半透明
+	std::vector<std::shared_ptr<CLight>> lightList;
+
+	//3Dと2DでLayer分けてるため
+	for (int i = 0; i < 2; i++)
+	{
+		for (auto gameObject : gameObjects[i])
+		{
+			CRender * render = dynamic_cast<CRender*>(gameObject.get());
+
+			if (!render)
+			{
+				
+				std::shared_ptr<CLight> light = std::dynamic_pointer_cast<CLight>(gameObject);
+				
+				if (light)
+				{
+					
+					lightList.push_back(light);
+
+				}
+				//if (typeid(*gameObject) == typeid(CLight))
+				//{
+				//	//型チェックしてるから自明なDownCast
+				//	
+				//}
+
+				continue;
+			}
+
+
+			std::vector<std::shared_ptr<Material>> materials = render->GetMaterials();
+
+			for (UINT i = 0; i < materials.size(); i++)
+			{
+
+				std::shared_ptr<Material> material = materials[i];
+				std::shared_ptr<RenderingSet> renderingSet;
+				renderingSet.reset(new RenderingSet(render, material.get(), i));
+
+				//TODO::2D対応してないよ
+				if (material->GetRenderQueue() <= MaterialManager::OPACITY_RENDER_QUEUE)
+					opacityList.push_back(renderingSet);
+				else
+					transparentList.push_back(renderingSet);
+			}
+
+		}
+	}
+
+	opacityList.sort();
+	transparentList.sort();
+
 	Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
 	auto commandListSet = dxDevice->GetGraphicContext()->RequestCommandListSet();
 
@@ -68,7 +124,11 @@ void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 	commandListSet.m_CommandList.Get()->RSSetViewports(1, &m_ViewPort);
 	commandListSet.m_CommandList.Get()->RSSetScissorRects(1, &m_ScissorRect);
 
-	m_CurrentGeometryRender->Draw(gameObjects, this, commandListSet);
+	m_CurrentGeometryRender->Draw(opacityList, this, commandListSet);
+	
+	auto textureResources = m_CurrentGeometryRender->GetTextureResources();
+	
+	//m_CurrentLightRender->Draw(textureResources, lightList, commandListSet);
 
 	//	ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
 
@@ -128,4 +188,6 @@ void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 	//		dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
 	//	}
 	//}
+	dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
+	dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
 }

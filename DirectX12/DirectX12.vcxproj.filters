@@ -144,6 +144,9 @@
     <ClInclude Include="Framework\LowLevel\BufferView.h">
       <Filter>Framework\LowLevel</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Resources\DirectionalLight.h">
+      <Filter>Framework\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\LowLevel\Window.cpp">
@@ -218,13 +221,16 @@
     <ClCompile Include="TestObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\Resources\Material.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\Render\DeferredRender.cpp">
       <Filter>Framework\Render</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Render\LightRender.cpp">
+      <Filter>Framework\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Resources\Material.cpp">
+      <Filter>Framework\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Resources\DirectionalLight.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -248,6 +254,12 @@
       <Filter>Framework\Shader</Filter>
     </FxCompile>
     <FxCompile Include="Framework\Shader\Default2DVS.hlsl">
+      <Filter>Framework\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Framework\Shader\LitVS.hlsl">
+      <Filter>Framework\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Framework\Shader\LitPS.hlsl">
       <Filter>Framework\Shader</Filter>
     </FxCompile>
   </ItemGroup>

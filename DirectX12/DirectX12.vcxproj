@@ -165,6 +165,7 @@
     <ClInclude Include="Framework\Resources\CGameObject.h" />
     <ClInclude Include="Framework\Resources\CLight.h" />
     <ClInclude Include="Framework\Resources\CScene.h" />
+    <ClInclude Include="Framework\Resources\DirectionalLight.h" />
     <ClInclude Include="Framework\Resources\FrameResources.h" />
     <ClInclude Include="Framework\Resources\GpuBuffer.h" />
     <ClInclude Include="Framework\Resources\Material.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Framework\Render\MeshRender.cpp" />
     <ClCompile Include="Framework\Resources\Camera.cpp" />
     <ClCompile Include="Framework\Resources\CScene.cpp" />
+    <ClCompile Include="Framework\Resources\DirectionalLight.cpp" />
     <ClCompile Include="Framework\Resources\FrameResources.cpp" />
     <ClCompile Include="Framework\Resources\GpuBuffer.cpp" />
     <ClCompile Include="Framework\Resources\Material.cpp" />
@@ -241,6 +243,23 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Framework\Shader\LitPS.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Framework\Shader\LitVS.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="Framework\Shader\TestPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
