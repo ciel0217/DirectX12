@@ -20,14 +20,14 @@ void DeferredRender::CalcTextureResource(std::string name, const ComPtr<ID3D12De
 
 void DeferredRender::SetUpRender()
 {
-	std::string resoureceName[] = {"BaseColor", "Normal", "RoughMetaSpe"};
-	m_ResoureceMax = sizeof(resoureceName) / sizeof(resoureceName[0]);
+	
+	m_ResoureceMax = sizeof(m_ResoureceName) / sizeof(m_ResoureceName[0]);
 
 	m_DefaultMat = MaterialManager::GetInstance()->CreateMaterial("DefaultDeferred", "Framework/Shader/DefaultGBufferVS.cso",
 		"Framework/Shader/DefaultGBufferPS.cso", MaterialManager::OPACITY_RENDER_QUEUE);
 
-	m_ChangeFrameTexMat = MaterialManager::GetInstance()->CreateMaterial("ChageFrameTex", "Framework/Shader/Default2DVS.cso",
-		"Framework/Shader/Default2DPS.cso", MaterialManager::D2_RENDER_QUEUE, e2DPipeline);
+	//m_ChangeFrameTexMat = MaterialManager::GetInstance()->CreateMaterial("ChageFrameTex", "Framework/Shader/Default2DVS.cso",
+	//	"Framework/Shader/Default2DPS.cso", MaterialManager::D2_RENDER_QUEUE, e2DPipeline);
 
 	{
 		ComPtr<ID3D12Device> device = Dx12GraphicsDevice::GetInstance()->GetDevice();
@@ -35,8 +35,8 @@ void DeferredRender::SetUpRender()
 
 		for (UINT i = 0; i < m_ResoureceMax; i++)
 		{
-			CalcTextureResource(resoureceName[i], device, commandContext, i);
-			m_TextureResourece[resoureceName[i]]->GetTexture()->GetResource()->SetName(L"deferred");
+			CalcTextureResource(m_ResoureceName[i], device, commandContext, i);
+			m_TextureResourece[m_ResoureceName[i]]->GetTexture()->GetResource()->SetName(L"deferred");
 		}
 	}
 	
@@ -70,12 +70,14 @@ void DeferredRender::Draw(std::list<std::shared_ptr<RenderingSet>> gameObjects, 
 		FrameResources* mainFrameResource = dxDevice->GetFrameResource(frameIndex);
 
 		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> rtvHandles;
-		rtvHandles.reserve(m_ResoureceMax);
+		rtvHandles.resize(m_ResoureceMax);
 
-		for (auto res : m_TextureResourece)
+		for (UINT i = 0; i < m_ResoureceMax; i++)
 		{
-			rtvHandles.push_back(res.second->GetRTVBufferView()->m_CpuHandle);
+			rtvHandles[i] = m_TextureResourece[m_ResoureceName[i]]->GetRTVBufferView()->m_CpuHandle;
 		}
+		
+	
 
 		/////////•`‰æ‘OResourceBarrior
 		std::vector<D3D12_RESOURCE_BARRIER> beforeBarriers;

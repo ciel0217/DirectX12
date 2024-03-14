@@ -109,6 +109,7 @@ void Shader::CalcShaderReflection(const D3D12_SHADER_BYTECODE & byteCode)
 			break;
 		}
 	}
+	m_ShaderRefResult.rootParameterSize = srvCount + cbCount;
 }
 
 D3D12_SHADER_BYTECODE Shader::GetByteCode()const

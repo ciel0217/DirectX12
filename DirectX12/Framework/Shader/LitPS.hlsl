@@ -11,5 +11,7 @@ SamplerState Sampler : register(s0);
 float4 main(OutputVS2D outputVS) : SV_Target0
 {
 	Light light = Lights[0];
-	return BaseColor.Sample(Sampler, outputVS.TexCoord) + Normal.Sample(Sampler, outputVS.TexCoord) + RoughMetaSpe.Sample(Sampler, outputVS.TexCoord) + float4(light.lightColor, 1.0f);
+	float lightColor = saturate(dot(Normal.Sample(Sampler, outputVS.TexCoord) * 2.0 - 1.0, light.lightDir));
+	
+	return BaseColor.Sample(Sampler, outputVS.TexCoord)* lightColor + RoughMetaSpe.Sample(Sampler, outputVS.TexCoord);
 }

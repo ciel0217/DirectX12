@@ -29,36 +29,57 @@ void RootSignature::Create(const ComPtr<ID3D12Device>& device, const VertexShade
 {
 	std::vector<D3D12_ROOT_PARAMETER1> rootParameter;
 	rootParameter.clear();
+	rootParameter.resize(vShader->GetShaderReflectResult().rootParameterSize + pShader->GetShaderReflectResult().rootParameterSize);
 
+
+	UINT addIndex = 0;
 	if (!vShader->GetShaderReflectResult().m_CBVRangeDescs.empty())
+	{
 		for (const auto& desc : vShader->GetShaderReflectResult().m_CBVRangeDescs)
 		{
-			m_DescriptorTableIndex[desc.first] = static_cast<UINT>(rootParameter.size());
+			m_DescriptorTableIndex[desc.first] = desc.second.range.BaseShaderRegister;
 
 			D3D12_ROOT_PARAMETER1 parameter = vShader->GetCbvRootParameter(desc.first);
-			rootParameter.push_back(parameter);
+			rootParameter[desc.second.range.BaseShaderRegister] = parameter;
 		}
+		//次に渡す値を設定
+		addIndex += static_cast<UINT>(vShader->GetShaderReflectResult().m_CBVRangeDescs.size());
+	}
 
 	if (!vShader->GetShaderReflectResult().m_SRVRangeDescs.empty())
+	{
 		for (const auto& desc : vShader->GetShaderReflectResult().m_SRVRangeDescs)
 		{
-			m_DescriptorTableIndex[desc.first] = static_cast<UINT>(rootParameter.size());
-			rootParameter.push_back(vShader->GetSrvRootParameter(desc.first));
+			m_DescriptorTableIndex[desc.first] = desc.second.BaseShaderRegister + addIndex;
+			rootParameter[desc.second.BaseShaderRegister + addIndex] = vShader->GetSrvRootParameter(desc.first);
 		}
+	}
+
+	//頂点シェーダの分ずらす
+	addIndex = vShader->GetShaderReflectResult().rootParameterSize;
 
 	if (!pShader->GetShaderReflectResult().m_CBVRangeDescs.empty())
+	{
+	
 		for (const auto& desc : pShader->GetShaderReflectResult().m_CBVRangeDescs)
 		{
-			m_DescriptorTableIndex[desc.first] = static_cast<UINT>(rootParameter.size());
-			rootParameter.push_back(pShader->GetCbvRootParameter(desc.first));
+			m_DescriptorTableIndex[desc.first] = desc.second.range.BaseShaderRegister + addIndex;
+			rootParameter[desc.second.range.BaseShaderRegister + addIndex] = pShader->GetCbvRootParameter(desc.first);
 		}
 
+		//次に渡す値を設定
+		addIndex += static_cast<UINT>(pShader->GetShaderReflectResult().m_CBVRangeDescs.size());
+	}
+
 	if (!pShader->GetShaderReflectResult().m_SRVRangeDescs.empty())
+	{
+
 		for (const auto& desc : pShader->GetShaderReflectResult().m_SRVRangeDescs)
 		{
-			m_DescriptorTableIndex[desc.first] = static_cast<UINT>(rootParameter.size());
-			rootParameter.push_back(pShader->GetSrvRootParameter(desc.first));
+			m_DescriptorTableIndex[desc.first] = desc.second.BaseShaderRegister + addIndex;
+			rootParameter[desc.second.BaseShaderRegister + addIndex] = pShader->GetSrvRootParameter(desc.first);
 		}
+	}
 
 	//とりあえず固定
 	D3D12_STATIC_SAMPLER_DESC samplerDesc = {};
@@ -88,6 +109,9 @@ void RootSignature::ShutDown()
 
 void RootSignature::SetGraphicsRootDescriptorTable(const CommandListSet* commandListSet, const std::string name, const std::shared_ptr<BufferView> &bufferView)
 {
+	//登録なし
+	if (m_DescriptorTableIndex.count(name) == 0)
+		return;
 	UINT index = m_DescriptorTableIndex[name];
 
 	commandListSet->m_CommandList->SetGraphicsRootDescriptorTable(index, bufferView->m_GpuHandle);

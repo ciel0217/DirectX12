@@ -13,12 +13,13 @@ void LightRender::SetUpRender()
 		m_LightView.reset(new BufferView());
 
 		auto device = Dx12GraphicsDevice::GetInstance()->GetDevice();
-		m_LightStructuredBuffer->CreateStructuredBuffer(device, MAX_LIGHT, sizeof(CLight));
+		m_LightStructuredBuffer->CreateStructuredBuffer(device, MAX_LIGHT, sizeof(Light));
 
 		std::vector<D3D12_BUFFER_SRV> srvParam;
 		srvParam.resize(1);
 		srvParam[0].NumElements = MAX_LIGHT;
-		srvParam[0].StructureByteStride = sizeof(CLight);
+		srvParam[0].FirstElement = 0;
+		srvParam[0].StructureByteStride = sizeof(Light);
 
 		DescriptorHeapManager::Instance().CreateStructuredBufferView(m_LightStructuredBuffer->GetResource().GetAddressOf(), m_LightView.get(), 1, srvParam);
 	}
@@ -46,7 +47,16 @@ void LightRender::UninitRender()
 
 void LightRender::Draw(std::unordered_map<std::string, std::shared_ptr<FrameResources>>& textureResources, std::vector<std::shared_ptr<CLight>> lights, CommandListSet & commandListSet)
 {
-	m_LightStructuredBuffer->WriteData(lights.data(), sizeof(CLight) * lights.size(), 0);
+	//Lightのデータ取り出し
+	std::vector<Light> lightData;
+	lightData.clear();
+	lightData.reserve(lights.size());
+
+	for (auto light : lights)
+		lightData.push_back(light->GetLight());
+
+	//Setする
+	m_LightStructuredBuffer->WriteData(lightData.data(), sizeof(Light) * lightData.size(), 0);
 
 	{
 		Dx12GraphicsDevice* dxDevice = Dx12GraphicsDevice::GetInstance();
@@ -76,7 +86,7 @@ void LightRender::Draw(std::unordered_map<std::string, std::shared_ptr<FrameReso
 		//SetRenderTargets
 		commandListSet.m_CommandList->OMSetRenderTargets(1, &(m_TextureResourece["Light"]->GetRTVBufferView()->m_CpuHandle), NULL, NULL);
 
-		commandListSet.m_CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 		std::shared_ptr<PipelineStateObject> pso = m_RenderMat->GetRenderSet()->pipelineStateObj;
 
@@ -92,7 +102,7 @@ void LightRender::Draw(std::unordered_map<std::string, std::shared_ptr<FrameReso
 			}
 		}
 
-		m_RenderMat->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(&commandListSet, "Light", m_LightView);
+		m_RenderMat->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(&commandListSet, "Lights", m_LightView);
 
 		commandListSet.m_CommandList->DrawInstanced(4, 1, 0, 0);
 
@@ -107,7 +117,5 @@ void LightRender::Draw(std::unordered_map<std::string, std::shared_ptr<FrameReso
 		afterBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 		commandListSet.m_CommandList->ResourceBarrier(1, &afterBarrier);
-
-		
 	}
 }

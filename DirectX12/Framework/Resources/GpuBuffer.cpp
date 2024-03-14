@@ -99,7 +99,8 @@ void GpuAndCpuBuffer::CreateNonData(const ComPtr<ID3D12Device>& device, const UI
 
 void GpuAndCpuBuffer::WriteData(const void * data, const UINT size, const UINT startOffset)
 {
-	memcpy(m_DataPtr, reinterpret_cast<const unsigned char*>(data) + startOffset, size);
+	//memcpy(m_DataPtr, reinterpret_cast<const unsigned char*>(data) + startOffset, size);
+	memcpy(m_DataPtr, data , size);
 }
 
 
@@ -108,7 +109,7 @@ void VertexBuffer::CreateVertexBuffer(const ComPtr<ID3D12Device>& device, Comman
 	auto commandListSet = context->RequestCommandListSet();
 	ComPtr<ID3D12Resource> uploadHeap;
 	CreateVertexBuffer(device, commandListSet.m_CommandList, uploadHeap, data);
-
+	
 	context->ExecuteCommandList(commandListSet.m_CommandList);
 	context->DiscardCommandListSet(commandListSet);
 	context->WaitForIdle();

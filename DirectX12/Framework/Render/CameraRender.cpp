@@ -25,6 +25,9 @@ void CameraRender::SetUpRender()
 	m_VPCBuffer->CreateConstantBuffer(dxDevice->GetDevice(), sizeof(VP));
 	DescriptorHeapManager::Instance().CreateConstantBufferView(m_VPCBuffer->GetResource().GetAddressOf(), m_VPView.get(), 1);
 
+	m_ChangeFrameTexMat = MaterialManager::GetInstance()->CreateMaterial("ChageFrameTex", "Framework/Shader/Default2DVS.cso",
+		"Framework/Shader/Default2DPS.cso", MaterialManager::D2_RENDER_QUEUE, e2DPipeline);
+
 	//ビューポート初期化&TODO:::これも色々できるといいかも
 	m_ViewPort.TopLeftX = 0.0f;
 	m_ViewPort.TopLeftY = 0.0f;
@@ -128,66 +131,58 @@ void CameraRender::Draw(std::list<std::shared_ptr<CGameObject >> gameObjects[])
 	
 	auto textureResources = m_CurrentGeometryRender->GetTextureResources();
 	
-	//m_CurrentLightRender->Draw(textureResources, lightList, commandListSet);
+	m_CurrentLightRender->Draw(textureResources, lightList, commandListSet);
 
-	//	ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
+	
+	///一番最後にmainFrameに今までの描画を移す
+	ID3D12DescriptorHeap*  const ppHeaps[] = { DescriptorHeapManager::Instance().GetD3dDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV).Get() };
+	auto mainFrame = dxDevice->GetFrameResource(dxDevice->GetFrameIndex());
+	auto lastTextureResource = m_CurrentLightRender->GetTextureResources();
 
-	//	//使うDescriptorHeapの設定
-	//	commandListSet.m_CommandList.Get()->SetDescriptorHeaps(1, ppHeaps);
+	//使うDescriptorHeapの設定
+	commandListSet.m_CommandList.Get()->SetDescriptorHeaps(1, ppHeaps);
 
-
-
-	//	//ResourceBarrierの設定(描画前Ver)
-	//	D3D12_RESOURCE_BARRIER barrier;
-	//	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//	barrier.Transition.pResource = frameResource->GetTexture()->GetResource().Get();
-	//	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	//	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-	//	commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barrier);
-
-
-	//	//レンダーターゲットの設定
+	//ResourceBarrierの設定(描画前Ver)
+	D3D12_RESOURCE_BARRIER beforeBarrier;
+	beforeBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	beforeBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	beforeBarrier.Transition.pResource = mainFrame->GetTexture()->GetResource().Get();
+	beforeBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	beforeBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	beforeBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 		
-	//	commandListSet.m_CommandList.Get()->OMSetRenderTargets(1, &rtvHandle, FALSE, &(dxDevice->GetDSV()->m_CpuHandle));
+	commandListSet.m_CommandList.Get()->ResourceBarrier(1, &beforeBarrier);
 
-		
+	//Clear
+	const float clearColor[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+	commandListSet.m_CommandList->ClearRenderTargetView(mainFrame->GetRTVBufferView()->m_CpuHandle, clearColor, 0, nullptr);
 
-	//	commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//レンダーターゲットの設定
+	commandListSet.m_CommandList.Get()->OMSetRenderTargets(1, &(mainFrame->GetRTVBufferView()->m_CpuHandle), FALSE, nullptr);
 
-	//	for (auto gameObject : opacityList)
-	//	{
-	//		//各オブジェクト描画
-	//		std::shared_ptr<PipelineStateObject> pso = gameObject->Mat->GetRenderSet()->pipelineStateObj;
-	//		if (currentPSO != pso)
-	//		{
-	//			currentPSO = pso;
+	commandListSet.m_CommandList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	//			commandListSet.m_CommandList.Get()->SetPipelineState(pso->GetPipelineState().Get());
-	//			commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(gameObject->Mat->GetRenderSet()->rootSignature->GetRootSignature().Get());
-	//			//セットはオブジェクトの数関係なく一回だけ
-	//			gameObject->Mat->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(&commandListSet, "VP", m_VPView);
+	commandListSet.m_CommandList.Get()->SetPipelineState(m_ChangeFrameTexMat->GetRenderSet()->pipelineStateObj->GetPipelineState().Get());
 
-	//		}
+	commandListSet.m_CommandList.Get()->SetGraphicsRootSignature(m_ChangeFrameTexMat->GetRenderSet()->rootSignature->GetRootSignature().Get());
+	
+	//一個しかないけど、こうしないと値が取れない。[""]でとってもいいけど、キーが決め打ちになるから嫌だ
+	for(auto res : lastTextureResource)
+		m_ChangeFrameTexMat->GetRenderSet()->rootSignature->SetGraphicsRootDescriptorTable(&commandListSet, "Texture", res.second->GetSRVBufferView());
+	
+	commandListSet.m_CommandList->DrawInstanced(4, 1, 0, 0);
 
-	//		gameObject->Render->Draw(&commandListSet, gameObject->MatIndex);
+	//ResourceBarrierの設定(描画前Ver)
+	D3D12_RESOURCE_BARRIER afterBarrier;
+	afterBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	afterBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	afterBarrier.Transition.pResource = mainFrame->GetTexture()->GetResource().Get();
+	afterBarrier.Transition.StateBefore =D3D12_RESOURCE_STATE_RENDER_TARGET;
+	afterBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	afterBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
-	//		D3D12_RESOURCE_BARRIER barriera;
-	//		barriera.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//		barriera.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//		barriera.Transition.pResource = frameResource->GetTexture()->GetResource().Get();
-	//		barriera.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//		barriera.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	//		barriera.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	commandListSet.m_CommandList.Get()->ResourceBarrier(1, &afterBarrier);
 
-	//		commandListSet.m_CommandList.Get()->ResourceBarrier(1, &barriera);
-
-	//		dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
-	//		dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
-	//	}
-	//}
 	dxDevice->GetGraphicContext()->ExecuteCommandList(commandListSet);
 	dxDevice->GetGraphicContext()->DiscardCommandListSet(commandListSet);
 }

@@ -41,6 +41,7 @@ void CommandContext::DiscardCommandListSet(const CommandListSet & set)
 {
 	m_CommandAllocator.DiscardAllocator(set.m_FenceValue, set.m_Allocator);
 	m_CommandList.DiscardCommandList(set.m_FenceValue, set.m_CommandList);
+
 }
 
 UINT64 CommandContext::ExecuteCommandList(const ComPtr<ID3D12GraphicsCommandList>& commandList)
